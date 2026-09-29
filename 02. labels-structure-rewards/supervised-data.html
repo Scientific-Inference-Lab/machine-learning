@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Supervised Data | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-supervised-data tr.is-on th,.topic-supervised-data tr.is-on td{outline:3px solid var(--pnu-green);outline-offset:-3px;font-weight:700}
+    .topic-supervised-data td.is-miss{color:var(--alert-700);font-weight:800}
+  </style>
+</head>
+<body class="visual-topic topic-supervised-data">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Labels, Structure, Rewards</span><span class="nav-tag is-current" aria-current="page">Supervised Data</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Labels, Structure, Rewards</p><h1 class="page-title">Supervised Data</h1><hr class="accent-rule"><p class="page-subtitle">지도학습 자료는 입력 x와 그에 대응해 관측된 출력 y를 짝지은 학습 사례의 모음이다. 모델이 계산한 예측값 ŷ는 기록된 y와 구별한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>학습 사례 (x⁽ⁱ⁾, y⁽ⁱ⁾)</strong><span>i번째 사례의 입력과 관측된 출력의 쌍이다.</span></article><article class="summary-card"><strong>출력 y</strong><span>측정, 사람의 판정, 이후에 일어난 결과를 기록해 얻는다.</span></article><article class="summary-card"><strong>예측값 ŷ</strong><span>모델이 입력에서 계산한 값 ŷ⁽ⁱ⁾ = f̂(x⁽ⁱ⁾)다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">한 행이 입력 x⁽ⁱ⁾와 출력 y⁽ⁱ⁾의 쌍이다</h2><p class="lead">사례 번호 i를 바꾸면 학습 자료에서 강조되는 행과 그 행의 x⁽ⁱ⁾, y⁽ⁱ⁾가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="row">사례 번호 i <output id="row-out" class="control-value" for="row">3</output></label><input id="row" type="range" min="1" max="5" step="1" value="3"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><table class="topic-table" id="train-table" aria-label="학습 자료 다섯 사례"><thead><tr><th scope="col">번호 i</th><th scope="col" class="is-x">사용자 나이</th><th scope="col" class="is-x">콘텐츠 종류</th><th scope="col" class="is-x">상황</th><th scope="col" class="is-y">클릭 여부 y</th><th scope="col">예측값 ŷ</th></tr></thead><tbody><tr data-i="1"><th scope="row">1</th><td>31</td><td>뉴스</td><td>웹</td><td data-y>0</td><td data-p></td></tr><tr data-i="2"><th scope="row">2</th><td>22</td><td>게임</td><td>모바일</td><td data-y>1</td><td data-p></td></tr><tr data-i="3"><th scope="row">3</th><td>24</td><td>과학</td><td>모바일</td><td data-y>1</td><td data-p></td></tr><tr data-i="4"><th scope="row">4</th><td>45</td><td>과학</td><td>웹</td><td data-y>0</td><td data-p></td></tr><tr data-i="5"><th scope="row">5</th><td>19</td><td>뉴스</td><td>모바일</td><td data-y>0</td><td data-p></td></tr></tbody></table></div><figcaption class="visual-caption">파란 머리 칸은 입력 x, 초록 머리 칸은 관측된 출력 y다. 초록 테두리 행이 고른 사례이며 ŷ 열은 아래 절에서 고른 규칙이 계산한 값이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">예측값 ŷ는 관측된 y와 어긋날 수 있다</h2><p class="lead">모델의 예측 규칙을 바꾸면 각 사례의 ŷ가 다시 계산되고, 관측된 y와 어긋난 사례가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="rule">예측 규칙 f̂</label><select id="rule"><option value="mobile">모바일이면 클릭함(1)</option><option value="science">과학이면 클릭함(1)</option><option value="young">나이 25 이하이면 클릭함(1)</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div class="topic-flow"><div class="flow-box is-x"><strong>입력 x⁽ⁱ⁾</strong><span id="flow-x"></span></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-box"><strong>예측값 ŷ⁽ⁱ⁾</strong><span id="flow-p"></span></div><div class="flow-arrow" aria-hidden="true">↔</div><div class="flow-box is-on"><strong>관측값 y⁽ⁱ⁾</strong><span id="flow-y"></span></div></div></div><figcaption class="visual-caption">위 표에서 고른 사례 i 하나의 흐름이다. 파란 상자는 모델이 받는 입력, 가운데는 규칙이 계산한 값, 초록 상자는 자료에 기록된 값이다. 위 표의 ŷ 열도 같은 규칙으로 바뀐다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../02. labels-structure-rewards/learning-problems.html" rel="prev">이전 · 학습 문제의 구성</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../02. labels-structure-rewards/actions-and-rewards.html" rel="next">다음 · 행동과 보상</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  var data = [[1, 31, "뉴스", "웹", 0], [2, 22, "게임", "모바일", 1], [3, 24, "과학", "모바일", 1], [4, 45, "과학", "웹", 0], [5, 19, "뉴스", "모바일", 0]];
+  var rules = {
+    mobile: { f: function (d) { return d[3] === "모바일" ? 1 : 0; }, name: "상황이 모바일이면 1" },
+    science: { f: function (d) { return d[2] === "과학" ? 1 : 0; }, name: "콘텐츠가 과학이면 1" },
+    young: { f: function (d) { return d[1] <= 25 ? 1 : 0; }, name: "나이가 25 이하이면 1" }
+  };
+  function render() {
+    var i = Number($("row").value), rule = rules[$("rule").value], miss = [];
+    $("row-out").textContent = i;
+    data.forEach(function (d) {
+      var tr = document.querySelector('#train-table tr[data-i="' + d[0] + '"]'), p = rule.f(d), cell = tr.querySelector("[data-p]");
+      cell.textContent = p; cell.classList.toggle("is-miss", p !== d[4]); tr.classList.toggle("is-on", d[0] === i);
+      if (p !== d[4]) miss.push(d[0]);
+    });
+    var d = data.filter(function (r) { return r[0] === i; })[0], p = rule.f(d);
+    show(1, [["x⁽" + i + "⁾", "(" + d[1] + ", " + d[2] + ", " + d[3] + ")"], ["y⁽" + i + "⁾", String(d[4])], ["학습 사례", "(x⁽" + i + "⁾, y⁽" + i + "⁾)"]],
+      "사례 " + i + "의 입력 x⁽" + i + "⁾ = (" + d[1] + ", " + d[2] + ", " + d[3] + ")과 클릭 여부 y⁽" + i + "⁾ = " + d[4] + "이 한 쌍이다. 학습 자료 𝒟는 이런 쌍 (x⁽ⁱ⁾, y⁽ⁱ⁾)을 n개 모은 집합이다.");
+    $("flow-x").textContent = "(" + d[1] + ", " + d[2] + ", " + d[3] + ")"; $("flow-p").textContent = "ŷ = " + p; $("flow-y").textContent = "y = " + d[4];
+    show(2, [["규칙", rule.name], ["사례 " + i + "의 ŷ와 y", p + " · " + d[4] + (p === d[4] ? " (같음)" : " (다름)")], ["어긋난 사례", miss.length ? miss.join(", ") + "번 · " + miss.length + "개" : "없음"]],
+      (p === d[4] ? "사례 " + i + "에서는 ŷ와 y가 같다. " : "사례 " + i + "에서는 규칙의 예측이 ŷ = " + p + "이지만 기록된 값은 y = " + d[4] + "이다. ") + "ŷ는 모델이 계산한 값이고 y는 자료에 기록된 값이므로, 규칙이 바뀌면 ŷ만 바뀐다. 손실(loss)은 이 어긋남을 수치로 평가한다.");
+  }
+  on("row", render); on("rule", render);
+  render();
+}());
+</script>
+</body>
+</html>

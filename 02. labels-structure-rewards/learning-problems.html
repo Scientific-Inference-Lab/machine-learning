@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Learning Problems | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+
+  </style>
+</head>
+<body class="visual-topic topic-learning-problems">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Labels, Structure, Rewards</span><span class="nav-tag is-current" aria-current="page">Learning Problems</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Labels, Structure, Rewards</p><h1 class="page-title">Learning Problems</h1><hr class="accent-rule"><p class="page-subtitle">같은 추천 서비스의 기록에서도 무엇을 알아내려는지에 따라 학습 문제(learning problem)가 달라진다. 학습 문제는 가진 자료와 학습 목표로 정해진다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>자료</strong><span>입력과 함께 기록된 값의 종류다.</span></article><article class="summary-card"><strong>목표</strong><span>새 출력 예측, 비슷한 대상 찾기, 행동 선택 가운데 하나다.</span></article><article class="summary-card"><strong>판정 순서</strong><span>출력 예측, 행동 선택, 구조 탐색의 순서로 확인한다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">같은 추천 기록도 목표에 따라 다른 학습 문제가 된다</h2><p class="lead">학습 목표를 바꾸면 기록의 각 열이 맡는 역할과 학습에 필요한 값이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="goal">학습 목표</label><select id="goal"><option value="predict">다음 클릭 예측</option><option value="group">비슷한 사용자 찾기</option><option value="act">보여 줄 콘텐츠 선택</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><table class="topic-table" aria-label="추천 기록과 열의 역할"><thead><tr><th scope="col">사용자</th><th scope="col">항목</th><th scope="col">상황</th><th scope="col">사건</th><th scope="col">시각</th></tr><tr id="role-row"></tr></thead><tbody><tr><td>사용자 017</td><td>항목 B</td><td>모바일, 저녁</td><td>클릭</td><td>20:14</td></tr><tr><td>사용자 017</td><td>항목 C</td><td>모바일, 저녁</td><td>건너뜀</td><td>20:15</td></tr><tr><td>사용자 204</td><td>항목 B</td><td>웹, 아침</td><td>조회</td><td>08:31</td></tr></tbody></table></div><figcaption class="visual-caption">표는 추천 기록 세 건이다. 둘째 머리행은 고른 목표에서 각 열의 역할이며, 파란 칸은 모델이 받는 값, 초록 칸은 학습 기준이 되는 값이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">학습 유형은 출력, 행동, 구조의 순서로 판정한다</h2><p class="lead">사례를 바꾸면 세 질문 가운데 처음으로 ‘예’라고 답하는 질문과 학습 유형이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="case">사례</label><select id="case"><option value="sales">광고 예산으로 판매량 예측</option><option value="gene">암 종류 정보 없이 유전자 발현으로 집단 탐색</option><option value="game">게임 상태에서 점수를 높일 행동 선택</option><option value="spend">거래 특성으로 다음 구매 금액 예측</option><option value="robot">충돌을 피해 목표에 도착하는 로봇 이동</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div class="topic-flow" id="judge-flow"><div class="flow-box" data-step="1"><strong>1. 출력?</strong><span>학습 자료에 관측된 y가 있고 새 y를 예측하는가</span></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-box" data-step="2"><strong>2. 행동?</strong><span>행동으로 보상을 높이는가</span></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-box" data-step="3"><strong>3. 구조?</strong><span>집단이나 새 표현을 찾는가</span></div></div></div><figcaption class="visual-caption">세 상자는 판정 순서다. 초록 상자가 처음으로 ‘예’라고 답한 질문이고, 흐린 상자는 확인할 필요가 없어진 뒤 단계다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../01. learning-from-data/learning-types.html" rel="prev">이전 · 학습 유형</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../02. labels-structure-rewards/supervised-data.html" rel="next">다음 · 지도학습 자료</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  var roles = {
+    predict: { cls: ["is-x", "is-x", "is-x", "is-y", ""], txt: ["입력 x", "입력 x", "입력 x", "출력 y", "사용 안 함"],
+      rows: [["모델이 받는 값", "사용자, 항목, 상황"], ["함께 관측되는 값", "사건 열의 클릭 결과 y"], ["학습 유형", "지도학습"]],
+      note: "다음 클릭을 예측하려면 과거 사례마다 클릭 결과가 기록되어 있어야 한다. 사용자·항목·상황이 입력 x, 사건 열의 클릭 결과가 출력 y가 된다." },
+    group: { cls: ["is-x", "is-x", "", "is-x", ""], txt: ["행동 벡터", "행동 벡터", "사용 안 함", "행동 벡터", "사용 안 함"],
+      rows: [["모델이 받는 값", "사용자별 행동 벡터"], ["함께 관측되는 값", "정답 출력 없음"], ["학습 유형", "비지도학습"]],
+      note: "비슷한 사용자를 묶는 데는 정답 출력이 필요 없다. 사용자마다 어떤 항목에 어떻게 반응했는지를 모은 행동의 유사성만 쓴다." },
+    act: { cls: ["is-x", "is-y", "is-x", "is-y", "is-x"], txt: ["관측", "행동", "관측", "보상", "순서"],
+      rows: [["모델이 받는 값", "현재 사용자와 상황"], ["함께 관측되는 값", "행동 이후 보상"], ["학습 유형", "강화학습"]],
+      note: "콘텐츠를 고르면 사용자의 반응이 보상으로 돌아오고, 그 선택이 다음에 관측할 자료까지 바꾼다. 항목은 에이전트의 행동, 사건은 그 행동의 보상이다." }
+  };
+  function renderGoal() {
+    var r = roles[$("goal").value];
+    $("role-row").innerHTML = r.txt.map(function (t, i) { return '<th scope="col" class="' + r.cls[i] + '">' + t + "</th>"; }).join("");
+    show(1, r.rows, r.note);
+  }
+  var cases = {
+    sales: { step: 1, data: "광고 예산과 판매량", type: "지도학습, 회귀", why: "판매량 y가 사례마다 기록되어 있고 새 예산의 판매량을 예측하므로 첫 질문에서 지도학습으로 정해진다. 판매량이 수로 나타나므로 회귀다." },
+    gene: { step: 3, data: "유전자 발현만", type: "비지도학습", why: "암 종류라는 출력을 쓰지 않고 행동과 보상도 없다. 발현 값 사이의 유사성으로 집단을 찾으므로 세 번째 질문에서 비지도학습이 된다." },
+    game: { step: 2, data: "게임 상태, 행동, 점수", type: "강화학습", why: "점수는 예측할 출력이 아니라 선택한 행동의 결과를 평가하는 보상이다. 점수를 높일 행동을 배우므로 두 번째 질문에서 강화학습이 된다." },
+    spend: { step: 1, data: "거래 특성과 구매 금액", type: "지도학습, 회귀", why: "다음 구매 금액이 뒤늦게 관측되어도 사례마다 기록된 출력 y다. 관측 시점이 아니라 그 값으로 무엇을 학습하는지가 기준이므로 지도학습이다." },
+    robot: { step: 2, data: "위치, 센서 측정값, 이동 기록", type: "강화학습", why: "다음 위치를 예측하는 문제가 아니라 도착하면 보상, 충돌하면 벌점을 받으며 이동을 고르는 문제라 강화학습이다." }
+  };
+  function renderCase() {
+    var c = cases[$("case").value];
+    Array.prototype.forEach.call(document.querySelectorAll("#judge-flow .flow-box"), function (b) {
+      var s = Number(b.dataset.step);
+      b.classList.toggle("is-on", s === c.step); b.classList.toggle("is-off", s > c.step);
+    });
+    show(2, [["자료", c.data], ["처음 ‘예’로 답한 질문", c.step + "번"], ["학습 유형", c.type]], c.why);
+  }
+  on("goal", renderGoal); on("case", renderCase);
+  renderGoal(); renderCase();
+}());
+</script>
+</body>
+</html>

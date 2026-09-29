@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Actions And Rewards | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+
+  </style>
+</head>
+<body class="visual-topic topic-actions-and-rewards">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Labels, Structure, Rewards</span><span class="nav-tag is-current" aria-current="page">Actions And Rewards</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Labels, Structure, Rewards</p><h1 class="page-title">Actions And Rewards</h1><hr class="accent-rule"><p class="page-subtitle">강화학습(reinforcement learning)에서 에이전트는 상태를 바탕으로 행동을 고르고, 환경은 상태를 바꾸며 보상(reward)을 돌려준다. 보상은 곧바로 올 수도, 여러 행동 뒤에 올 수도 있다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>상태 sₜ와 행동 aₜ</strong><span>시점 t의 상황과 그때 에이전트가 고른 행동이다.</span></article><article class="summary-card"><strong>보상 rₜ</strong><span>선택한 행동의 결과를 평가하는 수치다.</span></article><article class="summary-card"><strong>지연된 보상</strong><span>여러 번 행동한 뒤에야 관측되는 보상이다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">보상 기준에 따라 보상이 관측되는 시점이 달라진다</h2><p class="lead">보상 기준과 시점 t를 바꾸면 그때까지의 상태, 행동, 보상과 누적 보상이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="criterion">보상 기준</label><select id="criterion"><option value="click">클릭하면 +1</option><option value="buy">구매 완료하면 +5</option></select></div><div class="control-field"><label for="t">시점 t <output id="t-out" class="control-value" for="t">0</output></label><input id="t" type="range" min="0" max="2" step="1" value="0"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div class="topic-flow" id="episode"></div></div><figcaption class="visual-caption">상자 하나가 한 시점의 상태, 행동, 사용자 반응, 보상이다. 초록 상자가 현재 시점 t이고 흐린 상자는 아직 일어나지 않은 시점이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">같은 클릭 기록도 쓰임에 따라 출력 y 또는 보상이 된다</h2><p class="lead">클릭 기록의 쓰임을 바꾸면 그 기록이 맡는 역할, 학습 목표, 기록이 주는 정보가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="use">클릭 기록의 쓰임</label><select id="use"><option value="y">이 사용자가 클릭할지 예측</option><option value="r">어떤 콘텐츠를 보여 줄지 선택</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div class="topic-flow" id="use-flow"></div></div><figcaption class="visual-caption">상자는 클릭 기록이 학습에 들어가는 순서다. 파란 상자는 모델이나 에이전트가 받는 값, 초록 상자는 클릭 기록이 맡는 역할이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../02. labels-structure-rewards/supervised-data.html" rel="prev">이전 · 지도학습 자료</a><a class="pager-link is-all" href="../index.html">전체</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  var steps = [
+    { s: "첫 화면", a: "항목 B 표시", react: "클릭" },
+    { s: "B를 본 뒤", a: "항목 C 표시", react: "건너뜀" },
+    { s: "C를 넘긴 뒤", a: "항목 D 표시", react: "클릭 뒤 구매 완료" }
+  ];
+  function reward(c, k) { return c === "click" ? (steps[k].react.indexOf("클릭") === 0 ? 1 : 0) : (k === 2 ? 5 : 0); }
+  function renderEpisode() {
+    var c = $("criterion").value, t = Number($("t").value), total = 0;
+    $("t-out").textContent = t;
+    $("episode").innerHTML = steps.map(function (st, k) {
+      var r = reward(c, k), cls = k === t ? "is-on" : k > t ? "is-off" : "";
+      return '<div class="flow-box ' + cls + '"><strong>t = ' + k + '</strong><span>s' + k + ": " + st.s + "</span><span>a" + k + ": " + st.a + "</span><span>반응: " + st.react + "</span><span>r" + k + " = " + (r > 0 ? "+" + r : "0") + "</span></div>";
+    }).join('<div class="flow-arrow" aria-hidden="true">→</div>');
+    for (var k = 0; k <= t; k++) total += reward(c, k);
+    var r = reward(c, t);
+    show(1, [["상태 s" + t, steps[t].s], ["행동 a" + t, steps[t].a], ["보상 r" + t, r > 0 ? "+" + r : "0"], ["t까지 누적 보상", String(total)]],
+      c === "click"
+        ? "클릭을 보상으로 쓰면 행동 직후 사용자 반응이 곧바로 보상이 된다. t = " + t + "에서 " + steps[t].a + "에 대한 반응은 " + steps[t].react + "이므로 r" + t + " = " + (r > 0 ? "+" + r : "0") + "이다."
+        : t < 2 ? "구매를 보상으로 쓰면 t = " + t + "까지는 행동을 해도 보상이 0이다. 행동이 좋았는지는 여러 번 추천한 뒤에야 알 수 있다."
+        : "구매 완료가 t = 2에서야 관측되어 r2 = +5다. 이 보상은 D 하나가 아니라 B, C, D로 이어진 선택 전체의 결과이며, 이것이 지연된 보상이다.");
+  }
+  var uses = {
+    y: { boxes: [["is-x", "입력 x", "사용자, 항목, 상황"], ["is-on", "출력 y", "클릭했는가"], ["", "모델", "x와 y의 관계를 학습"], ["", "예측값 ŷ", "새 추천의 클릭 여부"]],
+      rows: [["클릭 기록의 역할", "예측할 출력 y"], ["학습 목표", "새 입력의 출력 예측"], ["주어진 정보", "각 입력에 대응하는 정답"], ["학습 유형", "지도학습"]],
+      note: "클릭 여부를 예측할 값으로 쓰면 기록은 입력마다 짝지어진 정답 y다. 모델은 새 사용자·항목·상황에서 클릭 여부를 맞히도록 학습한다." },
+    r: { boxes: [["is-x", "관측", "현재 사용자와 상황"], ["", "행동", "보여 줄 콘텐츠 선택"], ["is-on", "보상", "추천 뒤 클릭하면 +1"], ["", "다음 선택", "보상이 커지도록 조정"]],
+      rows: [["클릭 기록의 역할", "선택을 평가하는 보상"], ["학습 목표", "앞으로 받을 보상이 커지도록 선택"], ["주어진 정보", "선택한 행동의 결과만"], ["학습 유형", "강화학습"]],
+      note: "같은 클릭을 추천 선택의 점수로 쓰면 보상이 된다. 보상은 고른 콘텐츠의 결과만 알려 준다. 보여 주지 않은 콘텐츠가 더 나았는지, 곧 무엇이 최선의 행동이었는지는 직접 알려 주지 않는다." }
+  };
+  function renderUse() {
+    var u = uses[$("use").value];
+    $("use-flow").innerHTML = u.boxes.map(function (b) { return '<div class="flow-box ' + b[0] + '"><strong>' + b[1] + "</strong><span>" + b[2] + "</span></div>"; }).join('<div class="flow-arrow" aria-hidden="true">→</div>');
+    show(2, u.rows, u.note);
+  }
+  on("criterion", renderEpisode); on("t", renderEpisode); on("use", renderUse);
+  renderEpisode(); renderUse();
+}());
+</script>
+</body>
+</html>
