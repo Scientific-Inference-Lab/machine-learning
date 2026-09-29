@@ -1,0 +1,241 @@
+.problem-set-page {
+  overflow-x: hidden;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.problem-set-page .topic-hero .container,
+.problem-set-page main.container {
+  max-width: 900px;
+}
+
+.problem-set-page .topic-hero {
+  padding: 40px 0 24px;
+}
+
+.problem-list {
+  display: grid;
+  gap: 28px;
+  min-width: 0;
+}
+
+.problem-set-context {
+  min-width: 0;
+  padding: 18px 20px;
+  background: var(--surface-050);
+  border-left: 3px solid var(--pnu-green);
+  border-radius: var(--radius-sm);
+}
+
+.problem-set-context > :first-child {
+  margin-top: 0;
+}
+
+.problem-set-context > :last-child {
+  margin-bottom: 0;
+}
+
+.problem-card {
+  min-width: 0;
+  padding: clamp(20px, 4vw, 30px);
+  background: var(--white);
+  border: 1px solid var(--line-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.problem-card-header {
+  margin-bottom: 18px;
+}
+
+.problem-number {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--pnu-blue);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+}
+
+.problem-card h2 {
+  margin: 0;
+  color: var(--pnu-blue-dark);
+  font-size: clamp(19px, 3vw, 23px);
+  line-height: 1.35;
+}
+
+.problem-body > :first-child,
+.solution-body > :first-child {
+  margin-top: 0;
+}
+
+.problem-body,
+.data-table-wrap {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.problem-body > :last-child,
+.solution-body > :last-child {
+  margin-bottom: 0;
+}
+
+.problem-body ol,
+.solution-body ol,
+.problem-body ul,
+.solution-body ul {
+  padding-left: 1.35rem;
+}
+
+.problem-body li + li,
+.solution-body li + li {
+  margin-top: 7px;
+}
+
+.math-block {
+  margin: 16px 0;
+  padding: 13px 16px;
+  overflow-x: auto;
+  color: var(--pnu-blue-dark);
+  font-family: var(--mono);
+  font-weight: 700;
+  text-align: center;
+  background: var(--surface-050);
+  border: 1px solid var(--line-200);
+  border-radius: var(--radius-sm);
+}
+
+.code-block {
+  margin: 16px 0;
+  padding: 16px;
+  overflow-x: auto;
+  color: var(--ink-900);
+  font: 13.5px/1.55 var(--mono);
+  background: var(--surface-050);
+  border: 1px solid var(--line-200);
+  border-radius: var(--radius-sm);
+}
+
+.data-table-wrap {
+  margin: 16px 0;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  min-width: 430px;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 10px 12px;
+  border: 1px solid var(--line-200);
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table th:first-child,
+.data-table td:first-child {
+  text-align: left;
+}
+
+.data-table th {
+  color: var(--pnu-blue-dark);
+  background: var(--surface-050);
+}
+
+.solution-panel {
+  margin-top: 22px;
+  border-top: 1px solid var(--line-200);
+}
+
+.solution-panel summary {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  color: var(--pnu-blue-dark);
+  font-weight: 750;
+  cursor: pointer;
+  list-style: none;
+}
+
+.solution-panel summary::-webkit-details-marker {
+  display: none;
+}
+
+.solution-panel summary::before {
+  content: "+";
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 9px;
+  color: var(--white);
+  background: var(--pnu-blue);
+  border-radius: 50%;
+}
+
+.solution-panel[open] summary::before {
+  content: "−";
+}
+
+.solution-body {
+  padding: 18px 20px;
+  background: var(--callout-bg);
+  border-radius: var(--radius-sm);
+}
+
+.misconception {
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: var(--white);
+  border-left: 3px solid var(--pnu-green);
+}
+
+.problem-set-nav {
+  display: flex;
+  justify-content: center;
+  margin-top: 42px;
+}
+
+.problem-set-nav a {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  padding: 9px 18px;
+  color: var(--pnu-blue-dark);
+  font-weight: 700;
+  text-decoration: none;
+  background: var(--surface-050);
+  border: 1px solid var(--line-200);
+  border-radius: var(--radius-sm);
+}
+
+@media (max-width: 600px) {
+  .problem-set-page .header-inner {
+    align-items: flex-start;
+  }
+
+  .problem-card {
+    padding: 20px 17px;
+  }
+
+}
+
+@media print {
+  .site-header,
+  .problem-set-nav,
+  .site-footer {
+    display: none;
+  }
+
+  .problem-card {
+    break-inside: avoid;
+    box-shadow: none;
+  }
+
+  .solution-panel:not([open]) > :not(summary) {
+    display: block;
+  }
+}

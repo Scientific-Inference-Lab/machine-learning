@@ -1,0 +1,32 @@
+:root {
+  --pnu-blue: #005BAA;
+  --pnu-green: #00A651;
+  --pnu-blue-dark: #003E74;
+  --ink-900: #1F2D3D;
+  --ink-600: #5C6C7C;
+  --line-200: #D7E0E8;
+  --surface-050: #F5F8FB;
+  --white: #FFFFFF;
+  --alert-700: #B3261E;
+  --alert-050: #FDF3F2;
+  --alert-200: #F2C9C5;
+  --callout-bg: var(--surface-050);
+  --pnu-green-text: var(--pnu-blue-dark);
+  --pnu-green-deep: var(--pnu-blue-dark);
+  --pnu-green-tint: var(--surface-050);
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --shadow-card: 0 1px 2px var(--line-200);
+
+  --ink-400: var(--ink-600);
+  --ink-500: var(--ink-600);
+  --ink-700: var(--ink-900);
+  --line-300: var(--ink-600);
+  --surface-100: var(--line-200);
+  --pnu-red: var(--alert-700);
+
+  --pnu-blue-tint: color-mix(in srgb, var(--pnu-blue) 8%, var(--white));
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
