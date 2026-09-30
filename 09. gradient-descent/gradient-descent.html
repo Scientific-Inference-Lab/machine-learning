@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gradient Descent | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .cur{fill:var(--pnu-green)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:4 4}
+    .topic-plot .res-pos{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res-neg{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:5 3}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .step{stroke:var(--pnu-green);stroke-width:2.5}
+    .topic-plot .dot{fill:var(--pnu-blue-dark)}
+    .topic-plot .bar{fill:var(--pnu-blue)}
+    .topic-plot .bar.is-big{fill:var(--alert-700)}
+    .topic-plot .target{stroke:var(--pnu-blue-dark);stroke-width:2;stroke-dasharray:7 5}
+  </style>
+</head>
+<body class="visual-topic topic-gradient-descent">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Walking Downhill</span><span class="nav-tag is-current" aria-current="page">Gradient Descent</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Walking Downhill</p><h1 class="page-title">Gradient Descent</h1><hr class="accent-rule"><p class="page-subtitle">경사하강법(gradient descent)은 현재 매개변수에서 도함수나 그래디언트를 계산하고 그 반대 방향으로 학습률(learning rate) η만큼 갱신하기를 반복한다. η와 목적함수의 모양이 도착점과 수렴 여부를 정한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>갱신 규칙</strong><span>θ⁽ᵗ⁾ = θ⁽ᵗ⁻¹⁾ − η f′(θ⁽ᵗ⁻¹⁾)이며 기울기의 부호 반대로 움직인다.</span></article><article class="summary-card"><strong>학습률 η</strong><span>갱신 폭을 정하는 하이퍼파라미터이며 너무 크면 발산할 수 있다.</span></article><article class="summary-card"><strong>국소 최솟값</strong><span>주변에서 가장 작은 값이며 비볼록 함수에서는 전역 최솟값과 다를 수 있다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">학습률이 갱신 폭을 정하고, 너무 크면 최솟점을 지나쳐 발산한다</h2><p class="lead">f(x) = (x − 2)²에서 시작점, 학습률 η, 반복 횟수를 바꾸면 갱신 경로와 현재 x, 도함수, 다음 x가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--triple"><div class="control-field"><label for="gx0">시작점 x₀ <output id="gx0-out" class="control-value" for="gx0">4</output></label><input id="gx0" type="range" min="-2" max="6" step="0.5" value="4"></div><div class="control-field"><label for="eta">학습률 η <output id="eta-out" class="control-value" for="eta">0.25</output></label><input id="eta" type="range" min="0.05" max="1.2" step="0.05" value="0.25"></div><div class="control-field"><label for="steps">반복 횟수 t <output id="steps-out" class="control-value" for="steps">4</output></label><input id="steps" type="range" min="0" max="8" step="1" value="4"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="gd-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="gd-title gd-desc"><title id="gd-title">경사하강법 경로</title><desc id="gd-desc">포물선 위의 갱신 경로</desc></svg></div><figcaption class="visual-caption">파란 곡선은 f(x) = (x − 2)², 짙은 점은 지난 위치, 초록 점은 t번 갱신한 뒤의 위치, 초록 선은 갱신 한 번의 이동이다. 그림 밖으로 나간 점은 가장자리에 표시한다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">비볼록 함수에서는 시작점에 따라 도착하는 최솟값이 다르다</h2><p class="lead">같은 η = 0.1로 40번 갱신할 때 시작점 x₀을 바꾸면 도착하는 골짜기와 목적함수 값이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="nx0">시작점 x₀ <output id="nx0-out" class="control-value" for="nx0">1</output></label><input id="nx0" type="range" min="-4" max="4" step="0.5" value="1"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="nc-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="nc-title nc-desc"><title id="nc-title">비볼록 함수의 경사하강법</title><desc id="nc-desc">두 골짜기가 있는 함수</desc></svg></div><figcaption class="visual-caption">파란 곡선은 두 골짜기가 있는 f(x) = x⁴/20 − x² + x/2 + 7이다. 짙은 점선은 전역 최솟점, 초록 점은 40번 갱신한 뒤의 위치, 짙은 작은 점은 지나온 경로다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../09. gradient-descent/objective-functions.html" rel="prev">이전 · Objective Functions</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../10. stochastic-gradient-descent/stochastic-gradient-descent.html" rel="next">다음 · Stochastic Gradient Descent</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; return String(v) + (k ? a : b); }
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  function axes(X, Y, xs, ys, xl, yl, x0, x1, y0, y1) {
+    var s = '<line class="axis" x1="' + X(x0) + '" y1="' + Y(y0) + '" x2="' + X(x1) + '" y2="' + Y(y0) + '"/><line class="axis" x1="' + X(x0) + '" y1="' + Y(y0) + '" x2="' + X(x0) + '" y2="' + Y(y1) + '"/>';
+    xs.forEach(function (t) { s += '<text class="small" x="' + X(t) + '" y="' + (Y(y0) + 18) + '" text-anchor="middle">' + neg(t) + "</text>"; });
+    ys.forEach(function (t) { s += '<text class="small" x="' + (X(x0) - 8) + '" y="' + (Y(t) + 4) + '" text-anchor="end">' + neg(t) + "</text>"; });
+    s += '<text x="' + X(x1) + '" y="' + (Y(y0) + 36) + '" text-anchor="end">' + xl + '</text><text x="' + (X(x0) + 6) + '" y="' + (Y(y1) + 4) + '">' + yl + "</text>";
+    return s;
+  }
+  var f2 = function (v) { return neg((Math.round(v * 100) / 100).toFixed(2)); };
+  var f1 = function (v) { return neg(Math.round(v * 100) / 100); };
+
+  var X = function (x) { return 50 + (x + 3) * 47; }, Y = function (v) { return 260 - v * 8.5; };
+  var cl = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  function renderGD() {
+    var x = Number($("gx0").value), eta = Number($("eta").value), T = Number($("steps").value), path = [x];
+    $("gx0-out").textContent = neg(x); $("eta-out").textContent = eta.toFixed(2); $("steps-out").textContent = T;
+    for (var k = 0; k < T; k++) { x = x - eta * 2 * (x - 2); path.push(x); }
+    var s = '<title id="gd-title">경사하강법 경로</title><desc id="gd-desc">η=' + eta + ', ' + T + '번 갱신 뒤 x=' + x.toFixed(3) + '</desc>';
+    s += axes(X, Y, [-2, 0, 2, 4, 6, 8], [0, 10, 20], "x", "f(x)", -3, 8.5, 0, 28);
+    var p = []; for (var u = -3; u <= 7.001; u += 0.1) { var v = (u - 2) * (u - 2); if (v <= 28) p.push(X(u).toFixed(1) + "," + Y(v).toFixed(1)); }
+    s += '<polyline class="curve" points="' + p.join(" ") + '"/>';
+    for (var k2 = 0; k2 < path.length; k2++) {
+      var px = cl(path[k2], -3, 8.5), py = cl((path[k2] - 2) * (path[k2] - 2), 0, 28);
+      if (k2 > 0) { var qx = cl(path[k2 - 1], -3, 8.5), qy = cl((path[k2 - 1] - 2) * (path[k2 - 1] - 2), 0, 28); s += '<line class="step" x1="' + X(qx) + '" y1="' + Y(qy) + '" x2="' + X(px) + '" y2="' + Y(py) + '"/>'; }
+      s += '<circle class="' + (k2 === path.length - 1 ? "cur" : "dot") + '" cx="' + X(px) + '" cy="' + Y(py) + '" r="' + (k2 === path.length - 1 ? 7 : 4.5) + '"/>';
+    }
+    $("gd-plot").innerHTML = s;
+    var d = 2 * (x - 2), nx = x - eta * d, factor = 1 - 2 * eta, fmt = function (v) { return Math.abs(v) >= 1000 ? neg(v.toExponential(2)) : neg(Math.round(v * 1000) / 1000); };
+    show(1, [["x⁽" + T + "⁾", fmt(x)], ["f′(x) = 2(x − 2)", fmt(d)], ["다음 x = x − ηf′", fmt(nx)], ["|x − 2|", fmt(Math.abs(x - 2))]],
+      "한 번 갱신하면 x − 2가 (1 − 2η) = " + neg(factor.toFixed(2)) + "배가 된다. " + (Math.abs(factor) < 1e-9 ? "η = 0.5에서는 한 번에 최솟점 2에 도달하고 이후 갱신량은 0이다."
+        : Math.abs(factor) < 1 - 1e-9 ? (factor > 0 ? "0과 1 사이라 같은 쪽에서 2에 점점 가까워진다. η가 작을수록 갱신 폭이 작아 반복이 더 필요하다." : "음수라 최솟점을 넘나들지만 크기가 줄어 2에 가까워진다.")
+        : Math.abs(Math.abs(factor) - 1) < 1e-9 ? "크기가 1이라 두 점 사이를 오가며 가까워지지 않는다." : "크기가 1보다 커 갱신마다 |x − 2|가 커지고 f(x)가 발산한다. η를 줄여 다시 실행해야 한다."));
+  }
+  var f = function (x) { return Math.pow(x, 4) / 20 - x * x + x / 2 + 7; }, df = function (x) { return Math.pow(x, 3) / 5 - 2 * x + 0.5; };
+  var NX = function (x) { return 70 + (x + 4.5) * 52; }, NY = function (v) { return 260 - v * 28; };
+  var gmin = -3.28;
+  (function () { for (var k = 0; k < 200; k++) gmin -= 0.05 * df(gmin); }());
+  function renderNC() {
+    var x = Number($("nx0").value), path = [x];
+    $("nx0-out").textContent = neg(x);
+    for (var k = 0; k < 40; k++) { x = x - 0.1 * df(x); path.push(x); }
+    var s = '<title id="nc-title">비볼록 함수의 경사하강법</title><desc id="nc-desc">시작 ' + path[0] + ', 도착 x=' + x.toFixed(2) + '</desc>';
+    s += axes(NX, NY, [-4, -2, 0, 2, 4], [0, 2, 4, 6, 8], "x", "f(x)", -4.5, 4.6, 0, 8.4);
+    var p = []; for (var u = -4.5; u <= 4.5001; u += 0.05) if (f(u) <= 8.4) p.push(NX(u).toFixed(1) + "," + NY(f(u)).toFixed(1));
+    s += '<polyline class="curve" points="' + p.join(" ") + '"/><line class="target" x1="' + NX(gmin) + '" y1="' + NY(0) + '" x2="' + NX(gmin) + '" y2="' + NY(f(gmin)) + '"/>';
+    path.forEach(function (v, k) { if (k < path.length - 1) s += '<circle class="dot" cx="' + NX(v) + '" cy="' + NY(Math.min(8.4, f(v))) + '" r="3"/>'; });
+    s += '<circle class="cur" cx="' + NX(x) + '" cy="' + NY(f(x)) + '" r="8"/>';
+    $("nc-plot").innerHTML = s;
+    var global = Math.abs(x - gmin) < 0.1;
+    show(2, [["시작점", neg(path[0])], ["도착 x", neg(x.toFixed(2))], ["f(도착)", f(x).toFixed(2)], ["도착한 최솟값", global ? "전역 최솟값" : "국소 최솟값"]],
+      global ? "왼쪽 골짜기로 내려가 전역 최솟값 " + f(gmin).toFixed(2) + "에 도착했다. 같은 η라도 시작점이 오른쪽 골짜기 쪽이었다면 다른 곳에서 멈춘다."
+        : "오른쪽 골짜기의 국소 최솟점에서 도함수가 0이 되어 멈췄다. 이 점의 f는 " + jro(f(x).toFixed(2)) + " 전역 최솟값 " + f(gmin).toFixed(2) + "보다 크다. 여러 시작점에서 실행해 비교할 수 있지만 전역 최솟점 도달이 보장되지는 않는다.");
+  }
+  on("gx0", renderGD); on("eta", renderGD); on("steps", renderGD); on("nx0", renderNC);
+  renderGD(); renderNC();
+}());
+</script>
+</body>
+</html>

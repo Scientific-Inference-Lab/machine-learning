@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Stochastic Gradient Descent | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .cur{fill:var(--pnu-green)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:4 4}
+    .topic-plot .res-pos{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res-neg{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:5 3}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .step{stroke:var(--pnu-green);stroke-width:2.5}
+    .topic-plot .dot{fill:var(--pnu-blue-dark)}
+    .topic-plot .bar{fill:var(--pnu-blue)}
+    .topic-plot .bar.is-big{fill:var(--alert-700)}
+    .topic-plot .target{stroke:var(--pnu-blue-dark);stroke-width:2;stroke-dasharray:7 5}
+  </style>
+</head>
+<body class="visual-topic topic-stochastic-gradient-descent">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Fewer Examples per Step</span><span class="nav-tag is-current" aria-current="page">Stochastic Gradient Descent</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Fewer Examples per Step</p><h1 class="page-title">Stochastic Gradient Descent</h1><hr class="accent-rule"><p class="page-subtitle">확률적 경사하강법(stochastic gradient descent, SGD)은 무작위로 고른 관측 하나의 그래디언트로 매개변수를 갱신한다. 한 번의 추정은 흔들리지만, 같은 확률로 뽑으면 그 기댓값은 전체 그래디언트와 같다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>배치 경사하강법</strong><span>자료 전체의 평균 그래디언트로 갱신하며 선형 모델에서 한 번에 O(np)다.</span></article><article class="summary-card"><strong>SGD</strong><span>관측 하나의 그래디언트로 갱신하며 한 번에 O(p)다.</span></article><article class="summary-card"><strong>균등 추출의 기댓값</strong><span>같은 θ에서 균등 추출한 gᵢ의 기댓값은 ∇J(θ)와 같다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">관측 하나의 그래디언트는 전체 그래디언트와 다를 수 있다</h2><p class="lead">같은 θ에서 고른 관측을 바꾸면 그 관측의 그래디언트 성분 gᵢ와 η = 0.1일 때의 갱신 방향, 전체 평균과의 차이가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="pick">고른 관측</label><select id="pick"><option value="0">관측 1 (g₁ = −2)</option><option value="1">관측 2 (g₂ = 1)</option><option value="2">관측 3 (g₃ = 4)</option><option value="all">자료 전체 평균</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="g-line" class="topic-plot" viewBox="0 0 600 170" role="img" aria-labelledby="gl-title gl-desc"><title id="gl-title">그래디언트 성분의 수직선</title><desc id="gl-desc">세 관측의 그래디언트와 평균</desc></svg></div><figcaption class="visual-caption">수직선 위 짙은 점은 세 관측의 그래디언트 성분, 짙은 점선은 전체 평균 ∇J = 1이다. 초록 점이 갱신에 쓰는 값이고, 아래 초록 화살표가 θ의 이동 방향 −ηg다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">뽑은 그래디언트를 모으면 평균이 전체 그래디언트에 가까워진다</h2><p class="lead">추출 횟수 k를 늘리면 같은 θ에서 무작위로 뽑은 gᵢ들의 누적 평균이 전체 그래디언트 1 주변으로 모인다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="k">추출 횟수 k <output id="k-out" class="control-value" for="k">5</output></label><input id="k" type="range" min="1" max="60" step="1" value="5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="avg-plot" class="topic-plot" viewBox="0 0 600 260" role="img" aria-labelledby="avg-title avg-desc"><title id="avg-title">누적 평균</title><desc id="avg-desc">추출 횟수에 따른 평균</desc></svg></div><figcaption class="visual-caption">가로축은 추출 횟수, 세로축은 그때까지 뽑은 gᵢ의 평균이다. 작은 점은 각 추출값, 파란 선은 누적 평균, 짙은 점선은 전체 그래디언트 1이다. 추출 순서는 고정한 무작위 순서다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../09. gradient-descent/gradient-descent.html" rel="prev">이전 · Gradient Descent</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../10. stochastic-gradient-descent/mini-batches-and-epochs.html" rel="next">다음 · Mini-batches and Epochs</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; return String(v) + (k ? a : b); }
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  function axes(X, Y, xs, ys, xl, yl, x0, x1, y0, y1) {
+    var s = '<line class="axis" x1="' + X(x0) + '" y1="' + Y(y0) + '" x2="' + X(x1) + '" y2="' + Y(y0) + '"/><line class="axis" x1="' + X(x0) + '" y1="' + Y(y0) + '" x2="' + X(x0) + '" y2="' + Y(y1) + '"/>';
+    xs.forEach(function (t) { s += '<text class="small" x="' + X(t) + '" y="' + (Y(y0) + 18) + '" text-anchor="middle">' + neg(t) + "</text>"; });
+    ys.forEach(function (t) { s += '<text class="small" x="' + (X(x0) - 8) + '" y="' + (Y(t) + 4) + '" text-anchor="end">' + neg(t) + "</text>"; });
+    s += '<text x="' + X(x1) + '" y="' + (Y(y0) + 36) + '" text-anchor="end">' + xl + '</text><text x="' + (X(x0) + 6) + '" y="' + (Y(y1) + 4) + '">' + yl + "</text>";
+    return s;
+  }
+  var f2 = function (v) { return neg((Math.round(v * 100) / 100).toFixed(2)); };
+  var f1 = function (v) { return neg(Math.round(v * 100) / 100); };
+
+  var g = [-2, 1, 4];
+  var GX = function (v) { return 300 + v * 50; };
+  function renderPick() {
+    var v = $("pick").value, val = v === "all" ? 1 : g[Number(v)], upd = -0.1 * val;
+    var s = '<title id="gl-title">그래디언트 성분의 수직선</title><desc id="gl-desc">사용하는 값 ' + val + ', 갱신 ' + upd.toFixed(1) + '</desc>';
+    s += markersDefs() + '<line class="axis" x1="' + GX(-5) + '" y1="70" x2="' + GX(5) + '" y2="70"/>';
+    for (var t = -5; t <= 5; t++) s += '<line class="grid" x1="' + GX(t) + '" y1="64" x2="' + GX(t) + '" y2="76"/><text class="small" x="' + GX(t) + '" y="94" text-anchor="middle">' + neg(t) + "</text>";
+    s += '<line class="target" x1="' + GX(1) + '" y1="30" x2="' + GX(1) + '" y2="80"/><text class="small" x="' + GX(1) + '" y="24" text-anchor="middle">∇J = 1</text>';
+    g.forEach(function (x, i) { s += '<circle class="dot" cx="' + GX(x) + '" cy="70" r="7"/><text class="small" x="' + GX(x) + '" y="52" text-anchor="middle">g' + "₁₂₃"[i] + "</text>"; });
+    s += '<circle class="cur" cx="' + GX(val) + '" cy="70" r="9"/>';
+    s += '<line class="step" x1="' + GX(0) + '" y1="130" x2="' + GX(upd * 10) + '" y2="130" marker-end="url(#m-green)"/><text class="small" x="' + GX(0) + '" y="155" text-anchor="middle">θ 이동 −ηg (10배 확대)</text>';
+    $("g-line").innerHTML = s;
+    show(1, [["사용하는 그래디언트", neg(val)], ["전체 그래디언트 ∇J", "(−2 + 1 + 4) / 3 = 1"], ["차이", neg(val - 1)], ["갱신량 −ηg", neg(upd.toFixed(1))]],
+      v === "all" ? "배치 경사하강법은 세 관측을 모두 보고 평균 1을 쓰므로 같은 θ에서는 방향이 하나로 정해진다. 대신 관측이 n개면 갱신 한 번에 n개를 모두 계산한다."
+        : val === 1 ? "관측 " + (Number(v) + 1) + "만 보면 g = 1로 전체 그래디언트 1과 같아, 이번 갱신은 배치 경사하강법의 갱신과 일치한다. 다른 관측을 뽑으면 값이 달라지며, 세 관측을 같은 확률 1/3로 뽑을 때의 기댓값이 (−2 + 1 + 4)/3 = 1이다."
+        : "관측 " + (Number(v) + 1) + "만 보면 g = " + jro(neg(val)) + " 전체 그래디언트 1과 " + neg(val - 1) + "만큼 다르다" + (val < 0 ? ". 부호까지 반대라 이번 갱신은 θ를 전체 방향과 반대로 움직인다" : "") + ". 그래도 세 관측을 같은 확률 1/3로 뽑으면 기댓값은 (−2 + 1 + 4)/3 = 1이다.");
+  }
+  function markersDefs() { return '<defs><marker id="m-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#00a651"/></marker></defs>'; }
+  var seed = 7, draws = [];
+  for (var q = 0; q < 60; q++) { seed = (seed * 16807) % 2147483647; draws.push(g[seed % 3]); }
+  var AX = function (k) { return 60 + k * 8.7; }, AY = function (v) { return 130 - v * 22; };
+  function renderAvg() {
+    var k = Number($("k").value), sum = 0, pts = [], dots = "";
+    $("k-out").textContent = k;
+    for (var i = 0; i < k; i++) { sum += draws[i]; pts.push(AX(i + 1).toFixed(1) + "," + AY(sum / (i + 1)).toFixed(1)); dots += '<circle class="dot" cx="' + AX(i + 1).toFixed(1) + '" cy="' + AY(draws[i]) + '" r="2.5"/>'; }
+    var mean = sum / k;
+    var s = '<title id="avg-title">누적 평균</title><desc id="avg-desc">' + k + '번 추출 평균 ' + mean.toFixed(2) + '</desc>';
+    s += '<line class="axis" x1="60" y1="' + AY(-2.5) + '" x2="590" y2="' + AY(-2.5) + '"/><line class="axis" x1="60" y1="' + AY(-2.5) + '" x2="60" y2="' + AY(4.5) + '"/>';
+    [-2, 0, 1, 2, 4].forEach(function (t) { s += '<text class="small" x="52" y="' + (AY(t) + 4) + '" text-anchor="end">' + neg(t) + "</text>"; });
+    [1, 20, 40, 60].forEach(function (t) { s += '<text class="small" x="' + AX(t) + '" y="' + (AY(-2.5) + 18) + '" text-anchor="middle">' + t + "</text>"; });
+    s += '<line class="target" x1="60" y1="' + AY(1) + '" x2="590" y2="' + AY(1) + '"/>' + dots;
+    if (k > 1) s += '<polyline class="curve" points="' + pts.join(" ") + '"/>';
+    s += '<circle class="cur" cx="' + AX(k) + '" cy="' + AY(mean) + '" r="7"/>';
+    $("avg-plot").innerHTML = s;
+    show(2, [["k번째 추출값", neg(draws[k - 1])], ["누적 평균", neg(mean.toFixed(3))], ["전체 그래디언트와의 차이", neg((mean - 1).toFixed(3))]],
+      k < 5 ? "몇 번만 뽑으면 평균이 " + jro(neg(mean.toFixed(2))) + " 전체 그래디언트 1과 꽤 다를 수 있다. 개별 추정값의 변동이 그대로 남기 때문이다."
+        : "k = " + k + "번 뽑은 평균은 " + jro(neg(mean.toFixed(2))) + " 1과 " + Math.abs(mean - 1).toFixed(2) + "만큼 다르다. 추정 하나하나는 −2, 1, 4로 흔들려도 평균은 기댓값 1 주변에 모인다. SGD는 이 싼 추정값으로 자주 갱신한다.");
+  }
+  on("pick", renderPick); on("k", renderAvg);
+  renderPick(); renderAvg();
+}());
+</script>
+</body>
+</html>

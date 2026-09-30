@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Objective Functions | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .cur{fill:var(--pnu-green)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:4 4}
+    .topic-plot .res-pos{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res-neg{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:5 3}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .step{stroke:var(--pnu-green);stroke-width:2.5}
+    .topic-plot .dot{fill:var(--pnu-blue-dark)}
+    .topic-plot .bar{fill:var(--pnu-blue)}
+    .topic-plot .bar.is-big{fill:var(--alert-700)}
+    .topic-plot .target{stroke:var(--pnu-blue-dark);stroke-width:2;stroke-dasharray:7 5}
+    .obj-pair{display:grid;grid-template-columns:1fr 1.15fr;gap:12px;min-width:600px}
+    .obj-pair .topic-plot{min-width:0}
+  </style>
+</head>
+<body class="visual-topic topic-objective-functions">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Walking Downhill</span><span class="nav-tag is-current" aria-current="page">Objective Functions</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Walking Downhill</p><h1 class="page-title">Objective Functions</h1><hr class="accent-rule"><p class="page-subtitle">목적함수(objective function)는 관측별 손실을 평균해 매개변수 θ마다 값 하나를 정한다. 자료는 고정되고 θ만 바뀌므로, 학습은 J(θ)를 가장 작게 만드는 θ를 찾는 일이 된다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>J(θ)</strong><span>(1/n)Σ𝓛(ŷᵢ(θ), yᵢ)이며 자료 전체의 평균 손실이다.</span></article><article class="summary-card"><strong>arg min과 min</strong><span>arg min은 최소화하는 θ, min은 그때의 목적함수 값이다.</span></article><article class="summary-card"><strong>닫힌 해</strong><span>명시적인 수식으로 나타낸 해이며 없으면 반복 최적화를 쓴다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">θ가 바뀌면 관측별 손실과 목적함수 값이 함께 바뀐다</h2><p class="lead">모델 ŷ = θx에서 θ를 바꾸면 네 관측의 제곱 손실 막대와 그 평균 J(θ), 곡선 위의 현재 위치가 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="theta">매개변수 θ <output id="theta-out" class="control-value" for="theta">1.5</output></label><input id="theta" type="range" min="0" max="3.5" step="0.1" value="1.5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div class="obj-pair"><svg id="loss-bars" class="topic-plot" viewBox="0 0 300 260" role="img" aria-labelledby="bars-title bars-desc"><title id="bars-title">관측별 손실</title><desc id="bars-desc">네 관측의 제곱 손실</desc></svg><svg id="obj-curve" class="topic-plot" viewBox="0 0 340 260" role="img" aria-labelledby="obj-title obj-desc"><title id="obj-title">목적함수 곡선</title><desc id="obj-desc">θ에 따른 J(θ)</desc></svg></div></div><figcaption class="visual-caption">왼쪽 막대는 관측 i의 손실 𝓛(ŷᵢ, yᵢ) = (yᵢ − θxᵢ)²이며 빨간 막대가 가장 큰 손실이다. 오른쪽 곡선은 θ마다 계산한 J(θ), 초록 점은 현재 θ, 짙은 점선은 J가 최소인 θ̂다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">닫힌 해가 없으면 반복해서 해를 찾는다</h2><p class="lead">모델마다 목적함수를 최소화하는 θ를 수식 하나로 쓸 수 있는지가 다르다.</p></header>
+    <div class="visual-lab">
+      <figure class="visual-figure"><div class="visual-frame"><table class="topic-table" aria-label="모델별 닫힌 해와 계산 방법"><thead><tr><th scope="col">모델</th><th scope="col">닫힌 해</th><th scope="col">계산 방법</th></tr></thead><tbody><tr><th scope="row">최소제곱 선형 회귀</th><td class="is-y">있음</td><td>행렬 분해 등으로 계산</td></tr><tr><th scope="row">로지스틱 회귀</th><td>일반적으로 없음</td><td>반복 최적화</td></tr><tr><th scope="row">신경망</th><td>일반적으로 없음</td><td>반복 최적화</td></tr></tbody></table></div><figcaption class="visual-caption">행은 모델, 초록 칸은 닫힌 해가 있는 경우다.</figcaption></figure>
+      <p class="visual-note">닫힌 해가 없는 모델은 현재 θ에서 목적함수가 줄어드는 방향을 계산해 조금씩 움직인다. 그래디언트는 국소적으로 가장 가파르게 증가하는 방향이므로 그 반대 방향 −∇J(θ)로 갱신하며, 이것이 다음 주제의 경사하강법이다.</p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../08. predicting-a-probability/logistic-regression.html" rel="prev">이전 · Logistic Regression</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../09. gradient-descent/gradient-descent.html" rel="next">다음 · Gradient Descent</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; return String(v) + (k ? a : b); }
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  function axes(X, Y, xs, ys, xl, yl, x0, x1, y0, y1) {
+    var s = '<line class="axis" x1="' + X(x0) + '" y1="' + Y(y0) + '" x2="' + X(x1) + '" y2="' + Y(y0) + '"/><line class="axis" x1="' + X(x0) + '" y1="' + Y(y0) + '" x2="' + X(x0) + '" y2="' + Y(y1) + '"/>';
+    xs.forEach(function (t) { s += '<text class="small" x="' + X(t) + '" y="' + (Y(y0) + 18) + '" text-anchor="middle">' + neg(t) + "</text>"; });
+    ys.forEach(function (t) { s += '<text class="small" x="' + (X(x0) - 8) + '" y="' + (Y(t) + 4) + '" text-anchor="end">' + neg(t) + "</text>"; });
+    s += '<text x="' + X(x1) + '" y="' + (Y(y0) + 36) + '" text-anchor="end">' + xl + '</text><text x="' + (X(x0) + 6) + '" y="' + (Y(y1) + 4) + '">' + yl + "</text>";
+    return s;
+  }
+  var f2 = function (v) { return neg((Math.round(v * 100) / 100).toFixed(2)); };
+  var f1 = function (v) { return neg(Math.round(v * 100) / 100); };
+
+  var xs = [1, 2, 3, 4], ys = [2.2, 3.8, 6.1, 8.3];
+  function J(t) { return xs.reduce(function (s, x, i) { var e = ys[i] - t * x; return s + e * e; }, 0) / 4; }
+  var sxy = 0, sxx = 0; xs.forEach(function (x, i) { sxy += x * ys[i]; sxx += x * x; });
+  var th = sxy / sxx, jmin = J(th);
+  var BX = function (i) { return 60 + i * 58; }, BY = function (v) { return 220 - v * 10; };
+  var CX = function (t) { return 40 + t * 80; }, CY = function (v) { return 220 - v * 5; };
+  function render() {
+    var t = Number($("theta").value), ls = xs.map(function (x, i) { var e = ys[i] - t * x; return e * e; }), j = J(t), big = ls.indexOf(Math.max.apply(null, ls));
+    $("theta-out").textContent = t.toFixed(1);
+    var b = '<title id="bars-title">관측별 손실</title><desc id="bars-desc">손실 ' + ls.map(function (l) { return l.toFixed(2); }).join(", ") + '</desc>';
+    b += '<line class="axis" x1="30" y1="220" x2="290" y2="220"/>';
+    ls.forEach(function (l, i) { var h = Math.min(200, l * 10); b += '<rect class="bar' + (i === big ? " is-big" : "") + '" x="' + (BX(i) - 18) + '" y="' + (220 - h) + '" width="36" height="' + h + '"/><text class="small" x="' + BX(i) + '" y="238" text-anchor="middle">i = ' + (i + 1) + '</text><text class="small" x="' + BX(i) + '" y="' + (214 - h) + '" text-anchor="middle">' + l.toFixed(2) + "</text>"; });
+    $("loss-bars").innerHTML = b;
+    var c = '<title id="obj-title">목적함수 곡선</title><desc id="obj-desc">θ=' + t.toFixed(1) + '에서 J=' + j.toFixed(2) + ', 최소 θ=' + th.toFixed(2) + '</desc>';
+    c += axes(CX, CY, [0, 1, 2, 3], [0, 20, 40], "θ", "J(θ)", 0, 3.6, 0, 42);
+    var p = []; for (var u = 0; u <= 3.5001; u += 0.05) p.push(CX(u).toFixed(1) + "," + Math.max(8, CY(J(u))).toFixed(1));
+    c += '<polyline class="curve" points="' + p.join(" ") + '"/><line class="target" x1="' + CX(th) + '" y1="' + CY(0) + '" x2="' + CX(th) + '" y2="' + CY(jmin) + '"/>';
+    c += '<circle class="cur" cx="' + CX(t) + '" cy="' + Math.max(8, CY(j)) + '" r="7"/>';
+    $("obj-curve").innerHTML = c;
+    show(1, [["관측별 손실", ls.map(function (l) { return l.toFixed(2); }).join(" · ")], ["J(θ)", "(" + ls.map(function (l) { return l.toFixed(2); }).join(" + ") + ") / 4 = " + j.toFixed(2)], ["arg min θ", "θ̂ ≈ " + th.toFixed(2)], ["min J", jmin.toFixed(2)]],
+      Math.abs(t - th) < 0.06 ? "θ가 θ̂ ≈ " + th.toFixed(2) + "에 가까워 J(θ)가 최솟값 근처다. 네 관측의 손실이 모두 작아진 상태이며, 이 θ가 학습이 찾는 값이다."
+        : "θ = " + t.toFixed(1) + "에서는 관측 " + (big + 1) + "의 손실 " + kj(ls[big].toFixed(2), "이", "가") + " 가장 크다. 모든 관측에 같은 가중치 1/4을 곱해 평균하므로 손실이 큰 관측이 J에 크게 기여하고, θ를 θ̂ ≈ " + th.toFixed(2) + " 쪽으로 옮기면 J가 줄어든다.");
+  }
+  on("theta", render); render();
+}());
+</script>
+</body>
+</html>
