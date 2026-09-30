@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Leakage | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css">
+  <link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+.topic-data-leakage .leak-svg text {fill:var(--ink-600);font-family:var(--font-sans);font-size:14px}
+.topic-data-leakage .leak-svg .strong {fill:var(--pnu-blue-dark);font-weight:750}
+.topic-data-leakage .leak-svg .small {font-size:12px}
+.topic-data-leakage .leak-svg .box {fill:var(--white);stroke:var(--line-200);stroke-width:1.5}
+.topic-data-leakage .leak-svg .primary {fill:var(--callout-bg);stroke:var(--pnu-blue);stroke-width:2}
+.topic-data-leakage .leak-svg .reference {fill:var(--surface-050);stroke:var(--pnu-green);stroke-width:2}
+.topic-data-leakage .leak-svg .danger {fill:var(--surface-050);stroke:var(--alert-700,var(--alert-700));stroke-width:2}
+.topic-data-leakage .leak-svg .arrow {fill:none;stroke:var(--pnu-blue);stroke-width:2.4}
+.topic-data-leakage .leak-svg .green-arrow {fill:none;stroke:var(--pnu-green);stroke-width:2.4}
+.topic-data-leakage .leak-svg .red-arrow {fill:none;stroke:var(--alert-700,var(--alert-700));stroke-width:2.8}
+.topic-data-leakage .leak-svg .muted {opacity:.25}
+.topic-data-leakage .leak-svg .is-off {display:none}
+.topic-data-leakage .leak-svg[hidden] {display:none}
+@media(max-width: 560px) {
+.topic-data-leakage .leak-svg text {font-size:15px}
+.topic-data-leakage .leak-svg .small {font-size:13px}
+}
+  </style>
+</head>
+<body class="visual-topic topic-data-leakage">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner">
+  <a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a>
+  <div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Data Leakage</span><span class="nav-tag is-current" aria-current="page">Data Leakage</span></nav></div>
+</div></header>
+
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Data Leakage</p><h1 class="page-title">Data Leakage</h1><hr class="accent-rule"><p class="page-subtitle">데이터 누수는 예측할 때 사용할 수 없거나 평가에 남겨 둔 자료의 정보가 학습 과정에 들어가 최종 성능을 과대 추정할 수 있게 만드는 현상이다.</p></div></section>
+
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid">
+    <article class="summary-card"><strong>fit</strong><span>학습 자료에서 변환 상태를 계산해 저장한다.</span></article>
+    <article class="summary-card"><strong>transform</strong><span>저장한 상태를 바꾸지 않고 자료에 적용한다.</span></article>
+    <article class="summary-card"><strong>예측 시점</strong><span>예측하는 순간 관측할 수 있는 특성만 입력이 된다.</span></article>
+  </div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">여러 행을 보는 변환만 학습 자료에서 상태를 저장한다</h2><p class="lead">변환이 보는 범위를 바꾸면 저장 상태의 유무와 fit이 필요한지가 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="scope-buttons">변환이 보는 범위</label><select id="scope-buttons"><option value="value" selected>한 값</option><option value="row">한 행</option><option value="rows">여러 행</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame">
+        <svg class="visual-svg leak-svg" viewBox="0 0 760 290" role="img" aria-labelledby="scope-title scope-desc">
+          <title id="scope-title">변환이 보는 자료 범위와 저장 상태</title><desc id="scope-desc">한 값, 한 행, 여러 행을 보는 변환을 상태 저장 여부와 연결한 그림</desc>
+          <g id="scope-value"><rect class="primary" x="30" y="55" width="215" height="210" rx="12"></rect><text class="strong" x="137" y="88" text-anchor="middle">한 값</text><text x="137" y="130" text-anchor="middle">섭씨 → 화씨</text><path class="arrow" d="M77 165 H197"></path><text class="strong" x="137" y="205" text-anchor="middle">저장 상태 없음</text><text class="small" x="137" y="238" text-anchor="middle">각 값에 같은 식</text></g>
+          <g id="scope-row" class="muted"><rect class="primary" x="272" y="55" width="215" height="210" rx="12"></rect><text class="strong" x="379" y="88" text-anchor="middle">한 행</text><text x="379" y="130" text-anchor="middle">두 열의 비율</text><path class="arrow" d="M319 165 H439"></path><text class="strong" x="379" y="205" text-anchor="middle">저장 상태 없음</text><text class="small" x="379" y="238" text-anchor="middle">같은 행의 값만 사용</text></g>
+          <g id="scope-rows" class="muted"><rect class="reference" x="514" y="55" width="215" height="210" rx="12"></rect><text class="strong" x="621" y="88" text-anchor="middle">여러 행</text><text x="621" y="128" text-anchor="middle">평균 대체</text><text x="621" y="154" text-anchor="middle">표준화</text><path class="green-arrow" d="M561 178 H681"></path><text class="strong" x="621" y="212" text-anchor="middle">상태를 계산</text><text class="small" x="621" y="238" text-anchor="middle">평균 · 표준편차</text></g>
+
+        </svg>
+      </div><figcaption class="visual-caption">파란 상자는 행마다 독립적인 계산, 초록 상자는 여러 행에서 상태를 학습하는 계산이다. 흐린 상자는 고르지 않은 범위다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">전처리 상태는 분할 뒤 학습 자료로만 계산한다</h2><p class="lead">경로를 바꾸면 저장하는 평균이 μ_all과 μ_train 사이에서 바뀌고 테스트 정보가 상태에 들어가는지가 달라진다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="fit-order-buttons">강조할 경로</label><select id="fit-order-buttons"><option value="wrong">전체 fit → 분할</option><option value="correct" selected>분할 → 학습 fit</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame">
+        <svg class="visual-svg leak-svg" viewBox="0 0 760 360" role="img" aria-labelledby="order-title order-desc">
+          <title id="order-title">잘못된 전처리 순서와 올바른 전처리 순서</title><desc id="order-desc">테스트 자료가 전체 평균으로 들어가는 빨간 경로와 학습 평균을 공통 적용하는 초록 경로</desc>
+          <g id="wrong-order" class="muted"><text class="strong" x="35" y="42">전체 fit → 분할</text><rect class="box" x="35" y="65" width="145" height="66" rx="9"></rect><text x="107" y="92" text-anchor="middle">전체 자료</text><text class="small" x="107" y="114" text-anchor="middle">train ∪ test</text><path class="red-arrow" d="M185 98 H275"></path><rect class="danger" x="280" y="65" width="190" height="66" rx="9"></rect><text class="strong" x="375" y="91" text-anchor="middle">μ_all</text><text class="small" x="375" y="114" text-anchor="middle">mean(train ∪ test)</text><path class="red-arrow" d="M475 98 H565"></path><rect class="box" x="570" y="65" width="155" height="66" rx="9"></rect><text x="647" y="92" text-anchor="middle">자료 분할</text><text class="small" x="647" y="114" text-anchor="middle">이미 상태 계산 뒤</text><path class="red-arrow" d="M650 175 C650 150 520 150 420 131"></path><text x="545" y="174" fill="var(--alert-700,var(--alert-700))">test 정보</text></g>
+          <g id="correct-order"><text class="strong" x="35" y="226">분할 → 학습 fit → 같은 transform</text><rect class="box" x="35" y="250" width="135" height="66" rx="9"></rect><text x="102" y="278" text-anchor="middle">자료 분할</text><text class="small" x="102" y="299" text-anchor="middle">train | test</text><path class="green-arrow" d="M175 283 H245"></path><rect class="reference" x="250" y="250" width="155" height="66" rx="9"></rect><text class="strong" x="327" y="278" text-anchor="middle">μ_train</text><text class="small" x="327" y="299" text-anchor="middle">mean(train)</text><path class="green-arrow" d="M410 283 H480"></path><rect class="box" x="485" y="225" width="240" height="115" rx="9"></rect><text class="strong" x="605" y="255" text-anchor="middle">같은 transform</text><text x="605" y="283" text-anchor="middle">train: μ_train 적용</text><text x="605" y="310" text-anchor="middle">test: μ_train 적용</text></g>
+
+        </svg>
+      </div><figcaption class="visual-caption">위는 전체 fit 뒤 분할, 아래는 분할 뒤 학습 fit 경로다. 빨간 화살표는 테스트 자료가 전처리 상태로 들어가는 정보 경로다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">예측이나 선택 뒤에 생기는 정보가 되돌아오면 누수다</h2><p class="lead">사례를 바꾸면 되돌아가는 정보, 그 정보가 생기는 시점, 들어가는 단계가 바뀐다. 학습·검증·테스트 자료 가운데 검증 자료는 선택에, 테스트 자료는 선택이 끝난 뒤의 최종 평가에 쓴다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="timeline-buttons">누수 사례</label><select id="timeline-buttons"><option value="hospital" selected>입원 기간 예측 · 퇴원일</option><option value="purchase">구매액 예측 · 환불 여부</option><option value="feedback">테스트 성능으로 다시 선택</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame">
+        <svg id="timeline-svg" class="visual-svg leak-svg" viewBox="0 0 760 300" role="img" aria-labelledby="timeline-title timeline-desc">
+          <title id="timeline-title">예측 시점 전후의 특성</title><desc id="timeline-desc">입원과 퇴원, 구매와 환불 사례에서 예측 뒤 정보를 빨간 경로로 표시한 시간선</desc>
+          <defs><marker id="time-head" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--pnu-blue)"></path></marker></defs>
+          <g id="hospital-timeline"><text class="strong" x="35" y="64">입원 기간 예측</text><line class="arrow" x1="90" y1="150" x2="680" y2="150" marker-end="url(#time-head)"></line><circle cx="150" cy="150" r="10" fill="var(--pnu-blue)"></circle><text x="150" y="120" text-anchor="middle">입원</text><circle cx="380" cy="150" r="12" fill="var(--pnu-green)"></circle><text class="strong" x="380" y="120" text-anchor="middle">예측</text><circle cx="620" cy="150" r="10" fill="var(--alert-700,var(--alert-700))"></circle><text x="620" y="120" text-anchor="middle">퇴원</text><path class="red-arrow" d="M620 180 C600 260 425 260 385 175"></path><text x="500" y="260" text-anchor="middle">퇴원일을 입력으로 되돌림</text></g>
+          <g id="purchase-timeline" class="is-off"><text class="strong" x="35" y="64">구매액 예측</text><line class="arrow" x1="90" y1="150" x2="680" y2="150" marker-end="url(#time-head)"></line><circle cx="150" cy="150" r="10" fill="var(--pnu-blue)"></circle><text x="150" y="120" text-anchor="middle">구매 전 정보</text><circle cx="380" cy="150" r="12" fill="var(--pnu-green)"></circle><text class="strong" x="380" y="120" text-anchor="middle">구매액 예측</text><circle cx="620" cy="150" r="10" fill="var(--alert-700,var(--alert-700))"></circle><text x="620" y="120" text-anchor="middle">환불 여부</text><path class="red-arrow" d="M620 180 C600 260 425 260 385 175"></path><text x="500" y="260" text-anchor="middle">환불 여부를 입력으로 되돌림</text></g>
+          </svg>
+        <svg id="role-svg" class="visual-svg leak-svg" hidden viewBox="0 0 760 320" role="img" aria-labelledby="role-title role-desc">
+          <title id="role-title">학습 검증 테스트 자료의 역할</title><desc id="role-desc">세 자료의 역할과 테스트 결과가 선택 단계로 되돌아가는 누수 경로</desc>
+          <rect class="primary" x="35" y="80" width="190" height="105" rx="12"></rect><text class="strong" x="130" y="113" text-anchor="middle">학습 자료</text><text x="130" y="143" text-anchor="middle">전처리 상태</text><text x="130" y="166" text-anchor="middle">모델 매개변수</text>
+          <path class="arrow" d="M230 132 H280"></path>
+          <rect class="reference" x="285" y="80" width="190" height="105" rx="12"></rect><text class="strong" x="380" y="113" text-anchor="middle">검증 자료</text><text x="380" y="143" text-anchor="middle">특성 선택</text><text x="380" y="166" text-anchor="middle">모델 선택</text>
+          <path class="green-arrow" d="M480 132 H530"></path>
+          <rect class="box" x="535" y="80" width="190" height="105" rx="12"></rect><text class="strong" x="630" y="113" text-anchor="middle">테스트 자료</text><text x="630" y="143" text-anchor="middle">선택 후</text><text x="630" y="166" text-anchor="middle">최종 성능 평가</text>
+          <g id="feedback-path" class="muted"><path class="red-arrow" d="M630 192 C620 295 410 305 385 192"></path><rect class="danger" x="440" y="245" width="220" height="48" rx="8"></rect><text class="strong" x="550" y="275" text-anchor="middle">테스트 성능으로 다시 선택</text></g>
+
+        </svg>
+      </div><figcaption class="visual-caption">시간선의 초록 점은 예측 시점이다. 빨간 점과 빨간 화살표는 예측이나 선택이 끝난 뒤에 생긴 정보가 입력이나 선택 단계로 되돌아가는 경로다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="raw-data-preparation.html" rel="prev">이전 · Raw Data Preparation</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="pipelines.html" rel="next">다음 · Pipelines</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+function rd(l,v){return '<div class="visual-readout"><span class="visual-readout-label">'+l+'</span><strong class="visual-readout-value">'+v+'</strong></div>';}
+
+(function(){var el=document.getElementById("scope-buttons");
+var T={value:{r:[["보는 범위","한 값"],["예","섭씨 → 화씨"],["저장 상태","없음"]],n:"섭씨를 화씨로 바꾸는 계산은 각 값에 같은 식을 적용할 뿐 자료에서 배우는 상태가 없어 fit이 필요 없다."},
+row:{r:[["보는 범위","한 행"],["예","두 열의 비율"],["저장 상태","없음"]],n:"두 열의 비율은 같은 행의 값만으로 계산하므로 다른 행의 정보가 들어오지 않고 저장 상태가 없다."},
+rows:{r:[["보는 범위","여러 행"],["예","평균 대체 · 표준화"],["저장 상태","평균 · 표준편차"]],n:"평균 대체와 표준화는 여러 행에서 평균과 표준편차를 계산해 저장한다. 이 상태는 모델 매개변수처럼 학습 자료에서만 정해야 한다."}};
+function render(){var v=el.value,t=T[v];["value","row","rows"].forEach(function(k){document.getElementById("scope-"+k).classList.toggle("muted",k!==v);});
+document.getElementById("read-1").innerHTML=t.r.map(function(p){return rd(p[0],p[1]);}).join("");document.getElementById("note-1").textContent=t.n;}
+el.addEventListener("change",render);render();}());
+(function(){var el=document.getElementById("fit-order-buttons");
+var T={wrong:{r:[["저장하는 평균","μ_all"],["상태 계산에 쓴 자료","학습 자료와 테스트 자료"],["테스트 자료의 쓰임","상태 계산과 평가"]],n:"전체 자료로 평균을 먼저 계산하면 μ_all에 테스트 자료의 값이 섞인다. 분할은 그 뒤에 일어나므로 테스트 성능은 이미 테스트 정보를 본 전처리의 결과다."},
+correct:{r:[["저장하는 평균","μ_train"],["상태 계산에 쓴 자료","학습 자료만"],["테스트 자료의 쓰임","저장한 μ_train으로 변환만"]],n:"먼저 나누고 학습 자료로만 μ_train을 계산하면, 테스트 자료는 그 값으로 변환만 된다. 테스트 자료는 transform의 대상이지만 fit의 입력이 아니다."}};
+function render(){var v=el.value,t=T[v];document.getElementById("wrong-order").classList.toggle("muted",v!=="wrong");document.getElementById("correct-order").classList.toggle("muted",v!=="correct");
+document.getElementById("read-2").innerHTML=t.r.map(function(p){return rd(p[0],p[1]);}).join("");document.getElementById("note-2").textContent=t.n;}
+el.addEventListener("change",render);render();}());
+(function(){var el=document.getElementById("timeline-buttons");
+var T={hospital:{r:[["되돌아가는 정보","퇴원일"],["정보가 생기는 시점","입원 기간이 정해진 뒤"],["들어가는 단계","예측 입력"]],n:"퇴원일은 입원 기간이 끝나야 관측된다. 자료표에 열이 있어도 예측하는 순간에는 없으므로, 입력에 넣으면 실제로 쓸 수 없는 정보로 성능을 과대 추정한다."},
+purchase:{r:[["되돌아가는 정보","환불 여부"],["정보가 생기는 시점","구매 뒤"],["들어가는 단계","예측 입력"]],n:"환불 여부는 구매가 일어난 뒤에야 관측된다. 구매액을 예측하는 순간에는 알 수 없으므로 입력으로 쓰면 누수다."},
+feedback:{r:[["되돌아가는 정보","테스트 성능"],["정보가 생기는 시점","최종 평가 뒤"],["들어가는 단계","특성·모델 선택"]],n:"테스트 성능을 보고 특성이나 모델을 다시 고르면 테스트 자료가 선택 과정의 일부가 된다. 그 뒤의 테스트 성능은 독립된 최종 평가가 아니다."}};
+function render(){var v=el.value,t=T[v],tl=v!=="feedback";document.getElementById("timeline-svg").toggleAttribute("hidden",!tl);document.getElementById("role-svg").toggleAttribute("hidden",tl);
+document.getElementById("hospital-timeline").classList.toggle("is-off",v!=="hospital");document.getElementById("purchase-timeline").classList.toggle("is-off",v!=="purchase");document.getElementById("feedback-path").classList.toggle("muted",v!=="feedback");
+document.getElementById("read-3").innerHTML=t.r.map(function(p){return rd(p[0],p[1]);}).join("");document.getElementById("note-3").textContent=t.n;}
+el.addEventListener("change",render);render();}());
+
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Prediction Error | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-prediction-error .plot{display:block;width:100%;min-width:560px;height:auto}
+    .topic-prediction-error .axis{stroke:var(--ink-600);stroke-width:1.5}
+    .topic-prediction-error .curve{fill:none;stroke:var(--pnu-blue);stroke-width:4}
+    .topic-prediction-error .floor{stroke:var(--ink-600);stroke-width:2;stroke-dasharray:8 6}
+    .topic-prediction-error .gap{stroke:var(--pnu-green);stroke-width:4}
+    .topic-prediction-error .noise{stroke:var(--pnu-blue-dark);stroke-width:4;stroke-dasharray:4 4}
+    .topic-prediction-error .dot{fill:var(--pnu-green)}
+    .topic-prediction-error .label{font-size:14px;fill:var(--ink-900)}
+    .topic-prediction-error .error-board{display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:12px;min-width:560px}
+    .topic-prediction-error .error-card{padding:18px;border:1px solid var(--line-200);border-radius:10px;background:var(--surface-050);text-align:center}
+    .topic-prediction-error .error-card strong{display:block;color:var(--pnu-blue-dark);font-size:1.25rem}
+    .topic-prediction-error .error-card.is-now{border:2px solid var(--pnu-green)}
+  </style>
+</head>
+<body class="visual-topic topic-prediction-error">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Learning and Generalization</span><span class="nav-tag is-current" aria-current="page">Prediction Error</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Learning and Generalization</p><h1 class="page-title">Prediction Error</h1><hr class="accent-rule"><p class="page-subtitle">잡음 ε이 입력과 독립이고 기댓값이 0일 때, 학습을 마친 f̂와 입력 x를 고정하고 ε에 대해서만 기댓값을 내면, 제곱 예측 오차의 기댓값은 줄일 수 있는 오차 [f(x) − f̂(x)]²과 줄일 수 없는 오차 Var(ε)의 합이다. 예측 위치는 최저점까지의 거리를, 잡음 분산은 바닥의 높이를 정한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>줄일 수 있는 오차</strong><span>[f(x) − f̂(x)]²이며 예측이 참 함수값에 가까울수록 작아진다.</span></article><article class="summary-card"><strong>줄일 수 없는 오차</strong><span>Var(ε)이며 어떤 예측으로도 없앨 수 없는 잡음의 분산이다.</span></article><article class="summary-card"><strong>관측 오차</strong><span>한 번 생성된 Y에 대한 (Y − f̂(x))²이며 그 기댓값과 다르다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">잡음은 오차 곡선의 바닥을 올리고 최저 위치는 그대로 둔다</h2><p class="lead">f(x) = 4에서 예측값 f̂(x)와 잡음 분산 Var(ε)를 바꾸면 곡선의 높이, 현재 점, 두 항의 크기가 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double">
+        <div class="control-field"><label for="prediction">예측값 f̂(x) <output id="prediction-out" class="control-value" for="prediction">2</output></label><input id="prediction" type="range" min="0" max="8" step="1" value="2"></div>
+        <div class="control-field"><label for="noise">잡음 분산 Var(ε) <output id="noise-out" class="control-value" for="noise">1</output></label><input id="noise" type="range" min="0" max="4" step="1" value="1"></div>
+      </div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="error-plot" class="plot" viewBox="0 0 640 300" role="img" aria-labelledby="err-title err-desc"><title id="err-title">제곱 예측 오차의 기댓값 곡선</title><desc id="err-desc">예측값에 따른 제곱 예측 오차의 기댓값</desc></svg></div><figcaption class="visual-caption">가로축은 예측값 f̂(x), 세로축은 제곱 예측 오차의 기댓값이다. 파란 곡선은 (4 − f̂)² + Var(ε), 회색 점선은 잡음 바닥이다. 현재 점 아래의 초록 실선은 줄일 수 있는 오차, 짙은 점선은 Var(ε)의 높이다.</figcaption></figure>
+      <div id="error-read" class="visual-readouts" aria-live="polite"></div>
+      <p id="error-note" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">한 관측의 오차는 잡음 바닥보다 작을 수 있다</h2><p class="lead">f(x) = 4, f̂(x) = 2, Var(ε) = 1로 고정하고 이번 관측의 잡음 ε를 바꾸면 Y와 관측 제곱 오차가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="epsilon">이번 잡음 ε <output id="epsilon-out" class="control-value" for="epsilon">−2</output></label><input id="epsilon" type="range" min="-3" max="3" step="1" value="-2"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div class="error-board"><div class="error-card"><strong>f(x) = 4</strong>참 함수값</div><div class="error-card"><strong>f̂(x) = 2</strong>예측</div><div class="error-card is-now"><strong id="observed-y"></strong>Y = f(x) + ε</div></div></div><figcaption class="visual-caption">세 카드는 참 함수값, 고정된 예측, 이번 잡음으로 생성된 관측이다. 초록 테두리가 ε에 따라 바뀌는 값이다.</figcaption></figure>
+      <div id="realized-read" class="visual-readouts" aria-live="polite"></div>
+      <p id="realized-note" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="training-and-test-data.html" rel="prev">이전 · Training and Test Data</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="model-complexity.html" rel="next">다음 · Model Complexity</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; return String(v) + (k ? a : b); }
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  var neg = function (v) { return String(v).replace("-", "−"); };
+  var X = function (p) { return 70 + p * 66; };
+  var Y = function (e) { return 260 - e * 10.5; };
+  function renderError() {
+    var p = Number($("prediction").value), n = Number($("noise").value), bias = (4 - p) * (4 - p), total = bias + n;
+    $("prediction-out").textContent = p; $("noise-out").textContent = n;
+    var s = '<title id="err-title">제곱 예측 오차의 기댓값 곡선</title><desc id="err-desc">Var(ε)=' + n + '에서 최저점 f̂=4, 높이 ' + n + '. 현재 f̂=' + p + '의 오차 ' + total + '</desc>';
+    s += '<line class="axis" x1="50" y1="260" x2="620" y2="260"/><line class="axis" x1="70" y1="10" x2="70" y2="270"/>';
+    for (var t = 0; t <= 8; t += 2) s += '<text class="label" x="' + X(t) + '" y="284" text-anchor="middle">' + t + '</text>';
+    s += '<text class="label" x="620" y="298" text-anchor="end">f̂(x)</text><text class="label" x="' + X(4) + '" y="298" text-anchor="middle">f(x)=4</text>';
+    var pts = [];
+    for (var u = 0; u <= 8.001; u += 0.1) pts.push(X(u).toFixed(1) + "," + Math.max(10, Y((4 - u) * (4 - u) + n)).toFixed(1));
+    s += '<line class="floor" x1="70" y1="' + Y(n) + '" x2="610" y2="' + Y(n) + '"/><text class="label" x="612" y="' + (Y(n) - 6) + '" text-anchor="end">바닥 ' + n + '</text>';
+    s += '<polyline class="curve" points="' + pts.join(" ") + '"/>';
+    if (n > 0) s += '<line class="noise" x1="' + X(p) + '" y1="260" x2="' + X(p) + '" y2="' + Y(n) + '"/>';
+    if (bias > 0) s += '<line class="gap" x1="' + X(p) + '" y1="' + Y(n) + '" x2="' + X(p) + '" y2="' + Y(total) + '"/>';
+    s += '<circle class="dot" cx="' + X(p) + '" cy="' + Y(total) + '" r="8"/>';
+    $("error-plot").innerHTML = s;
+    $("error-read").innerHTML = rd("줄일 수 있는 오차", "(4 − " + p + ")² = " + bias) + rd("줄일 수 없는 오차", "Var(ε) = " + n) + rd("제곱 예측 오차의 기댓값", bias + " + " + n + " = " + total) + rd("최저점", "f̂(x) = 4에서 " + n);
+    $("error-note").textContent = bias === 0
+      ? "f̂(x) = 4이면 줄일 수 있는 오차가 0이라 제곱 오차의 기댓값은 잡음 분산 " + kj(n, "과", "와") + " 같다. 예측을 아무리 잘해도 이 바닥 아래로는 내려가지 않는다."
+      : "f̂(x) = " + kj(p, "은", "는") + " 참값 4에서 " + Math.abs(4 - p) + "만큼 떨어져 줄일 수 있는 오차 " + kj(bias, "이", "가") + " 더해진다. Var(ε)를 바꾸면 곡선 전체가 위아래로 움직일 뿐 최저 위치는 4에 남는다.";
+  }
+  function renderRealized() {
+    var e = Number($("epsilon").value), y = 4 + e, err = (y - 2) * (y - 2);
+    $("epsilon-out").textContent = neg(e);
+    $("observed-y").textContent = "Y = " + y;
+    $("realized-read").innerHTML = rd("관측 제곱 오차", "(" + y + " − 2)² = " + err) + rd("잡음 바닥 Var(ε)", "1") + rd("제곱 예측 오차의 기댓값", "(4 − 2)² + 1 = 5");
+    $("realized-note").textContent = err < 1
+      ? "ε = " + kj(neg(e), "이", "가") + " f(x) − f̂(x) = 2를 정확히 상쇄해 이번 관측의 제곱 오차가 0이다. 잡음 바닥 1은 반복 관측에 대한 기댓값이며 개별 오차의 하한이 아니다."
+      : "ε = " + neg(e) + "이면 이번 관측의 제곱 오차는 " + err + (JONG[String(err).slice(-1)] === 1 ? "으로" : "로") + " 기댓값 5" + (err > 5 ? "보다 크다" : err < 5 ? "보다 작다" : "와 같다") + ". 관측마다 제곱 오차는 ε에 따라 흩어지고, 그 기댓값이 5다.";
+  }
+  $("prediction").addEventListener("input", renderError);
+  $("noise").addEventListener("input", renderError);
+  $("epsilon").addEventListener("input", renderRealized);
+  renderError(); renderRealized();
+}());
+</script>
+</body>
+</html>

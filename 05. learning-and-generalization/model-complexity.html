@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Model Complexity | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-model-complexity .component-table{width:100%;min-width:620px;border-collapse:collapse}
+    .topic-model-complexity th,.topic-model-complexity td{padding:11px;border:1px solid var(--line-200);text-align:center}
+    .topic-model-complexity thead th{background:var(--surface-050);color:var(--pnu-blue-dark)}
+    .topic-model-complexity tr.is-best td,.topic-model-complexity tr.is-best th{background:var(--pnu-blue-tint);font-weight:800}
+    .topic-model-complexity tr.is-best td:last-child{outline:3px solid var(--pnu-green);outline-offset:-3px}
+    .topic-model-complexity .plot{display:block;width:100%;min-width:560px;height:auto}
+    .topic-model-complexity .truth{fill:none;stroke:var(--ink-600);stroke-width:2;stroke-dasharray:3 5}
+    .topic-model-complexity .fit-a{fill:none;stroke:var(--pnu-blue);stroke-width:4}
+    .topic-model-complexity .fit-b{fill:none;stroke:var(--pnu-green);stroke-width:4;stroke-dasharray:10 6}
+    .topic-model-complexity .spread{stroke:var(--alert-700);stroke-width:3}
+    .topic-model-complexity .label{font-size:14px;fill:var(--ink-900)}
+  </style>
+</head>
+<body class="visual-topic topic-model-complexity">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Learning and Generalization</span><span class="nav-tag is-current" aria-current="page">Model Complexity</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Learning and Generalization</p><h1 class="page-title">Model Complexity</h1><hr class="accent-rule"><p class="page-subtitle">잡음이 입력과 독립이고 기댓값이 0이면, 기대 테스트 오차는 편향(bias)의 제곱, 분산(variance), 잡음 분산의 합이다. 참 관계와 학습 자료량이 두 항의 균형을 바꾸므로 오차가 가장 작은 복잡도도 달라진다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>편향의 제곱</strong><span>여러 학습 표본에서 얻은 적합의 기댓값과 참 관계의 차이를 제곱한 값이다.</span></article><article class="summary-card"><strong>분산</strong><span>학습 표본이 바뀔 때 적합이 흔들리는 정도다.</span></article><article class="summary-card"><strong>기대 테스트 MSE</strong><span>편향의 제곱 + 분산 + Var(ε)이며 학습 표본의 변동에 대해 기댓값을 낸 오차다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">참 관계와 자료량에 따라 오차가 가장 작은 복잡도가 달라진다</h2><p class="lead">참 관계와 학습 자료량을 바꾸면 복잡도별 편향의 제곱과 분산, 그 합, 기대 테스트 MSE가 가장 작은 행이 바뀐다. 표의 수치는 실제 자료에서 잰 값이 아니라 이 관계를 보이도록 가정한 값이다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double">
+        <div class="control-field"><label for="truth">참 관계</label><select id="truth"><option value="simple">단순한 관계</option><option value="curved">굽은 관계</option></select></div>
+        <div class="control-field"><label for="amount">학습 자료량</label><select id="amount"><option value="small">적음</option><option value="large">많음</option></select></div>
+      </div>
+      <figure class="visual-figure"><div class="visual-frame"><table class="component-table" aria-label="복잡도별 편향 제곱, 분산, 잡음 분산과 기대 테스트 MSE"><thead><tr><th scope="col">복잡도</th><th scope="col">편향의 제곱</th><th scope="col">분산</th><th scope="col">Var(ε)</th><th scope="col">기대 테스트 MSE</th></tr></thead><tbody id="component-body"></tbody></table></div><figcaption class="visual-caption">각 행에서 세 항을 더해 기대 테스트 MSE를 계산한다. 파란 행과 초록 테두리 칸이 합이 가장 작은 복잡도다.</figcaption></figure>
+      <div id="complexity-read" class="visual-readouts" aria-live="polite"></div>
+      <p id="complexity-note" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">복잡한 모델은 적은 자료에서 표본마다 크게 흔들린다</h2><p class="lead">모델 복잡도와 자료량을 바꾸면 학습 표본 A와 B에서 얻은 두 적합의 모양과 둘 사이의 거리가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double">
+        <div class="control-field"><label for="fit-kind">모델</label><select id="fit-kind"><option value="simple">단순한 모델</option><option value="flexible">복잡한 모델</option></select></div>
+        <div class="control-field"><label for="fit-amount">학습 자료량</label><select id="fit-amount"><option value="small">적음</option><option value="large">많음</option></select></div>
+      </div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="fit-plot" class="plot" viewBox="0 0 640 260" role="img" aria-labelledby="fit-title fit-desc"><title id="fit-title">두 학습 표본의 적합</title><desc id="fit-desc">표본 A와 B의 적합</desc></svg></div><figcaption class="visual-caption">회색 점선은 참 관계, 파란 실선은 표본 A의 적합, 초록 점선은 표본 B의 적합이다. 빨간 세로선은 두 적합이 가장 멀리 떨어진 위치의 거리다.</figcaption></figure>
+      <div id="fit-read" class="visual-readouts" aria-live="polite"></div>
+      <p id="fit-note" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="prediction-error.html" rel="prev">이전 · Prediction Error</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../06. data-leakage/raw-data-preparation.html" rel="next">다음 · Raw Data Preparation</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  var models = {
+    "simple-small": { b: [0.2, 0.1, 0.05], v: [0.1, 0.5, 1.4] },
+    "simple-large": { b: [0.2, 0.1, 0.05], v: [0.05, 0.2, 0.6] },
+    "curved-small": { b: [2, 0.6, 0.2], v: [0.1, 0.5, 1.4] },
+    "curved-large": { b: [2, 0.6, 0.2], v: [0.05, 0.15, 0.4] }
+  };
+  var names = ["낮음", "중간", "높음"];
+  function renderComplexity() {
+    var truth = $("truth").value, amount = $("amount").value, d = models[truth + "-" + amount];
+    var sum = d.b.map(function (v, i) { return v + d.v[i] + 0.3; }), best = sum.indexOf(Math.min.apply(null, sum));
+    $("component-body").innerHTML = sum.map(function (s, i) {
+      return '<tr class="' + (i === best ? "is-best" : "") + '"><th scope="row">' + names[i] + "</th><td>" + d.b[i].toFixed(2) + "</td><td>" + d.v[i].toFixed(2) + "</td><td>0.30</td><td>" + s.toFixed(2) + "</td></tr>";
+    }).join("");
+    $("complexity-read").innerHTML = rd("오차가 가장 작은 복잡도", names[best]) + rd("그 행의 기대 테스트 MSE", d.b[best].toFixed(2) + " + " + d.v[best].toFixed(2) + " + 0.30 = " + sum[best].toFixed(2)) + rd("낮음 행 편향의 제곱 · 높음 행 분산", "" + d.b[0].toFixed(2) + " · " + d.v[2].toFixed(2));
+    var why = truth === "simple"
+      ? "참 관계가 단순하면 낮은 복잡도에서도 편향의 제곱이 0.20으로 작아, 복잡도를 높여 얻는 편향 감소보다 분산 증가가 크다."
+      : amount === "small"
+        ? "참 관계가 굽으면 낮은 복잡도의 편향의 제곱이 2.00으로 커진다. 자료가 적으면 높은 복잡도의 분산 1.40도 커서 중간에서 합이 가장 작다."
+        : "참 관계가 굽고 자료가 많으면 높은 복잡도의 분산이 0.40으로 줄어, 편향이 가장 작은 높은 복잡도에서 합이 가장 작다.";
+    $("complexity-note").textContent = why + " 오차가 가장 작은 복잡도는 한 항이 아니라 세 항의 합으로 정해진다.";
+  }
+  var X = function (t) { return 40 + t * 560; };
+  var Yv = function (v) { return 130 - v * 90; };
+  var truthF = function (t) { return Math.sin(t * Math.PI * 1.2) * 0.6; };
+  var spreads = { "simple-small": 0.16, "simple-large": 0.08, "flexible-small": 0.6, "flexible-large": 0.16 };
+  function fit(kind, sample, spread, t) {
+    var sign = sample === "A" ? 1 : -1;
+    if (kind === "simple") return 0.35 - 0.7 * t + sign * spread / 2 * (1 - t);
+    return truthF(t) + sign * spread / 2 * Math.sin(t * Math.PI * 5 + 0.3);
+  }
+  function path(fn) {
+    var pts = [];
+    for (var t = 0; t <= 1.0001; t += 0.01) pts.push(X(t).toFixed(1) + "," + Yv(fn(t)).toFixed(1));
+    return pts.join(" ");
+  }
+  function renderFit() {
+    var kind = $("fit-kind").value, amount = $("fit-amount").value, spread = spreads[kind + "-" + amount];
+    var fa = function (t) { return fit(kind, "A", spread, t); }, fb = function (t) { return fit(kind, "B", spread, t); };
+    var maxT = 0, maxD = -1;
+    for (var t = 0; t <= 1.0001; t += 0.01) { var dd = Math.abs(fa(t) - fb(t)); if (dd > maxD) { maxD = dd; maxT = t; } }
+    var s = '<title id="fit-title">두 학습 표본의 적합</title><desc id="fit-desc">' + (kind === "simple" ? "단순한" : "복잡한") + " 모델, 자료량 " + (amount === "small" ? "적음" : "많음") + ", 두 적합의 최대 거리 " + maxD.toFixed(2) + "</desc>";
+    s += '<polyline class="truth" points="' + path(truthF) + '"/><polyline class="fit-a" points="' + path(fa) + '"/><polyline class="fit-b" points="' + path(fb) + '"/>';
+    s += '<line class="spread" x1="' + X(maxT) + '" y1="' + Yv(fa(maxT)) + '" x2="' + X(maxT) + '" y2="' + Yv(fb(maxT)) + '"/>';
+    s += '<text class="label" x="40" y="250">A 실선 · B 점선 · 참 관계 회색</text>';
+    $("fit-plot").innerHTML = s;
+    var big = maxD > 0.3;
+    $("fit-read").innerHTML = rd("두 적합의 최대 거리", maxD.toFixed(2)) + rd("표본에 따른 흔들림", big ? "큼" : "작음") + rd("참 관계와의 모양 차이", kind === "simple" ? "굽은 부분을 따라가지 못함" : "평균적으로 굽은 모양을 따라감");
+    $("fit-note").textContent = kind === "flexible" && amount === "small"
+      ? "복잡한 모델은 적은 자료의 우연한 변동까지 따라가므로 표본 A와 B의 적합이 크게 달라진다. 이 흔들림이 분산이다."
+      : kind === "flexible"
+        ? "같은 복잡한 모델이라도 자료가 많으면 우연한 변동이 평균되어 두 적합의 거리가 " + maxD.toFixed(2) + "로 줄어든다. 자료량은 분산을 줄인다."
+        : "단순한 모델은 표본이 바뀌어도 거의 같은 직선을 얻어 분산이 작지만, 굽은 참 관계를 따라가지 못하는 편향이 남는다.";
+  }
+  $("truth").addEventListener("change", renderComplexity);
+  $("amount").addEventListener("change", renderComplexity);
+  $("fit-kind").addEventListener("change", renderFit);
+  $("fit-amount").addEventListener("change", renderFit);
+  renderComplexity(); renderFit();
+}());
+</script>
+</body>
+</html>

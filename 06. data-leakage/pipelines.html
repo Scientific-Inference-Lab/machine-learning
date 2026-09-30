@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pipelines | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css">
+  <link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+.topic-pipelines .pipe-svg text {fill:var(--ink-600);font-family:var(--font-sans);font-size:14px}
+.topic-pipelines .pipe-svg .strong {fill:var(--pnu-blue-dark);font-weight:750}
+.topic-pipelines .pipe-svg .small {font-size:12px}
+.topic-pipelines .pipe-svg .box {fill:var(--white);stroke:var(--line-200);stroke-width:1.5}
+.topic-pipelines .pipe-svg .primary {fill:var(--callout-bg);stroke:var(--pnu-blue);stroke-width:2}
+.topic-pipelines .pipe-svg .reference {fill:var(--surface-050);stroke:var(--pnu-green);stroke-width:2}
+.topic-pipelines .pipe-svg .state {fill:var(--surface-050);stroke:var(--pnu-green);stroke-width:2;stroke-dasharray:6 4}
+.topic-pipelines .pipe-svg .arrow {fill:none;stroke:var(--pnu-blue);stroke-width:2.4}
+.topic-pipelines .pipe-svg .green-arrow {fill:none;stroke:var(--pnu-green);stroke-width:2.4}
+.topic-pipelines .pipe-svg .muted {opacity:.25}
+.topic-pipelines .pipe-svg .active rect {stroke-width:3}
+@media(max-width: 560px) {
+.topic-pipelines .pipe-svg text {font-size:15px}
+.topic-pipelines .pipe-svg .small {font-size:13px}
+}
+  </style>
+</head>
+<body class="visual-topic topic-pipelines">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner">
+  <a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a>
+  <div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Data Leakage</span><span class="nav-tag is-current" aria-current="page">Pipelines</span></nav></div>
+</div></header>
+
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Data Leakage</p><h1 class="page-title">Pipelines</h1><hr class="accent-rule"><p class="page-subtitle">파이프라인은 전처리 단계와 모델을 순서대로 묶어 fit과 predict를 한 단위로 실행하는 객체다.</p></div></section>
+
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid">
+    <article class="summary-card"><strong>pipeline.fit</strong><span>전처리 상태를 저장한 뒤 변환한 학습 자료로 모델을 학습한다.</span></article>
+    <article class="summary-card"><strong>pipeline.predict</strong><span>저장한 전처리 상태를 적용한 뒤 저장한 모델로 예측한다.</span></article>
+    <article class="summary-card"><strong>ColumnTransformer</strong><span>열 종류마다 다른 변환을 적용한 뒤 하나의 행렬로 합친다.</span></article>
+  </div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">pipeline.fit은 전처리 상태와 모델 매개변수를 차례로 저장한다</h2><p class="lead">단계를 옮기면 흐름에서 지나온 상자와 그 단계에서 저장되는 상태가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="fit-stage">pipeline.fit 흐름 <output id="fit-stage-label" class="control-value" for="fit-stage">학습 자료</output></label><input id="fit-stage" type="range" min="0" max="3" step="1" value="0"></div></div>
+      <figure class="visual-figure"><div class="visual-frame">
+        <svg class="visual-svg pipe-svg" viewBox="0 0 760 240" role="img" aria-labelledby="fit-title fit-desc">
+          <title id="fit-title">pipeline.fit의 상태 저장 순서</title><desc id="fit-desc">학습 자료, 전처리 상태, 변환된 자료, 모델 매개변수가 차례로 연결되는 흐름</desc>
+          <g id="fit-node-0"><rect class="primary" x="25" y="95" width="155" height="90" rx="11"></rect><text class="strong" x="102" y="128" text-anchor="middle">학습 자료</text><text x="102" y="154" text-anchor="middle">원래 특성</text></g>
+          <path class="arrow" d="M185 140 H220"></path>
+          <g id="fit-node-1" class="muted"><rect class="state" x="225" y="65" width="175" height="150" rx="11"></rect><text class="strong" x="312" y="98" text-anchor="middle">전처리 fit</text><text x="312" y="128" text-anchor="middle">평균 · 표준편차</text><text x="312" y="153" text-anchor="middle">범주 목록</text><text class="small" x="312" y="190" text-anchor="middle">상태 저장 뒤 transform</text></g>
+          <path class="arrow" d="M405 140 H440"></path>
+          <g id="fit-node-2" class="muted"><rect class="box" x="445" y="95" width="135" height="90" rx="11"></rect><text class="strong" x="512" y="128" text-anchor="middle">변환된 자료</text><text x="512" y="154" text-anchor="middle">같은 열 구조</text></g>
+          <path class="green-arrow" d="M585 140 H620"></path>
+          <g id="fit-node-3" class="muted"><rect class="reference" x="625" y="95" width="110" height="90" rx="11"></rect><text class="strong" x="680" y="128" text-anchor="middle">모델 fit</text><text x="680" y="154" text-anchor="middle">매개변수</text></g>
+
+        </svg>
+      </div><figcaption class="visual-caption">초록 점선 상자는 전처리가 fit에서 저장하는 상태, 초록 실선 상자는 모델이 저장하는 상태다. 흐린 상자는 아직 지나지 않은 단계다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">pipeline.predict는 저장된 상태를 바꾸지 않고 적용한다</h2><p class="lead">단계를 옮기면 새 자료가 지나는 상자와 출력이 바뀌고, 저장된 전처리 상태와 모델 매개변수는 그대로다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="predict-stage">pipeline.predict 흐름 <output id="predict-stage-label" class="control-value" for="predict-stage">새 자료</output></label><input id="predict-stage" type="range" min="0" max="2" step="1" value="0"></div></div>
+      <figure class="visual-figure"><div class="visual-frame">
+        <svg class="visual-svg pipe-svg" viewBox="0 0 760 240" role="img" aria-labelledby="predict-title predict-desc">
+          <title id="predict-title">pipeline.predict와 잠긴 상태</title><desc id="predict-desc">새 자료가 저장된 전처리 상태와 저장된 모델 매개변수를 차례로 통과하는 흐름</desc>
+          <g id="predict-node-0"><rect class="primary" x="35" y="95" width="150" height="90" rx="11"></rect><text class="strong" x="110" y="128" text-anchor="middle">새 자료</text><text x="110" y="154" text-anchor="middle">원래 특성</text></g>
+          <path class="arrow" d="M190 140 H260"></path>
+          <g id="predict-node-1" class="muted"><rect class="state" x="265" y="65" width="220" height="150" rx="11"></rect><text class="strong" x="375" y="96" text-anchor="middle">저장된 전처리</text><text x="375" y="125" text-anchor="middle">μ_train · σ_train</text><text x="375" y="151" text-anchor="middle">학습 범주 목록</text><text class="small" x="375" y="188" text-anchor="middle">transform만 적용 · 상태를 다시 계산하지 않음</text></g>
+          <path class="green-arrow" d="M490 140 H560"></path>
+          <g id="predict-node-2" class="muted"><rect class="reference" x="565" y="95" width="160" height="90" rx="11"></rect><text class="strong" x="645" y="128" text-anchor="middle">저장된 모델</text><text x="645" y="154" text-anchor="middle">예측값 출력</text></g>
+
+        </svg>
+      </div><figcaption class="visual-caption">초록 점선의 전처리 상태는 predict 동안 다시 계산되지 않는다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">ColumnTransformer는 열 종류별 변환을 하나의 행렬로 합친다</h2><p class="lead">경로를 바꾸면 연결되는 변환과 모델로 전달되는 출력이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="branch-buttons">연결할 경로</label><select id="branch-buttons"><option value="numeric">수치형 경로</option><option value="categorical">범주형 경로</option><option value="both">두 경로 병합</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame">
+        <svg class="visual-svg pipe-svg" viewBox="0 0 760 360" role="img" aria-labelledby="column-title column-desc">
+          <title id="column-title">ColumnTransformer의 분기와 병합</title><desc id="column-desc">원자료의 수치형 열과 범주형 열이 별도 전처리를 거쳐 하나의 행렬로 합쳐지는 구조</desc>
+          <rect class="primary" x="30" y="135" width="145" height="100" rx="11"></rect><text class="strong" x="102" y="170" text-anchor="middle">원자료</text><text x="102" y="198" text-anchor="middle">열 종류 구분</text>
+          <path class="arrow" d="M180 185 C225 185 215 100 265 100"></path><path class="arrow" d="M180 185 C225 185 215 280 265 280"></path>
+          <g id="numeric-branch" class="muted"><rect class="box" x="270" y="45" width="245" height="110" rx="11"></rect><text class="strong" x="392" y="77" text-anchor="middle">수치형 경로</text><text x="392" y="106" text-anchor="middle">결측값 대체</text><text x="392" y="132" text-anchor="middle">척도 조정</text></g>
+          <g id="categorical-branch" class="muted"><rect class="box" x="270" y="225" width="245" height="110" rx="11"></rect><text class="strong" x="392" y="257" text-anchor="middle">범주형 경로</text><text x="392" y="286" text-anchor="middle">결측값 대체</text><text x="392" y="312" text-anchor="middle">부호화</text></g>
+          <path id="numeric-merge-arrow" class="arrow muted" d="M520 100 C565 100 555 185 600 185"></path><path id="categorical-merge-arrow" class="arrow muted" d="M520 280 C565 280 555 185 600 185"></path>
+          <g id="merged-matrix" class="muted"><rect class="reference" x="605" y="125" width="130" height="120" rx="11"></rect><text class="strong" x="670" y="160" text-anchor="middle">병합</text><text x="670" y="190" text-anchor="middle">하나의</text><text x="670" y="216" text-anchor="middle">특성 행렬</text></g>
+
+        </svg>
+      </div><figcaption class="visual-caption">위는 수치형 경로, 아래는 범주형 경로다. 흐리지 않은 경로가 연결된 변환이고, 오른쪽 초록 상자가 병합한 특성 행렬이다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="data-leakage.html" rel="prev">이전 · Data Leakage</a><a class="pager-link is-all" href="../index.html">전체</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+function rd(l,v){return '<div class="visual-readout"><span class="visual-readout-label">'+l+'</span><strong class="visual-readout-value">'+v+'</strong></div>';}
+
+function progress(prefix,count,cur){for(var i=0;i<count;i++){document.getElementById(prefix+i).classList.toggle("muted",i>cur);}}
+(function(){var el=document.getElementById("fit-stage"),L=["학습 자료","전처리 상태","변환된 자료","모델 매개변수"];
+var R=[[["현재 단계","학습 자료 입력"],["이 단계에서 저장","없음"],["다음 단계의 입력","원래 특성"]],[["현재 단계","전처리 fit"],["이 단계에서 저장","평균 · 표준편차 · 범주 목록"],["다음 단계의 입력","저장한 상태로 transform"]],[["현재 단계","변환된 학습 자료"],["이 단계에서 저장","없음"],["다음 단계의 입력","같은 열 구조의 변환 자료"]],[["현재 단계","모델 fit"],["이 단계에서 저장","모델 매개변수"],["다음 단계의 입력","학습 완료"]]];
+var N=["학습 자료가 원래 특성 그대로 파이프라인에 들어온다. 아직 어떤 상태도 저장되지 않았다.","전처리 fit이 학습 자료에서 평균, 표준편차, 범주 목록을 계산해 저장하고 그 상태로 학습 자료를 변환한다.","저장한 규칙으로 변환한 학습 자료가 같은 열 구조로 모델 앞에 놓인다.","변환된 학습 자료에서 모델 매개변수를 저장하면 pipeline.fit이 끝난다. 전처리 상태와 모델 매개변수가 한 순서 안에서 학습 자료로만 정해진다."];
+function render(){var i=Number(el.value);progress("fit-node-",4,i);document.getElementById("fit-stage-label").textContent=L[i];
+document.getElementById("read-1").innerHTML=R[i].map(function(p){return rd(p[0],p[1]);}).join("");document.getElementById("note-1").textContent=N[i];}
+el.addEventListener("input",render);render();}());
+(function(){var el=document.getElementById("predict-stage"),L=["새 자료","저장된 전처리","예측값"];
+var R=[[["현재 단계","새 자료 입력"],["전처리 상태","μ_train · σ_train · 범주 목록"],["모델 매개변수","변화 없음"]],[["현재 단계","저장된 전처리로 transform"],["전처리 상태","변화 없음"],["모델 매개변수","변화 없음"]],[["현재 단계","저장된 모델로 예측"],["전처리 상태","변화 없음"],["모델 매개변수","변화 없음"]]];
+var N=["새 자료가 원래 특성 그대로 들어온다. 이 자료로는 어떤 상태도 다시 계산하지 않는다.","새 자료에 μ_train, σ_train, 학습 범주 목록을 그대로 적용한다. 새 자료의 평균으로 다시 fit하지 않으므로 학습 때와 같은 표현이 된다.","변환된 새 자료를 저장된 모델에 넣어 예측값을 얻는다. predict 동안 전처리 상태와 모델 매개변수는 한 번도 바뀌지 않는다."];
+function render(){var i=Number(el.value);progress("predict-node-",3,i);document.getElementById("predict-stage-label").textContent=L[i];
+document.getElementById("read-2").innerHTML=R[i].map(function(p){return rd(p[0],p[1]);}).join("");document.getElementById("note-2").textContent=N[i];}
+el.addEventListener("input",render);render();}());
+(function(){var el=document.getElementById("branch-buttons");
+var T={numeric:{r:[["연결된 경로","수치형"],["적용 변환","결측값 대체 → 척도 조정"],["출력","수치형 열의 변환 결과"]],n:"수치형 열은 결측값 대체와 척도 조정을 거친다. 이 경로만으로는 범주형 열이 빠져 모델 입력이 완성되지 않는다."},
+categorical:{r:[["연결된 경로","범주형"],["적용 변환","결측값 대체 → 부호화"],["출력","범주형 열의 변환 결과"]],n:"범주형 열은 결측값 대체와 부호화를 거친다. 수치형 열과 다른 상태를 저장하므로 별도 경로로 둔다."},
+both:{r:[["연결된 경로","수치형 · 범주형"],["적용 변환","열 종류별 변환"],["출력","하나의 특성 행렬"]],n:"두 경로의 출력은 행 순서를 유지한 채 열 방향으로 합쳐진다. ColumnTransformer는 열 종류마다 다른 상태를 유지하면서 모델에는 하나의 행렬을 전달한다."}};
+function render(){var v=el.value,t=T[v],num=v!=="categorical",cat=v!=="numeric";
+document.getElementById("numeric-branch").classList.toggle("muted",!num);document.getElementById("categorical-branch").classList.toggle("muted",!cat);document.getElementById("numeric-merge-arrow").classList.toggle("muted",!num);document.getElementById("categorical-merge-arrow").classList.toggle("muted",!cat);document.getElementById("merged-matrix").classList.toggle("muted",v!=="both");
+document.getElementById("read-3").innerHTML=t.r.map(function(p){return rd(p[0],p[1]);}).join("");document.getElementById("note-3").textContent=t.n;}
+el.addEventListener("change",render);render();}());
+
+}());
+</script>
+</body>
+</html>

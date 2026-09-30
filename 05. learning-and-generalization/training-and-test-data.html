@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Training and Test Data | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-training-and-test-data .error-table{width:100%;min-width:620px;border-collapse:collapse}
+    .topic-training-and-test-data th,.topic-training-and-test-data td{padding:10px;border:1px solid var(--line-200);text-align:center}
+    .topic-training-and-test-data th{color:var(--pnu-blue-dark);background:var(--surface-050)}
+    .topic-training-and-test-data tr.is-off td{color:var(--ink-600);background:var(--white)}
+    .topic-training-and-test-data tr.is-on td{background:var(--pnu-blue-tint);font-weight:700}
+    .topic-training-and-test-data td.is-best{outline:3px solid var(--pnu-green);outline-offset:-3px}
+    .topic-training-and-test-data .flow{display:flex;min-width:620px;gap:10px;align-items:center}
+    .topic-training-and-test-data .flow span{flex:1;padding:18px;border:2px solid var(--line-200);border-radius:9px;text-align:center}
+    .topic-training-and-test-data .flow i{font-style:normal;color:var(--ink-600)}
+    .topic-training-and-test-data .flow .is-loop{border-color:var(--alert-700);border-style:dashed;color:var(--alert-700);font-weight:700}
+    .topic-training-and-test-data .flow .is-clean{border-color:var(--pnu-green);font-weight:700}
+  </style>
+</head>
+<body class="visual-topic topic-training-and-test-data">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Learning and Generalization</span><span class="nav-tag is-current" aria-current="page">Training and Test Data</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Learning and Generalization</p><h1 class="page-title">Training and Test Data</h1><hr class="accent-rule"><p class="page-subtitle">같은 모델도 평가하는 관측이 달라지면 평균제곱오차(mean squared error, MSE)와 선택 결과가 달라진다. 테스트 자료는 모델 결정에 쓰이지 않을 때만 독립된 평가가 된다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>학습 MSE</strong><span>적합에 사용한 관측의 평균제곱오차다.</span></article><article class="summary-card"><strong>테스트 MSE</strong><span>학습에 쓰지 않은 관측의 평균제곱오차다.</span></article><article class="summary-card"><strong>평가 독립성</strong><span>테스트 결과가 모델 결정으로 되돌아가지 않는 성질이다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">학습 MSE가 작은 모델과 테스트 MSE가 작은 모델이 다를 수 있다</h2><p class="lead">평가에 쓰는 자료를 바꾸면 같은 두 모델의 제곱 오차 행, 두 MSE, 더 작은 모델이 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="eval-set">평가 자료</label><select id="eval-set"><option value="0">학습 관측 3개</option><option value="1">테스트 관측 2개</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><table class="error-table" aria-label="자료별 관측값, 두 모델의 예측과 제곱 오차"><thead><tr><th scope="col">자료</th><th scope="col">관측 y</th><th scope="col">모델 A 예측</th><th scope="col">모델 B 예측</th><th scope="col">A 제곱 오차</th><th scope="col">B 제곱 오차</th></tr></thead><tbody id="error-body"></tbody></table></div><figcaption class="visual-caption">파란 행이 평가에 쓰는 자료다. 초록 테두리 칸은 그 자료에서 MSE가 더 작은 모델의 제곱 오차다.</figcaption></figure>
+      <div id="mse-read" class="visual-readouts" aria-live="polite"></div>
+      <p id="mse-note" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">테스트 결과로 모델을 고르면 그 값은 독립된 평가가 아니다</h2><p class="lead">테스트 MSE의 쓰임을 바꾸면 결정 흐름에서 되먹임 경로와 최종 보고값의 성격이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="test-use">테스트 MSE의 쓰임</label><select id="test-use"><option value="final">선택이 끝난 뒤 한 번만 계산해 보고</option><option value="select">모델 A·B 선택에도 사용</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div id="flow" class="flow" role="img" aria-label="모델 결정과 평가의 흐름"></div></div><figcaption class="visual-caption">상자는 결정 순서다. 빨간 점선 상자는 테스트 결과가 모델 결정으로 되돌아간 단계, 초록 상자는 독립된 평가 단계다.</figcaption></figure>
+      <div id="flow-read" class="visual-readouts" aria-live="polite"></div>
+      <p id="flow-note" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../04. derivatives-and-probability/probability-distributions.html" rel="prev">이전 · Probability Distributions</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="prediction-error.html" rel="next">다음 · Prediction Error</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  var rows = [{ set: "학습", y: [1, 3, 5], a: [1, 3, 5], b: [2, 3, 4] }, { set: "테스트", y: [3, 5], a: [1, 7], b: [3, 5] }];
+  function sq(y, p) { return y.map(function (v, i) { return (v - p[i]) * (v - p[i]); }); }
+  function mean(v) { return v.reduce(function (s, x) { return s + x; }, 0) / v.length; }
+  function renderMse() {
+    var k = Number($("eval-set").value), r = rows[k], ea = sq(r.y, r.a), eb = sq(r.y, r.b), ma = mean(ea), mb = mean(eb), best = ma < mb ? "A" : "B";
+    $("error-body").innerHTML = rows.map(function (row, i) {
+      var a = sq(row.y, row.a), b = sq(row.y, row.b), on = i === k;
+      return '<tr class="' + (on ? "is-on" : "is-off") + '"><th scope="row">' + row.set + "</th><td>" + row.y.join(", ") + "</td><td>" + row.a.join(", ") + "</td><td>" + row.b.join(", ") + '</td><td class="' + (on && best === "A" ? "is-best" : "") + '">' + a.join(", ") + '</td><td class="' + (on && best === "B" ? "is-best" : "") + '">' + b.join(", ") + "</td></tr>";
+    }).join("");
+    $("mse-read").innerHTML = rd("모델 A " + r.set + " MSE", "(" + ea.join(" + ") + ") / " + ea.length + " = " + ma.toFixed(2)) + rd("모델 B " + r.set + " MSE", "(" + eb.join(" + ") + ") / " + eb.length + " = " + mb.toFixed(2)) + rd("더 작은 모델", "모델 " + best);
+    $("mse-note").textContent = k === 0
+      ? "학습 관측에서는 A가 세 점을 정확히 맞춰 MSE 0.00으로 B의 0.67보다 작다. 적합에 쓴 관측의 오차만 보면 A를 고르게 된다."
+      : "테스트 관측에서는 A의 MSE가 4.00, B가 0.00이다. 학습 관측을 정확히 맞춘 A가 새 관측에서는 벗어나므로, 일반화 성능은 학습에 쓰지 않은 관측으로 따로 계산해야 한다.";
+  }
+  function renderFlow() {
+    var sel = $("test-use").value === "select";
+    var steps = sel
+      ? ['<span>모델 A·B 학습</span>', '<i>→</i>', '<span class="is-loop">테스트 MSE로 B 선택</span>', '<i>→</i>', '<span class="is-loop">같은 테스트 MSE 0.00 보고</span>']
+      : ['<span>모델 A·B 학습</span>', '<i>→</i>', '<span>테스트 밖 근거로 모델 확정</span>', '<i>→</i>', '<span class="is-clean">테스트 MSE를 한 번만 계산해 보고</span>'];
+    $("flow").innerHTML = steps.join("");
+    $("flow").setAttribute("aria-label", sel ? "학습, 테스트 MSE로 선택, 같은 값을 보고하는 흐름" : "학습, 테스트 밖에서 확정, 테스트 MSE를 한 번만 계산해 보고하는 흐름");
+    $("flow-read").innerHTML = rd("테스트 자료의 역할", sel ? "평가와 모델 선택" : "최종 평가만") + rd("평가 독립성", sel ? "깨짐" : "유지");
+    $("flow-note").textContent = sel
+      ? "테스트 MSE가 B 선택에 들어갔으므로 같은 자료의 0.00은 선택 결과에 맞춰진 값이다. 선택 뒤의 성능을 보고하려면 결정에 쓰지 않은 새 자료가 필요하다."
+      : "모델을 확정할 때까지 테스트 자료를 보지 않았으므로, 마지막에 한 번 계산한 테스트 MSE는 결정과 독립된 새 관측의 오차다.";
+  }
+  $("eval-set").addEventListener("change", renderMse);
+  $("test-use").addEventListener("change", renderFlow);
+  renderMse(); renderFlow();
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Raw Data Preparation | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css">
+  <link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+.topic-raw-data-preparation .prep-svg text {fill:var(--ink-600);font-family:var(--font-sans);font-size:14px}
+.topic-raw-data-preparation .prep-svg .strong {fill:var(--pnu-blue-dark);font-weight:750}
+.topic-raw-data-preparation .prep-svg .small {font-size:12px}
+.topic-raw-data-preparation .prep-svg .box {fill:var(--white);stroke:var(--line-200);stroke-width:1.5}
+.topic-raw-data-preparation .prep-svg .primary {fill:var(--callout-bg);stroke:var(--pnu-blue);stroke-width:2}
+.topic-raw-data-preparation .prep-svg .reference {fill:var(--surface-050);stroke:var(--pnu-green);stroke-width:2}
+.topic-raw-data-preparation .prep-svg .problem {fill:var(--surface-050);stroke:var(--alert-700,var(--alert-700));stroke-width:2}
+.topic-raw-data-preparation .prep-svg .muted {opacity:.28}
+.topic-raw-data-preparation .prep-svg .focus {opacity:1}
+.topic-raw-data-preparation .prep-svg .focus rect,
+.topic-raw-data-preparation .prep-svg .focus path {stroke-width:3}
+.topic-raw-data-preparation .prep-svg .arrow {fill:none;stroke:var(--pnu-blue);stroke-width:2.4}
+.topic-raw-data-preparation .prep-svg .green-arrow {fill:none;stroke:var(--pnu-green);stroke-width:2.4}
+.topic-raw-data-preparation .prep-svg .red-arrow {fill:none;stroke:var(--alert-700,var(--alert-700));stroke-width:2.4}
+@media(max-width: 560px) {
+.topic-raw-data-preparation .prep-svg text {font-size:15px}
+.topic-raw-data-preparation .prep-svg .small {font-size:13px}
+}
+  </style>
+</head>
+<body class="visual-topic topic-raw-data-preparation">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a>
+    <div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Data Leakage</span><span class="nav-tag is-current" aria-current="page">Raw Data Preparation</span></nav></div>
+  </div>
+</header>
+
+<section class="hero topic-hero">
+  <div class="container">
+    <p class="eyebrow">Data Leakage</p>
+    <h1 class="page-title">Raw Data Preparation</h1>
+    <hr class="accent-rule">
+    <p class="page-subtitle">전처리는 원자료의 결측값, 값 범위, 범주를 모델이 계산할 수 있는 입력으로 바꾸는 처리다. 여러 행에서 계산하는 처리는 학습 자료에서 상태를 저장한다.</p>
+  </div>
+</section>
+
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념">
+    <div class="summary-grid">
+      <article class="summary-card"><strong>원자료</strong><span>결측값, 이상치, 서로 다른 척도, 범주 값이 한 표에 섞여 있다.</span></article>
+      <article class="summary-card"><strong>수치형 열</strong><span>결측값 대체와 척도 조정을 거친다.</span></article>
+      <article class="summary-card"><strong>범주형 열</strong><span>결측값 대체와 부호화를 거친다.</span></article>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">원자료의 문제마다 필요한 처리가 다르다</h2><p class="lead">강조할 문제를 바꾸면 행렬에서 해당 칸과 처리 방향이 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single">
+        <div class="control-field"><label for="raw-issue-buttons">강조할 원자료 문제</label><select id="raw-issue-buttons"><option value="missing" selected>결측값</option><option value="outlier">이상치</option><option value="scale">다른 값 범위</option><option value="category">범주 값</option></select></div>
+
+      </div>
+      <figure class="visual-figure">
+        <div class="visual-frame">
+          <svg id="raw-matrix" class="visual-svg prep-svg" viewBox="0 0 760 390" role="img" aria-labelledby="raw-title raw-desc">
+            <title id="raw-title">원자료 행렬의 네 가지 문제</title><desc id="raw-desc">결측값, 이상치, 서로 다른 수치 범위, 범주 값을 직접 표시한 행렬</desc>
+            <g aria-label="범례"><rect class="problem" x="34" y="20" width="18" height="18" rx="3"></rect><text x="60" y="34">처리가 필요한 값</text><rect class="primary" x="220" y="20" width="18" height="18" rx="3"></rect><text x="246" y="34">현재 초점</text></g>
+            <text class="strong" x="92" y="82" text-anchor="middle">관측</text><text class="strong" x="235" y="70" text-anchor="middle">수치 A</text><text class="small" x="235" y="88" text-anchor="middle">양수 구간</text><text class="strong" x="385" y="70" text-anchor="middle">수치 B</text><text class="small" x="385" y="88" text-anchor="middle">더 넓은 범위</text><text class="strong" x="535" y="82" text-anchor="middle">등급</text><text class="strong" x="665" y="82" text-anchor="middle">도시</text>
+            <g data-kind="scale"><rect x="160" y="52" width="300" height="46" rx="7" fill="none" stroke="var(--line-200)" stroke-width="1.5"></rect></g>
+            <g><rect class="box" x="30" y="105" width="125" height="48"></rect><text x="92" y="135" text-anchor="middle">관측 1</text></g>
+            <g><rect class="box" x="160" y="105" width="145" height="48"></rect><text x="232" y="135" text-anchor="middle">x₁₁</text></g>
+            <g><rect class="box" x="310" y="105" width="145" height="48"></rect><text x="382" y="135" text-anchor="middle">x₁₂</text></g>
+            <g data-kind="category"><rect class="box" x="460" y="105" width="145" height="48"></rect><text x="532" y="135" text-anchor="middle">낮음</text></g>
+            <g data-kind="category"><rect class="box" x="610" y="105" width="120" height="48"></rect><text x="670" y="135" text-anchor="middle">서울</text></g>
+            <g><rect class="box" x="30" y="158" width="125" height="48"></rect><text x="92" y="188" text-anchor="middle">관측 2</text></g>
+            <g data-kind="missing"><rect class="problem" x="160" y="158" width="145" height="48"></rect><text class="strong" x="232" y="188" text-anchor="middle">결측값</text></g>
+            <g><rect class="box" x="310" y="158" width="145" height="48"></rect><text x="382" y="188" text-anchor="middle">x₂₂</text></g>
+            <g data-kind="category"><rect class="box" x="460" y="158" width="145" height="48"></rect><text x="532" y="188" text-anchor="middle">중간</text></g>
+            <g data-kind="category"><rect class="box" x="610" y="158" width="120" height="48"></rect><text x="670" y="188" text-anchor="middle">부산</text></g>
+            <g><rect class="box" x="30" y="211" width="125" height="48"></rect><text x="92" y="241" text-anchor="middle">관측 3</text></g>
+            <g><rect class="box" x="160" y="211" width="145" height="48"></rect><text x="232" y="241" text-anchor="middle">x₃₁</text></g>
+            <g data-kind="outlier"><rect class="problem" x="310" y="211" width="145" height="48"></rect><text class="strong" x="382" y="241" text-anchor="middle">이상치</text></g>
+            <g data-kind="category"><rect class="box" x="460" y="211" width="145" height="48"></rect><text x="532" y="241" text-anchor="middle">높음</text></g>
+            <g data-kind="category"><rect class="box" x="610" y="211" width="120" height="48"></rect><text x="670" y="241" text-anchor="middle">서울</text></g>
+            <path data-kind="scale" class="arrow" d="M190 295 H430"></path><path data-kind="scale" class="arrow" d="M190 295 l14 -8 M190 295 l14 8 M430 295 l-14 -8 M430 295 l-14 8"></path><text data-kind="scale" class="strong" x="310" y="324" text-anchor="middle">특성마다 다른 값 범위</text>
+            <rect id="raw-focus-label" class="primary" x="160" y="342" width="440" height="34" rx="8"></rect><text id="raw-focus-text" class="strong" x="380" y="364" text-anchor="middle">계산할 값이 없음 → 지우거나 값을 채움</text>
+          </svg>
+        </div>
+        <figcaption class="visual-caption">빨간 칸은 처리가 필요한 값이다. 흐리지 않은 칸이 고른 문제의 위치이고, 아래 파란 상자가 처리 방향이다.</figcaption>
+      </figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">열 종류와 처리에 따라 학습 자료에서 저장하는 상태가 다르다</h2><p class="lead">처리를 바꾸면 fit에서 저장하는 상태와 그 상태를 적용한 결과가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single">
+        <div class="control-field"><label for="fit-kind">처리</label><select id="fit-kind"><option value="num-impute">수치형 결측값 대체</option><option value="standardize">수치형 표준화</option><option value="cat-impute">범주형 결측값 대체</option></select></div>
+
+      </div>
+      <figure class="visual-figure"><div class="visual-frame">
+        <svg class="visual-svg prep-svg" viewBox="0 0 760 330" role="img" aria-labelledby="missing-title missing-desc">
+        <title id="missing-title">열 종류별 fit 상태와 적용 결과</title><desc id="missing-desc">수치형 결측 대체, 수치형 표준화, 범주형 결측 대체가 학습 자료에서 저장하는 상태와 적용 결과</desc>
+        <g id="lane-num-impute"><rect class="primary" x="35" y="25" width="150" height="70" rx="10"></rect><text class="strong" x="110" y="52" text-anchor="middle">수치형 열</text><text x="110" y="75" text-anchor="middle">결측값</text><path class="arrow" d="M190 60 H280"></path><rect class="reference" x="285" y="25" width="190" height="70" rx="10"></rect><text class="strong" x="380" y="52" text-anchor="middle">fit 상태</text><text x="380" y="75" text-anchor="middle">평균 또는 중앙값</text><path class="green-arrow" d="M480 60 H570"></path><rect class="box" x="575" y="25" width="150" height="70" rx="10"></rect><text class="strong" x="650" y="52" text-anchor="middle">적용 결과</text><text x="650" y="75" text-anchor="middle">수치 값으로 채움</text></g>
+        <g id="lane-standardize" class="muted"><rect class="primary" x="35" y="125" width="150" height="70" rx="10"></rect><text class="strong" x="110" y="152" text-anchor="middle">수치형 열</text><text x="110" y="175" text-anchor="middle">원래 척도</text><path class="arrow" d="M190 160 H280"></path><rect class="reference" x="285" y="125" width="190" height="70" rx="10"></rect><text class="strong" x="380" y="152" text-anchor="middle">fit 상태</text><text x="380" y="175" text-anchor="middle">μⱼ · σⱼ</text><path class="green-arrow" d="M480 160 H570"></path><rect class="box" x="575" y="125" width="150" height="70" rx="10"></rect><text class="strong" x="650" y="152" text-anchor="middle">적용 결과</text><text x="650" y="175" text-anchor="middle">평균 0 · 표준편차 1</text></g>
+        <g id="lane-cat-impute" class="muted"><rect class="primary" x="35" y="225" width="150" height="70" rx="10"></rect><text class="strong" x="110" y="252" text-anchor="middle">범주형 열</text><text x="110" y="275" text-anchor="middle">결측값</text><path class="arrow" d="M190 260 H280"></path><rect class="reference" x="285" y="225" width="190" height="70" rx="10"></rect><text class="strong" x="380" y="252" text-anchor="middle">fit 상태</text><text x="380" y="275" text-anchor="middle">가장 자주 나온 범주</text><path class="green-arrow" d="M480 260 H570"></path><rect class="box" x="575" y="225" width="150" height="70" rx="10"></rect><text class="strong" x="650" y="252" text-anchor="middle">적용 결과</text><text x="650" y="275" text-anchor="middle">범주 값으로 채움</text></g>
+        </svg>
+      </div><figcaption class="visual-caption">왼쪽 파란 상자는 입력 열, 가운데 초록 상자는 학습 자료에서 저장하는 fit 상태, 오른쪽 상자는 그 상태를 적용한 결과다. 흐린 경로는 고르지 않은 처리다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">부호화는 범주 사이의 관계를 수치 표현으로 옮긴다</h2><p class="lead">부호화 방식을 바꾸면 범주에 붙는 표현과 그 표현이 보존하는 관계가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single">
+        <div class="control-field"><label for="encoding-buttons">부호화 관계</label><select id="encoding-buttons"><option value="ordinal" selected>순서형</option><option value="onehot">one-hot</option><option value="unknown">학습에 없던 범주</option></select></div>
+
+      </div>
+      <figure class="visual-figure"><div class="visual-frame">
+        <svg class="visual-svg prep-svg" viewBox="0 0 760 305" role="img" aria-labelledby="encoding-title encoding-desc">
+          <title id="encoding-title">범주 부호화 세 관계</title><desc id="encoding-desc">순서형 값, 서울과 부산의 one-hot 표현, 학습에 없던 서로 다른 범주가 같은 영 벡터로 겹치는 충돌</desc>
+          <g id="encoding-ordinal"><rect class="primary" x="25" y="55" width="220" height="230" rx="12"></rect><text class="strong" x="135" y="88" text-anchor="middle">순서형 부호화</text><text x="70" y="135">낮음</text><text class="strong" x="195" y="135">0</text><text x="70" y="180">중간</text><text class="strong" x="195" y="180">1</text><text x="70" y="225">높음</text><text class="strong" x="195" y="225">2</text><path class="arrow" d="M220 145 V205"></path><text class="small" x="135" y="265" text-anchor="middle">0 &lt; 1 &lt; 2</text></g>
+          <g id="encoding-onehot" class="muted"><rect class="reference" x="270" y="55" width="220" height="230" rx="12"></rect><text class="strong" x="380" y="88" text-anchor="middle">one-hot encoding</text><text x="310" y="145">서울</text><text class="strong" x="420" y="145">(1,0)</text><text x="310" y="205">부산</text><text class="strong" x="420" y="205">(0,1)</text><text class="small" x="380" y="265" text-anchor="middle">범주 사이 순서 없음</text></g>
+          <g id="encoding-unknown" class="muted"><rect class="problem" x="515" y="55" width="220" height="230" rx="12"></rect><text class="strong" x="625" y="88" text-anchor="middle">학습에 없던 범주</text><text x="550" y="135">새 범주 가</text><text class="strong" x="680" y="135">(0,0)</text><text x="550" y="185">새 범주 나</text><text class="strong" x="680" y="185">(0,0)</text><path class="red-arrow" d="M570 220 H680"></path><text class="small" x="625" y="265" text-anchor="middle">서로 다른 범주가 같은 표현</text></g>
+
+        </svg>
+      </div><figcaption class="visual-caption">세 상자는 순서형 부호화, one-hot encoding, 학습에 없던 새 범주다. 흐리지 않은 상자가 고른 관계이고, 빨간 상자는 표현 충돌이다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../05. learning-and-generalization/model-complexity.html" rel="prev">이전 · Model Complexity</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="data-leakage.html" rel="next">다음 · Data Leakage</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+function rd(l,v){return '<div class="visual-readout"><span class="visual-readout-label">'+l+'</span><strong class="visual-readout-value">'+v+'</strong></div>';}
+
+(function(){var el=document.getElementById("raw-issue-buttons");
+var T={missing:{r:[["강조한 문제","결측값"],["위치","관측 2 · 수치 A"],["처리 방향","지우거나 값을 채움"]],t:"계산할 값이 없음 → 지우거나 값을 채움",n:"관측 2의 수치 A에는 계산할 값이 없다. 행을 지우거나 학습 자료에서 정한 값으로 채워야 모델이 계산할 수 있다."},
+outlier:{r:[["강조한 문제","이상치"],["위치","관측 3 · 수치 B"],["처리 방향","원인 확인 뒤 기준 결정"]],t:"다른 관측과 크게 떨어짐 → 원인과 기준",n:"관측 3의 수치 B는 다른 관측과 크게 떨어져 있다. 입력 오류인지 실제 값인지 원인을 확인한 뒤 처리 기준을 정한다."},
+scale:{r:[["강조한 문제","다른 값 범위"],["위치","수치 A와 수치 B 열"],["처리 방향","중심과 퍼짐 조정"]],t:"특성마다 다른 값 범위 → 중심과 퍼짐",n:"수치 A와 수치 B는 값의 범위가 달라 거리나 계수 계산에서 범위가 넓은 열이 더 크게 작용한다. 척도 조정으로 중심과 퍼짐을 맞춘다."},
+category:{r:[["강조한 문제","범주 값"],["위치","등급과 도시 열"],["처리 방향","부호화"]],t:"수치 연산의 입력이 아님 → 부호화",n:"등급과 도시는 수치 연산의 입력이 아니다. 범주 사이에 순서가 있는지에 따라 다른 부호화를 고른다."}};
+function render(){var v=el.value,t=T[v];document.querySelectorAll("#raw-matrix [data-kind]").forEach(function(g){g.classList.toggle("focus",g.dataset.kind===v);g.classList.toggle("muted",g.dataset.kind!==v);});document.getElementById("raw-focus-text").textContent=t.t;
+document.getElementById("read-1").innerHTML=t.r.map(function(p){return rd(p[0],p[1]);}).join("");document.getElementById("note-1").textContent=t.n;}
+el.addEventListener("change",render);render();}());
+(function(){var el=document.getElementById("fit-kind");
+var T={"num-impute":{r:[["열 종류","수치형 열"],["fit에서 저장","평균 또는 중앙값"],["적용 결과","결측 칸에 저장한 수치"]],n:"수치형 열의 결측값은 학습 자료에서 계산한 평균이나 중앙값으로 채운다. 새 자료의 결측 칸에도 같은 저장 값을 쓴다."},
+standardize:{r:[["열 종류","수치형 열"],["fit에서 저장","μⱼ · σⱼ"],["적용 결과","zᵢⱼ = (xᵢⱼ − μⱼ) / σⱼ"]],n:"표준화는 학습 자료에서 열마다 평균 μⱼ와 표준편차 σⱼ를 저장하고 zᵢⱼ = (xᵢⱼ − μⱼ) / σⱼ를 적용한다. 학습 자료의 변환 결과는 평균 0, 표준편차 1이다."},
+"cat-impute":{r:[["열 종류","범주형 열"],["fit에서 저장","가장 자주 나온 범주"],["적용 결과","결측 칸에 저장한 범주"]],n:"범주형 열에는 평균을 계산할 수 없으므로 학습 자료에서 가장 자주 나온 범주를 저장해 결측 칸을 채운다."}};
+function render(){var v=el.value,t=T[v];["num-impute","standardize","cat-impute"].forEach(function(k){document.getElementById("lane-"+k).classList.toggle("muted",k!==v);});
+document.getElementById("read-2").innerHTML=t.r.map(function(p){return rd(p[0],p[1]);}).join("");document.getElementById("note-2").textContent=t.n;}
+el.addEventListener("change",render);render();}());
+(function(){var el=document.getElementById("encoding-buttons");
+var T={ordinal:{r:[["부호화","순서형 부호화"],["표현","낮음 0 · 중간 1 · 높음 2"],["보존되는 관계","0 < 1 < 2 순서"]],n:"등급처럼 순서가 있는 범주는 0, 1, 2로 바꿔 순서를 수의 크기로 보존한다."},
+onehot:{r:[["부호화","one-hot encoding"],["표현","서울 (1,0) · 부산 (0,1)"],["보존되는 관계","범주마다 다른 축, 순서 없음"]],n:"도시처럼 순서가 없는 범주에 0, 1을 붙이면 없는 순서가 생긴다. one-hot encoding은 범주마다 다른 축을 두어 순서를 만들지 않는다."},
+unknown:{r:[["부호화","one-hot encoding · 새 범주"],["표현","새 범주 가 (0,0) · 새 범주 나 (0,0)"],["보존되는 관계","구분이 사라짐"]],n:"학습 자료에 없던 범주를 모두 (0,0)으로 두면 서로 다른 새 범주가 같은 표현이 된다. 범주 목록은 학습 자료에서 정해지므로 새 범주 처리 규칙이 따로 필요하다."}};
+function render(){var v=el.value,t=T[v];["ordinal","onehot","unknown"].forEach(function(k){document.getElementById("encoding-"+k).classList.toggle("muted",k!==v);});
+document.getElementById("read-3").innerHTML=t.r.map(function(p){return rd(p[0],p[1]);}).join("");document.getElementById("note-3").textContent=t.n;}
+el.addEventListener("change",render);render();}());
+
+}());
+</script>
+</body>
+</html>
