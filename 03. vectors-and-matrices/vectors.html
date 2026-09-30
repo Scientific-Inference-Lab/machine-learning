@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Vectors | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot.square{max-width:440px;min-width:300px;margin:0 auto}
+    .topic-plot .vec-u{stroke:var(--pnu-blue-dark);stroke-width:3;stroke-dasharray:7 5}
+    .topic-plot .vec-v{stroke:var(--pnu-blue);stroke-width:3}
+    .topic-plot .vec-sum{stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:3 4}
+    .topic-plot .arc{fill:none;stroke:var(--pnu-green);stroke-width:2}
+  </style>
+</head>
+<body class="visual-topic topic-vectors">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Vectors and Matrices</span><span class="nav-tag is-current" aria-current="page">Vectors</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Vectors and Matrices</p><h1 class="page-title">Vectors</h1><hr class="accent-rule"><p class="page-subtitle">벡터(vector)는 한 관측의 특성값을 정해진 순서로 담고, 행렬(matrix)은 관측을 행으로 쌓아 자료 전체를 담는다. 덧셈과 스칼라배는 같은 자리의 성분마다 적용된다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>벡터 x ∈ ℝᵖ</strong><span>성분 p개를 정해진 순서로 담는다. xⱼ는 j번째 특성의 값이다.</span></article><article class="summary-card"><strong>덧셈과 스칼라배</strong><span>같은 자리끼리 더하고, 수 하나를 모든 성분에 곱한다.</span></article><article class="summary-card"><strong>행렬 X ∈ ℝⁿˣᵖ</strong><span>관측 n개를 행으로, 특성 p개를 열로 모은 배열이다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">벡터의 덧셈은 같은 자리의 성분끼리 더한다</h2><p class="lead">v의 두 성분을 바꾸면 v 화살표, u + v 화살표, 성분별 합이 함께 바뀐다. u = (1, 2)ᵀ로 고정한다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="v1">v₁ <output id="v1-out" class="control-value" for="v1">2</output></label><input id="v1" type="range" min="-3" max="3" step="1" value="2"></div><div class="control-field"><label for="v2">v₂ <output id="v2-out" class="control-value" for="v2">−1</output></label><input id="v2" type="range" min="-3" max="3" step="1" value="-1"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="add-plot" class="topic-plot square" viewBox="0 0 300 300" role="img" aria-labelledby="add-title add-desc"><title id="add-title">벡터 덧셈</title><desc id="add-desc">u, v, u+v 화살표</desc></svg></div><figcaption class="visual-caption">눈금 한 칸이 1이다. 짙은 점선은 u, 파란 실선은 v, 초록 굵은 선은 u + v이며 회색 점선은 u 끝에서 v를 이어 붙인 경로다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">스칼라배는 크기를 바꾸고, 음수를 곱하면 방향이 반대가 된다</h2><p class="lead">α를 바꾸면 αu의 성분, 크기, 방향이 바뀐다. u = (2, 1)ᵀ로 고정한다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="alpha">스칼라 α <output id="alpha-out" class="control-value" for="alpha">1.5</output></label><input id="alpha" type="range" min="-2" max="2" step="0.5" value="1.5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="scale-plot" class="topic-plot square" viewBox="0 0 300 300" role="img" aria-labelledby="scale-title scale-desc"><title id="scale-title">스칼라배</title><desc id="scale-desc">u와 αu 화살표</desc></svg></div><figcaption class="visual-caption">짙은 점선은 u, 초록 굵은 선은 αu다. 눈금 한 칸이 1이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">관측을 행으로 쌓아야 X의 모양이 n × p가 된다</h2><p class="lead">배치와 성분 위치 i, j를 바꾸면 행렬의 모양과 x⁽ⁱ⁾ⱼ가 놓이는 칸, NumPy 첨자가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--triple"><div class="control-field"><label for="layout">배치</label><select id="layout"><option value="X">관측을 행으로 (X)</option><option value="XT">전치 (Xᵀ)</option></select></div><div class="control-field"><label for="mi">관측 i <output id="mi-out" class="control-value" for="mi">2</output></label><input id="mi" type="range" min="1" max="4" step="1" value="2"></div><div class="control-field"><label for="mj">특성 j <output id="mj-out" class="control-value" for="mj">3</output></label><input id="mj" type="range" min="1" max="3" step="1" value="3"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><table id="matrix" class="topic-table" aria-label="자료 행렬"></table></div><figcaption class="visual-caption">행 머리는 관측 또는 특성, 열 머리는 그 반대다. 파란 칸은 관측 i 한 줄, 초록 테두리 칸이 x⁽ⁱ⁾ⱼ다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../02. labels-structure-rewards/actions-and-rewards.html" rel="prev">이전 · Actions and Rewards</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../03. vectors-and-matrices/dot-products.html" rel="next">다음 · Dot Products</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  var pn = function (v) { return v < 0 ? "(" + neg(v) + ")" : neg(v); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  function markers(ids) {
+    var col = { blue: "#005baa", green: "#00a651", dark: "#003e74", red: "#b3261e", ink: "#5c6c7c" };
+    return "<defs>" + ids.map(function (k) { return '<marker id="m-' + k + '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="' + col[k] + '"/></marker>'; }).join("") + "</defs>";
+  }
+  function arrow(x1, y1, x2, y2, cls, m) { return (x1 === x2 && y1 === y2) ? "" : '<line class="' + cls + '" x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" marker-end="url(#m-' + m + ')"/>'; }
+  function grid(P, x0, x1, y0, y1) {
+    var s = "";
+    for (var x = x0; x <= x1; x++) s += '<line class="' + (x === 0 ? "axis" : "grid") + '" x1="' + P(x, y0)[0] + '" y1="' + P(x, y0)[1] + '" x2="' + P(x, y1)[0] + '" y2="' + P(x, y1)[1] + '"/>';
+    for (var y = y0; y <= y1; y++) s += '<line class="' + (y === 0 ? "axis" : "grid") + '" x1="' + P(x0, y)[0] + '" y1="' + P(x0, y)[1] + '" x2="' + P(x1, y)[0] + '" y2="' + P(x1, y)[1] + '"/>';
+    return s;
+  }
+  var r2 = function (v) { return neg(Math.round(v * 100) / 100); };
+
+  var P = function (x, y) { return [120 + 30 * x, 180 - 30 * y]; };
+  function renderAdd() {
+    var v = [Number($("v1").value), Number($("v2").value)], u = [1, 2], s = [u[0] + v[0], u[1] + v[1]];
+    $("v1-out").textContent = neg(v[0]); $("v2-out").textContent = neg(v[1]);
+    var o = P(0, 0), pu = P(u[0], u[1]), pv = P(v[0], v[1]), ps = P(s[0], s[1]);
+    var g = markers(["dark", "blue", "green"]) + grid(P, -4, 6, -4, 6);
+    g += '<title id="add-title">벡터 덧셈</title><desc id="add-desc">u=(1,2), v=(' + v.join(",") + '), u+v=(' + s.join(",") + ')</desc>';
+    g += arrow(pu[0], pu[1], ps[0], ps[1], "guide", "ink") + arrow(o[0], o[1], pu[0], pu[1], "vec-u", "dark") + arrow(o[0], o[1], pv[0], pv[1], "vec-v", "blue") + arrow(o[0], o[1], ps[0], ps[1], "vec-sum", "green");
+    $("add-plot").innerHTML = g;
+    show(1, [["u", "(1, 2)ᵀ"], ["v", "(" + neg(v[0]) + ", " + neg(v[1]) + ")ᵀ"], ["u + v", "(1 + " + pn(v[0]) + ", 2 + " + pn(v[1]) + ")ᵀ = (" + neg(s[0]) + ", " + neg(s[1]) + ")ᵀ"]],
+      "첫째 성분끼리 1 + " + pn(v[0]) + " = " + neg(s[0]) + ", 둘째 성분끼리 2 + " + pn(v[1]) + " = " + neg(s[1]) + "이다. 그림에서는 u의 끝에 v를 이어 붙인 끝점이 u + v의 끝점이다.");
+  }
+  function renderScale() {
+    var a = Number($("alpha").value), u = [2, 1], w = [a * u[0], a * u[1]], len = Math.abs(a) * Math.sqrt(5);
+    $("alpha-out").textContent = neg(a);
+    var o = P(0, 0), pu = P(u[0], u[1]), pw = P(w[0], w[1]);
+    var g = markers(["dark", "green"]) + grid(P, -4, 6, -4, 6);
+    g += '<title id="scale-title">스칼라배</title><desc id="scale-desc">u=(2,1), α=' + a + ', αu=(' + w.join(",") + ')</desc>';
+    g += arrow(o[0], o[1], pw[0], pw[1], "vec-sum", "green") + arrow(o[0], o[1], pu[0], pu[1], "vec-u", "dark");
+    $("scale-plot").innerHTML = g;
+    var dir = a > 0 ? "u와 같음" : a < 0 ? "u와 반대" : "영벡터라 방향 없음";
+    show(2, [["αu", "(" + r2(w[0]) + ", " + r2(w[1]) + ")ᵀ"], ["크기 |α|·‖u‖₂", r2(Math.abs(a)) + " × √5 ≈ " + len.toFixed(2)], ["방향", dir]],
+      a === 0 ? "α = 0이면 모든 성분이 0인 영벡터가 된다." : "α = " + neg(a) + "이면 두 성분에 모두 α를 곱해 크기가 |α| = " + r2(Math.abs(a)) + "배가 된다. " + (a < 0 ? "α가 음수이므로 화살표가 원점을 지나 반대쪽을 가리킨다." : "α가 양수이므로 방향은 u와 같다."));
+  }
+  var X = [[170, 68, 24], [158, 52, 31], [176, 74, 28], [165, 60, 22]], feat = ["키", "몸무게", "나이"];
+  function renderMatrix() {
+    var t = $("layout").value === "XT", i = Number($("mi").value), j = Number($("mj").value), h = "";
+    $("mi-out").textContent = i; $("mj-out").textContent = j;
+    if (!t) {
+      h = '<thead><tr><th scope="col">X</th>' + feat.map(function (f) { return '<th scope="col">' + f + "</th>"; }).join("") + "</tr></thead><tbody>";
+      X.forEach(function (row, r) { h += '<tr><th scope="row">관측 ' + (r + 1) + "</th>" + row.map(function (v, c) { return '<td class="' + (r + 1 === i ? "is-x" : "") + (r + 1 === i && c + 1 === j ? " is-on" : "") + '">' + v + "</td>"; }).join("") + "</tr>"; });
+    } else {
+      h = '<thead><tr><th scope="col">Xᵀ</th>' + X.map(function (_, r) { return '<th scope="col">관측 ' + (r + 1) + "</th>"; }).join("") + "</tr></thead><tbody>";
+      feat.forEach(function (f, c) { h += '<tr><th scope="row">' + f + "</th>" + X.map(function (row, r) { return '<td class="' + (r + 1 === i ? "is-x" : "") + (r + 1 === i && c + 1 === j ? " is-on" : "") + '">' + row[c] + "</td>"; }).join("") + "</tr>"; });
+    }
+    $("matrix").innerHTML = h + "</tbody>";
+    var val = X[i - 1][j - 1];
+    show(3, [["모양", t ? "3 × 4" : "4 × 3"], ["x⁽" + i + "⁾" + "₁₂₃"[j - 1], val + " (관측 " + i + "의 " + feat[j - 1] + ")"], ["칸 위치", t ? "(" + j + ", " + i + ")" : "(" + i + ", " + j + ")"], ["NumPy", t ? "X.T[" + (j - 1) + ", " + (i - 1) + "]" : "X[" + (i - 1) + ", " + (j - 1) + "]"]],
+      t ? "Xᵀ는 (i, j) 자리의 값을 (j, i) 자리로 옮겨 행이 특성, 열이 관측이 된다. 같은 자료를 눕혀 담으면 모양이 3 × 4로 바뀌므로 관측이 행이라는 기준과 X.shape를 먼저 확인한다."
+        : "관측 4개를 행으로, 특성 3개를 열로 쌓아 X ∈ ℝ⁴ˣ³이다. 관측 " + i + "의 한 줄이 행 x⁽" + i + "⁾ᵀ이고, 수식의 1부터 세는 첨자는 NumPy에서 0부터 센다.");
+  }
+  on("v1", renderAdd); on("v2", renderAdd); on("alpha", renderScale); on("layout", renderMatrix); on("mi", renderMatrix); on("mj", renderMatrix);
+  renderAdd(); renderScale(); renderMatrix();
+}());
+</script>
+</body>
+</html>

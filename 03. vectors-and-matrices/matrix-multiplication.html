@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Matrix Multiplication | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .shape-board{display:flex;align-items:center;justify-content:center;gap:18px;min-width:560px;padding:14px}
+    .shape-board .mat{display:grid;grid-template-columns:repeat(var(--cols),22px);gap:3px;padding:6px;border:2px solid transparent;border-radius:6px}
+    .shape-board .mat.is-bad{border-color:var(--alert-700)}
+    .shape-board .cell{width:22px;min-width:0;height:22px;padding:0;border:1px solid var(--line-200);border-radius:2px;background:var(--white)}
+    .shape-board .cell.is-on{background:var(--pnu-green)}
+    .shape-board figcaption,.shape-board .lab{text-align:center;font-size:14px;color:var(--ink-600)}
+    .shape-board .dim-ok{color:var(--pnu-green);font-weight:800}
+    .shape-board .dim-bad{color:var(--alert-700);font-weight:800}
+    .shape-board .op{font-size:22px;color:var(--ink-600)}
+    .topic-matrix-multiplication td.delta{color:var(--pnu-green);font-weight:800}
+  </style>
+</head>
+<body class="visual-topic topic-matrix-multiplication">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Vectors and Matrices</span><span class="nav-tag is-current" aria-current="page">Matrix Multiplication</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Vectors and Matrices</p><h1 class="page-title">Matrix Multiplication</h1><hr class="accent-rule"><p class="page-subtitle">행렬 곱은 왼쪽 행렬의 행과 오른쪽 행렬의 열 사이 내적을 결과의 성분으로 만든다. 같은 가중치 벡터를 자료 행렬의 모든 행에 적용하면 예측값 n개를 한 번에 얻는다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>모양 규칙</strong><span>(n × p)(p × k) = (n × k)이며 안쪽 차원이 같아야 한다.</span></article><article class="summary-card"><strong>Xθ + θ₀1ₙ</strong><span>각 행 x⁽ⁱ⁾ᵀ와 θ의 내적에 절편 θ₀을 더한 예측값 벡터다.</span></article><article class="summary-card"><strong>XΔθ + Δθ₀1ₙ</strong><span>θ가 Δθ, θ₀이 Δθ₀만큼 바뀔 때 관측별 예측값의 변화다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">행렬 곱은 왼쪽 열 수와 오른쪽 행 수가 같을 때만 정의된다</h2><p class="lead">두 행렬의 모양을 바꾸면 안쪽 차원의 일치 여부와 결과 행렬의 모양이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--wrap"><div class="control-field"><label for="an">A의 행 수 <output id="an-out" class="control-value" for="an">3</output></label><input id="an" type="range" min="1" max="5" step="1" value="3"></div><div class="control-field"><label for="ad">A의 열 수 <output id="ad-out" class="control-value" for="ad">2</output></label><input id="ad" type="range" min="1" max="5" step="1" value="2"></div><div class="control-field"><label for="bd">B의 행 수 <output id="bd-out" class="control-value" for="bd">2</output></label><input id="bd" type="range" min="1" max="5" step="1" value="2"></div><div class="control-field"><label for="bk">B의 열 수 <output id="bk-out" class="control-value" for="bk">1</output></label><input id="bk" type="range" min="1" max="5" step="1" value="1"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div id="shape-board" class="shape-board" role="img" aria-label="두 행렬과 결과의 모양"></div></div><figcaption class="visual-caption">칸 하나가 성분 하나다. A의 초록 행과 B의 초록 열의 내적이 결과의 초록 칸이 된다. 안쪽 차원이 다르면 빨간 테두리로 표시하고 결과를 만들지 않는다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">Xθ + θ₀1ₙ은 모든 관측에 같은 가중치를 적용한다</h2><p class="lead">가중치 θ₁, θ₂와 절편 θ₀을 바꾸면 두 관측의 내적, 예측값 ŷ, 기준값에서의 변화 XΔθ + Δθ₀1ₙ이 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--triple"><div class="control-field"><label for="th1">θ₁ <output id="th1-out" class="control-value" for="th1">3</output></label><input id="th1" type="range" min="-3" max="5" step="1" value="3"></div><div class="control-field"><label for="th2">θ₂ <output id="th2-out" class="control-value" for="th2">1</output></label><input id="th2" type="range" min="-3" max="5" step="1" value="1"></div><div class="control-field"><label for="th0">θ₀ <output id="th0-out" class="control-value" for="th0">2</output></label><input id="th0" type="range" min="-5" max="5" step="1" value="2"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><table id="pred-table" class="topic-table" aria-label="관측별 내적과 예측값"></table></div><figcaption class="visual-caption">X = [[6, 2], [4, 5]]의 두 행이 관측이다. 마지막 열은 기준 θ = (3, 1)ᵀ, θ₀ = 2일 때의 예측값 22, 19에서 달라진 양이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../03. vectors-and-matrices/dot-products.html" rel="prev">이전 · Dot Products</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../04. derivatives-and-probability/derivatives.html" rel="next">다음 · Derivatives</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  function mat(r, c, onRow, onCol, bad) {
+    var h = '<div class="mat' + (bad ? " is-bad" : "") + '" style="--cols:' + c + '">';
+    for (var i = 0; i < r; i++) for (var j = 0; j < c; j++) h += '<span class="cell' + ((onRow === i && onCol === undefined) || (onCol === j && onRow === undefined) || (onRow === i && onCol === j) ? " is-on" : "") + '"></span>';
+    return h + "</div>";
+  }
+  function renderShape() {
+    var an = Number($("an").value), ad = Number($("ad").value), bd = Number($("bd").value), bk = Number($("bk").value), ok = ad === bd;
+    ["an", "ad", "bd", "bk"].forEach(function (k) { $(k + "-out").textContent = $(k).value; });
+    var cls = ok ? "dim-ok" : "dim-bad";
+    var h = '<div>' + mat(an, ad, 0, undefined, !ok) + '<div class="lab">A: ' + an + ' × <span class="' + cls + '">' + ad + "</span></div></div>";
+    h += '<span class="op">×</span><div>' + mat(bd, bk, undefined, 0, !ok) + '<div class="lab">B: <span class="' + cls + '">' + bd + "</span> × " + bk + "</div></div>";
+    h += '<span class="op">=</span>' + (ok ? "<div>" + mat(an, bk, 0, 0) + '<div class="lab">AB: ' + an + " × " + bk + "</div></div>" : '<div class="lab dim-bad">정의할 수 없음</div>');
+    $("shape-board").innerHTML = h;
+    $("shape-board").setAttribute("aria-label", "A " + an + "×" + ad + ", B " + bd + "×" + bk + (ok ? ", 결과 " + an + "×" + bk : ", 정의할 수 없음"));
+    show(1, [["식", "(" + an + " × " + ad + ")(" + bd + " × " + bk + ")"], ["안쪽 차원", ad + ", " + bd + (ok ? " · 같음" : " · 다름")], ["결과 모양", ok ? an + " × " + bk : "정의할 수 없음"]],
+      ok ? "A의 한 행에 성분이 " + ad + "개, B의 한 열에도 " + bd + "개가 있어 자리를 맞춰 내적할 수 있다. 행 " + an + "개와 열 " + bk + "개의 조합마다 내적 하나가 나오므로 결과의 모양은 " + an + " × " + bk + "이다."
+        : "A의 행은 성분이 " + ad + "개인데 B의 열은 " + bd + "개라 대응시킬 자리가 없어 내적을 계산할 수 없다. NumPy에서는 ValueError가 난다.");
+  }
+  var X = [[6, 2], [4, 5]];
+  function renderPred() {
+    var t = [Number($("th1").value), Number($("th2").value)], t0 = Number($("th0").value), dt = [t[0] - 3, t[1] - 1], d0 = t0 - 2;
+    ["th1", "th2", "th0"].forEach(function (k) { $(k + "-out").textContent = neg($(k).value); });
+    var h = '<thead><tr><th scope="col">관측</th><th scope="col">x⁽ⁱ⁾</th><th scope="col">θᵀx⁽ⁱ⁾</th><th scope="col">+ θ₀</th><th scope="col">ŷ⁽ⁱ⁾</th><th scope="col">기준 대비 변화</th></tr></thead><tbody>', ys = [], ds = [];
+    X.forEach(function (x, i) {
+      var dotv = x[0] * t[0] + x[1] * t[1], y = dotv + t0, d = x[0] * dt[0] + x[1] * dt[1] + d0;
+      ys.push(y); ds.push(d);
+      h += '<tr><th scope="row">x⁽' + (i + 1) + "⁾</th><td>(" + x.join(", ") + ")ᵀ</td><td>" + x[0] + "(" + neg(t[0]) + ") + " + x[1] + "(" + neg(t[1]) + ") = " + neg(dotv) + "</td><td>" + neg(t0) + '</td><td class="is-y">' + neg(y) + '</td><td class="delta">' + (d > 0 ? "+" : "") + neg(d) + "</td></tr>";
+    });
+    $("pred-table").innerHTML = h + "</tbody>";
+    show(2, [["θ, θ₀", "(" + neg(t[0]) + ", " + neg(t[1]) + ")ᵀ, " + neg(t0)], ["ŷ = Xθ + θ₀1ₙ", "(" + neg(ys[0]) + ", " + neg(ys[1]) + ")ᵀ"], ["Δθ, Δθ₀", "(" + neg(dt[0]) + ", " + neg(dt[1]) + ")ᵀ, " + neg(d0)], ["XΔθ + Δθ₀1ₙ", "(" + neg(ds[0]) + ", " + neg(ds[1]) + ")ᵀ"]],
+      (dt[0] === 0 && dt[1] === 0 && d0 === 0) ? "θ = (3, 1)ᵀ, θ₀ = 2에서 두 행과 θ의 내적 20, 17에 2를 더해 ŷ = (22, 19)ᵀ다. 같은 θ를 두 행에 모두 적용하므로 관측이 늘어도 식은 Xθ + θ₀1ₙ 하나다."
+        : "θ가 기준에서 Δθ = (" + neg(dt[0]) + ", " + neg(dt[1]) + ")ᵀ, θ₀이 " + neg(d0) + "만큼 바뀌어 예측값은 관측마다 XΔθ + Δθ₀1ₙ = (" + neg(ds[0]) + ", " + neg(ds[1]) + ")ᵀ만큼 바뀐다. 각 행과 Δθ의 내적에 Δθ₀을 더한 값이 그 관측의 변화다.");
+  }
+  ["an", "ad", "bd", "bk"].forEach(function (k) { on(k, renderShape); });
+  ["th1", "th2", "th0"].forEach(function (k) { on(k, renderPred); });
+  renderShape(); renderPred();
+}());
+</script>
+</body>
+</html>

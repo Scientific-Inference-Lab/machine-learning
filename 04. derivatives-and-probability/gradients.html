@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gradients | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-gradients .plot{display:block;width:100%;min-width:560px;height:auto}
+    .topic-gradients .axis{stroke:var(--ink-600);stroke-width:1.2}
+    .topic-gradients .level{fill:none;stroke:var(--line-200);stroke-width:2}
+    .topic-gradients .grad{stroke:var(--pnu-blue-dark);stroke-width:4}
+    .topic-gradients .dir{stroke:var(--pnu-green);stroke-width:4;stroke-dasharray:10 6}
+    .topic-gradients .label{font-size:14px;fill:var(--ink-900)}
+    .topic-gradients .vector-board{display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:12px;min-width:560px}
+    .topic-gradients .vector-card{padding:16px;border:1px solid var(--line-200);border-radius:10px;background:var(--surface-050)}
+    .topic-gradients .vector-card strong{display:block;margin-bottom:6px;color:var(--pnu-blue-dark)}
+  </style>
+</head>
+<body class="visual-topic topic-gradients">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Derivatives and Probability</span><span class="nav-tag is-current" aria-current="page">Gradients</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Derivatives and Probability</p><h1 class="page-title">Gradients</h1><hr class="accent-rule"><p class="page-subtitle">그래디언트(gradient)는 각 변수에 대한 편미분을 모은 벡터다. 그래디언트와 이동 방향의 내적이 그 방향으로 조금 움직일 때 함수의 1차 변화를 정한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>그래디언트 ∇J</strong><span>(∂J/∂θ₁, ∂J/∂θ₂)이며 함수가 가장 빠르게 커지는 방향을 가리킨다.</span></article><article class="summary-card"><strong>방향 변화 ∇J·d</strong><span>방향 d로 조금 움직일 때 J의 1차 변화다.</span></article><article class="summary-card"><strong>접선 방향</strong><span>∇J와 내적이 0인 방향은 1차 변화가 없다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">같은 점에서 방향에 따라 1차 변화가 달라진다</h2><p class="lead">J(θ₁, θ₂) = θ₁² + 2θ₂²에서 점과 이동 방향을 바꾸면 그래디언트, 방향 벡터, 두 벡터의 내적과 변화 방향이 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--triple">
+        <div class="control-field"><label for="x">θ₁ <output id="x-out" class="control-value" for="x">1</output></label><input id="x" type="range" min="-2" max="2" step="1" value="1"></div>
+        <div class="control-field"><label for="y">θ₂ <output id="y-out" class="control-value" for="y">1</output></label><input id="y" type="range" min="-2" max="2" step="1" value="1"></div>
+        <div class="control-field"><label for="direction-choice">이동 방향 d</label><select id="direction-choice"><option value="gradient">∇J 방향</option><option value="negative">−∇J 방향</option><option value="tangent">접선 방향 (2θ₂, −θ₁)</option></select></div>
+      </div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="grad-plot" class="plot" viewBox="0 0 640 360" role="img" aria-labelledby="grad-title grad-desc"><title id="grad-title">등고선과 그래디언트</title><desc id="grad-desc">현재 점의 그래디언트와 이동 방향</desc></svg></div><figcaption class="visual-caption">회색 타원은 J가 같은 점을 이은 등고선이다. 짙은 실선 화살표는 ∇J, 초록 점선 화살표는 고른 방향 d다. 둘 다 방향만 보이도록 길이를 고정했고, 두 방향이 같을 때도 겹쳐 가리지 않게 d를 더 짧게 그렸다.</figcaption></figure>
+      <div id="grad-read" class="visual-readouts" aria-live="polite"></div>
+      <p id="grad-note" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">1차 변화가 0이어도 실제 변화는 남을 수 있다</h2><p class="lead">점 (1, 1)에서 그래디언트 (2, 4)와 직교하는 방향 d = (2, −1)로 0.1만큼 움직인다.</p></header>
+    <div class="visual-lab">
+      <figure class="visual-figure"><div class="visual-frame"><div class="vector-board"><div class="vector-card"><strong>시작</strong>(1, 1), J = 3</div><div class="vector-card"><strong>작은 이동</strong>0.1 × (2, −1)</div><div class="vector-card"><strong>도착</strong>(1.2, 0.9), J = 3.06</div></div></div><figcaption class="visual-caption">세 카드는 시작점, 이동량, 도착점과 각 점의 함수값이다.</figcaption></figure>
+      <p class="visual-note">1차 근사는 0.1 × ∇J·d = 0.1 × (2·2 + 4·(−1)) = 0이지만 실제 변화는 3.06 − 3 = 0.06이다. 직교 방향에서는 선형 항만 0이 되고 유한한 이동에서는 이차항이 남는다.</p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="derivatives.html" rel="prev">이전 · Derivatives</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="probability-distributions.html" rel="next">다음 · Probability Distributions</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  var cx = 320, cy = 180, u = 48;
+  var neg = function (v) { return String(v).replace("-", "−"); };
+  var vec = function (v) { return "(" + neg(v[0]) + ", " + neg(v[1]) + ")"; };
+  function arrow(cls, x0, y0, v, id, size) {
+    var len = Math.hypot(v[0], v[1]);
+    if (!len) return "";
+    var ex = x0 + v[0] / len * size, ey = y0 - v[1] / len * size;
+    return '<line class="' + cls + '" x1="' + x0 + '" y1="' + y0 + '" x2="' + ex + '" y2="' + ey + '" marker-end="url(#' + id + ')"/>';
+  }
+  function render() {
+    var a = Number($("x").value), b = Number($("y").value), g = [2 * a, 4 * b], c = $("direction-choice").value;
+    var d = c === "gradient" ? g : c === "negative" ? [-g[0], -g[1]] : [2 * b, -a];
+    var dot = g[0] * d[0] + g[1] * d[1];
+    $("x-out").textContent = neg(a); $("y-out").textContent = neg(b);
+    var s = '<title id="grad-title">등고선과 그래디언트</title><desc id="grad-desc">점 ' + vec([a, b]) + '에서 ∇J ' + vec(g) + ', 방향 d ' + vec(d) + ', 내적 ' + neg(dot) + '</desc>';
+    s += '<defs><marker id="m-grad" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="14" refY="8" orient="auto"><path d="M0 0L16 8L0 16Z" fill="#003e74"/></marker><marker id="m-dir" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="14" refY="8" orient="auto"><path d="M0 0L16 8L0 16Z" fill="#00a651"/></marker></defs>';
+    [1, 3, 6, 9, 12].forEach(function (k) { s += '<ellipse class="level" cx="' + cx + '" cy="' + cy + '" rx="' + Math.sqrt(k) * u + '" ry="' + Math.sqrt(k / 2) * u + '"/>'; });
+    s += '<line class="axis" x1="40" y1="' + cy + '" x2="600" y2="' + cy + '"/><line class="axis" x1="' + cx + '" y1="10" x2="' + cx + '" y2="350"/><text class="label" x="604" y="' + (cy + 5) + '">θ₁</text><text class="label" x="' + (cx + 14) + '" y="22">θ₂</text>';
+    var px = cx + a * u, py = cy - b * u;
+    s += arrow("grad", px, py, g, "m-grad", 72) + arrow("dir", px, py, d, "m-dir", 42);
+    s += '<circle cx="' + px + '" cy="' + py + '" r="7" fill="#1f2d3d"/>';
+    $("grad-plot").innerHTML = s;
+    var change = dot > 0 ? "증가" : dot < 0 ? "감소" : "1차 변화 없음";
+    $("grad-read").innerHTML = rd("점과 J", vec([a, b]) + ", J = " + (a * a + 2 * b * b)) + rd("그래디언트 ∇J", vec(g)) + rd("방향 d", vec(d)) + rd("∇J·d", neg(dot) + " · " + change);
+    $("grad-note").textContent = a === 0 && b === 0
+      ? "원점에서는 ∇J = (0, 0)이라 어느 방향으로 움직여도 1차 변화가 0이다. 이 점에서 J가 최소다."
+      : c === "gradient" ? "d = ∇J이면 ∇J·d = ‖∇J‖² = " + dot + "로 양수라 J가 증가한다. 같은 길이의 방향 중 증가가 가장 크다."
+      : c === "negative" ? "d = −∇J이면 ∇J·d = −‖∇J‖² = " + neg(dot) + "로 음수라 J가 감소한다. 경사하강법이 이 방향으로 움직인다."
+      : "접선 방향 (2θ₂, −θ₁)에서는 ∇J와의 내적이 2θ₁·2θ₂ + 4θ₂·(−θ₁) = 0이라 1차 변화가 없다. 화살표가 등고선을 따라간다.";
+  }
+  ["x", "y", "direction-choice"].forEach(function (id) { $(id).addEventListener("input", render); });
+  $("direction-choice").addEventListener("change", render);
+  render();
+}());
+</script>
+</body>
+</html>

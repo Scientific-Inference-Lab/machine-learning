@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Actions And Rewards | 기계학습개론</title><link rel="icon" href="data:,">
+  <title>Actions and Rewards | 기계학습개론</title><link rel="icon" href="data:,">
   <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
   <style>
 
@@ -10,8 +10,8 @@
 </head>
 <body class="visual-topic topic-actions-and-rewards">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
-<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Labels, Structure, Rewards</span><span class="nav-tag is-current" aria-current="page">Actions And Rewards</span></nav></div></div></header>
-<section class="hero topic-hero"><div class="container"><p class="eyebrow">Labels, Structure, Rewards</p><h1 class="page-title">Actions And Rewards</h1><hr class="accent-rule"><p class="page-subtitle">강화학습(reinforcement learning)에서 에이전트는 상태를 바탕으로 행동을 고르고, 환경은 상태를 바꾸며 보상(reward)을 돌려준다. 보상은 곧바로 올 수도, 여러 행동 뒤에 올 수도 있다.</p></div></section>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Labels, Structure, Rewards</span><span class="nav-tag is-current" aria-current="page">Actions and Rewards</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Labels, Structure, Rewards</p><h1 class="page-title">Actions and Rewards</h1><hr class="accent-rule"><p class="page-subtitle">강화학습(reinforcement learning)에서 에이전트는 상태를 바탕으로 행동을 고르고, 환경은 상태를 바꾸며 보상(reward)을 돌려준다. 보상은 곧바로 올 수도, 여러 행동 뒤에 올 수도 있다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>상태 sₜ와 행동 aₜ</strong><span>시점 t의 상황과 그때 에이전트가 고른 행동이다.</span></article><article class="summary-card"><strong>보상 rₜ</strong><span>선택한 행동의 결과를 평가하는 수치다.</span></article><article class="summary-card"><strong>지연된 보상</strong><span>여러 번 행동한 뒤에야 관측되는 보상이다.</span></article></div></section>
 
@@ -35,7 +35,7 @@
     </div>
   </section>
 
-  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../02. labels-structure-rewards/supervised-data.html" rel="prev">이전 · 지도학습 자료</a><a class="pager-link is-all" href="../index.html">전체</a></nav>
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../02. labels-structure-rewards/supervised-data.html" rel="prev">이전 · Supervised Data</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../03. vectors-and-matrices/vectors.html" rel="next">다음 · Vectors</a></nav>
 </main>
 <footer class="site-footer">
   <div class="container footer-inner">
@@ -80,7 +80,7 @@
     y: { boxes: [["is-x", "입력 x", "사용자, 항목, 상황"], ["is-on", "출력 y", "클릭했는가"], ["", "모델", "x와 y의 관계를 학습"], ["", "예측값 ŷ", "새 추천의 클릭 여부"]],
       rows: [["클릭 기록의 역할", "예측할 출력 y"], ["학습 목표", "새 입력의 출력 예측"], ["주어진 정보", "각 입력에 대응하는 정답"], ["학습 유형", "지도학습"]],
       note: "클릭 여부를 예측할 값으로 쓰면 기록은 입력마다 짝지어진 정답 y다. 모델은 새 사용자·항목·상황에서 클릭 여부를 맞히도록 학습한다." },
-    r: { boxes: [["is-x", "관측", "현재 사용자와 상황"], ["", "행동", "보여 줄 콘텐츠 선택"], ["is-on", "보상", "추천 뒤 클릭하면 +1"], ["", "다음 선택", "보상이 커지도록 조정"]],
+    r: { boxes: [["is-x", "상태", "현재 사용자와 상황"], ["", "행동", "보여 줄 콘텐츠 선택"], ["is-on", "보상", "추천 뒤 클릭하면 +1"], ["", "다음 선택", "보상이 커지도록 조정"]],
       rows: [["클릭 기록의 역할", "선택을 평가하는 보상"], ["학습 목표", "앞으로 받을 보상이 커지도록 선택"], ["주어진 정보", "선택한 행동의 결과만"], ["학습 유형", "강화학습"]],
       note: "같은 클릭을 추천 선택의 점수로 쓰면 보상이 된다. 보상은 고른 콘텐츠의 결과만 알려 준다. 보여 주지 않은 콘텐츠가 더 나았는지, 곧 무엇이 최선의 행동이었는지는 직접 알려 주지 않는다." }
   };

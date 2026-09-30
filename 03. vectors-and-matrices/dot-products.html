@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dot Products | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot.square{max-width:440px;min-width:300px;margin:0 auto}
+    .topic-plot .vec-u{stroke:var(--pnu-blue-dark);stroke-width:3;stroke-dasharray:7 5}
+    .topic-plot .vec-v{stroke:var(--pnu-blue);stroke-width:3}
+    .topic-plot .vec-sum{stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:3 4}
+    .topic-plot .arc{fill:none;stroke:var(--pnu-green);stroke-width:2}
+    .topic-plot#angle-plot{max-width:620px;margin:0 auto}
+    .topic-dot-products tr.total td,.topic-dot-products tr.total th{font-weight:800;background:var(--surface-050)}
+  </style>
+</head>
+<body class="visual-topic topic-dot-products">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Vectors and Matrices</span><span class="nav-tag is-current" aria-current="page">Dot Products</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Vectors and Matrices</p><h1 class="page-title">Dot Products</h1><hr class="accent-rule"><p class="page-subtitle">내적(dot product)은 두 벡터의 같은 자리 성분을 곱해 모두 더한 수 하나다. 특성과 가중치의 내적은 선형 점수가 되고, 내적의 부호와 코사인 유사도는 두 벡터의 방향 관계를 나타낸다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>내적 uᵀv</strong><span>u₁v₁ + u₂v₂ + ⋯ + uₚvₚ이며 성분 수가 같아야 정의된다.</span></article><article class="summary-card"><strong>벡터의 크기 ‖u‖₂</strong><span>√(u·u)이며 원점에서 끝점까지의 거리다.</span></article><article class="summary-card"><strong>코사인 유사도</strong><span>(u·v) / (‖u‖₂‖v‖₂)이며 크기의 영향을 뺀 방향 관계다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">가중치와 특성값을 자리마다 곱해 더하면 점수 하나가 된다</h2><p class="lead">결석 횟수 x₂와 결석 가중치 θ₂를 바꾸면 그 항과 점수 θᵀx가 함께 바뀐다. 다른 두 특성은 고정한다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="x2">결석 횟수 x₂ <output id="x2-out" class="control-value" for="x2">2</output></label><input id="x2" type="range" min="0" max="6" step="1" value="2"></div><div class="control-field"><label for="t2">결석 가중치 θ₂ <output id="t2-out" class="control-value" for="t2">−5</output></label><input id="t2" type="range" min="-8" max="4" step="1" value="-5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><table id="score-table" class="topic-table" aria-label="특성, 가중치, 항의 값"></table></div><figcaption class="visual-caption">행마다 xⱼ × θⱼ가 항의 값이고, 마지막 행이 세 항의 합 θᵀx다. 초록 테두리 칸이 조작하는 결석 항이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">내적의 부호는 사이각을, 코사인 유사도는 크기를 뺀 방향을 나타낸다</h2><p class="lead">v의 각도와 크기를 바꾸면 u·v, 두 크기의 곱, cos ϑ가 바뀐다. u = (3, 0)ᵀ로 고정한다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="ang">v의 각도 <output id="ang-out" class="control-value" for="ang">45°</output></label><input id="ang" type="range" min="0" max="180" step="15" value="45"></div><div class="control-field"><label for="len">v의 크기 <output id="len-out" class="control-value" for="len">2</output></label><input id="len" type="range" min="1" max="4" step="0.5" value="2"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="angle-plot" class="topic-plot" viewBox="0 0 360 220" role="img" aria-labelledby="ang-title ang-desc"><title id="ang-title">두 벡터와 사이각</title><desc id="ang-desc">u와 v</desc></svg></div><figcaption class="visual-caption">짙은 점선은 u, 파란 실선은 v, 초록 호는 사이각 ϑ다. 눈금 한 칸이 1이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../03. vectors-and-matrices/vectors.html" rel="prev">이전 · Vectors</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../03. vectors-and-matrices/matrix-multiplication.html" rel="next">다음 · Matrix Multiplication</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  function markers(ids) {
+    var col = { blue: "#005baa", green: "#00a651", dark: "#003e74", red: "#b3261e", ink: "#5c6c7c" };
+    return "<defs>" + ids.map(function (k) { return '<marker id="m-' + k + '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="' + col[k] + '"/></marker>'; }).join("") + "</defs>";
+  }
+  function arrow(x1, y1, x2, y2, cls, m) { return (x1 === x2 && y1 === y2) ? "" : '<line class="' + cls + '" x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" marker-end="url(#m-' + m + ')"/>'; }
+  function grid(P, x0, x1, y0, y1) {
+    var s = "";
+    for (var x = x0; x <= x1; x++) s += '<line class="' + (x === 0 ? "axis" : "grid") + '" x1="' + P(x, y0)[0] + '" y1="' + P(x, y0)[1] + '" x2="' + P(x, y1)[0] + '" y2="' + P(x, y1)[1] + '"/>';
+    for (var y = y0; y <= y1; y++) s += '<line class="' + (y === 0 ? "axis" : "grid") + '" x1="' + P(x0, y)[0] + '" y1="' + P(x0, y)[1] + '" x2="' + P(x1, y)[0] + '" y2="' + P(x1, y)[1] + '"/>';
+    return s;
+  }
+  var r2 = function (v) { return neg(Math.round(v * 100) / 100); };
+
+  function renderScore() {
+    var x = [6, Number($("x2").value), 4], t = [8, Number($("t2").value), 3], names = ["공부 시간", "결석 횟수", "과제 제출"];
+    $("x2-out").textContent = x[1]; $("t2-out").textContent = neg(t[1]);
+    var terms = x.map(function (v, k) { return v * t[k]; }), sum = terms.reduce(function (a, b) { return a + b; }, 0);
+    var h = '<thead><tr><th scope="col">특성</th><th scope="col">값 xⱼ</th><th scope="col">가중치 θⱼ</th><th scope="col">항 xⱼθⱼ</th></tr></thead><tbody>';
+    names.forEach(function (n, k) { h += '<tr><th scope="row">' + n + "</th><td>" + x[k] + "</td><td>" + neg(t[k]) + '</td><td class="' + (k === 1 ? "is-on" : "") + '">' + neg(terms[k]) + "</td></tr>"; });
+    $("score-table").innerHTML = h + '<tr class="total"><th scope="row">합계</th><td></td><td></td><td>θᵀx = ' + neg(sum) + "</td></tr></tbody>";
+    show(1, [["결석 항", x[1] + " × " + neg(t[1]) + " = " + neg(terms[1])], ["θᵀx", "48 + " + (terms[1] < 0 ? "(" + neg(terms[1]) + ")" : neg(terms[1])) + " + 12 = " + neg(sum)], ["결석 1회 증가 시 점수 변화", (t[1] > 0 ? "+" : "") + neg(t[1])]],
+      t[1] < 0 ? "결석 가중치가 음수(θ₂ = " + neg(t[1]) + ")라 결석이 1회 늘 때마다 점수가 " + Math.abs(t[1]) + "만큼 줄어든다. 값이 양수인 특성도 가중치가 음수면 점수를 낮춘다."
+        : t[1] === 0 ? "가중치가 0이면 결석 횟수가 얼마든 그 항은 0이라 점수에 영향이 없다."
+        : "결석 가중치가 양수(θ₂ = " + t[1] + ")이면 결석이 늘수록 점수가 커진다. 가중치의 부호가 특성이 점수를 올리는지 내리는지를 정한다.");
+  }
+  var P = function (x, y) { return [180 + 40 * x, 180 - 40 * y]; };
+  function renderAngle() {
+    var deg = Number($("ang").value), L = Number($("len").value), rad = deg * Math.PI / 180;
+    var v = [L * Math.cos(rad), L * Math.sin(rad)], dot = 3 * v[0], prod = 3 * L, cos = dot / prod;
+    if (Math.abs(dot) < 1e-9) dot = 0;
+    $("ang-out").textContent = deg + "°"; $("len-out").textContent = L;
+    var o = P(0, 0), pu = P(3, 0), pv = P(v[0], v[1]);
+    var g = markers(["dark", "blue"]) + grid(P, -4, 4, -1, 4);
+    g += '<title id="ang-title">두 벡터와 사이각</title><desc id="ang-desc">사이각 ' + deg + '도, 내적 ' + dot.toFixed(2) + '</desc>';
+    var ar = 30, ex = o[0] + ar * Math.cos(rad), ey = o[1] - ar * Math.sin(rad);
+    if (deg > 0) g += '<path class="arc" d="M' + (o[0] + ar) + " " + o[1] + " A" + ar + " " + ar + " 0 0 0 " + ex.toFixed(1) + " " + ey.toFixed(1) + '"/>';
+    g += arrow(o[0], o[1], pu[0], pu[1], "vec-u", "dark") + arrow(o[0], o[1], pv[0].toFixed(1), pv[1].toFixed(1), "vec-v", "blue");
+    $("angle-plot").innerHTML = g;
+    var rel = deg === 0 ? "같은 방향 · 양수" : deg < 90 ? "예각 · 양수" : deg === 90 ? "직각 · 0" : deg < 180 ? "둔각 · 음수" : "반대 방향 · 음수";
+    show(2, [["u·v", r2(dot)], ["‖u‖₂‖v‖₂", "3 × " + L + " = " + r2(prod)], ["cos ϑ", r2(cos)], ["관계", rel]],
+      (deg === 90 ? "두 벡터가 직교해 내적이 0이다. " : deg < 90 ? "사이각이 90°보다 작아 내적이 양수다. " : "사이각이 90°보다 커 내적이 음수다. ") + "v의 크기를 바꾸면 u·v와 크기의 곱이 같은 비율로 변하므로 cos ϑ는 " + r2(cos) + "에서 달라지지 않는다. 코사인 유사도는 크기의 영향을 뺀 방향만 비교한다.");
+  }
+  on("x2", renderScore); on("t2", renderScore); on("ang", renderAngle); on("len", renderAngle);
+  renderScore(); renderAngle();
+}());
+</script>
+</body>
+</html>

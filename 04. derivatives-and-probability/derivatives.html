@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Derivatives | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-derivatives .plot{display:block;width:100%;min-width:560px;height:auto}
+    .topic-derivatives .axis{stroke:var(--ink-600);stroke-width:1.5}
+    .topic-derivatives .grid{stroke:var(--line-200)}
+    .topic-derivatives .curve{fill:none;stroke:var(--pnu-blue);stroke-width:4}
+    .topic-derivatives .secant{stroke:var(--pnu-green);stroke-width:3}
+    .topic-derivatives .tangent{stroke:var(--pnu-blue-dark);stroke-width:2;stroke-dasharray:8 6}
+    .topic-derivatives .tangent.solid{stroke-dasharray:none;stroke-width:3}
+    .topic-derivatives .point{fill:var(--pnu-blue-dark)}
+    .topic-derivatives .point.moving{fill:var(--pnu-green)}
+    .topic-derivatives .label{font-size:14px;fill:var(--ink-900)}
+  </style>
+</head>
+<body class="visual-topic topic-derivatives">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Derivatives and Probability</span><span class="nav-tag is-current" aria-current="page">Derivatives</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Derivatives and Probability</p><h1 class="page-title">Derivatives</h1><hr class="accent-rule"><p class="page-subtitle">두 점 사이의 평균변화율은 간격 h가 0에 가까워질수록 한 점의 도함수(derivative)에 가까워진다. 도함수의 부호와 크기는 θ를 조금 늘릴 때 J가 어느 방향으로 얼마나 빨리 변하는지를 말한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>평균변화율</strong><span>두 점을 잇는 할선의 기울기 [J(θ+h) − J(θ)] / h다.</span></article><article class="summary-card"><strong>도함수 J′(θ)</strong><span>h가 0으로 갈 때 평균변화율의 극한이며 접선의 기울기다.</span></article><article class="summary-card"><strong>부호와 크기</strong><span>부호는 θ가 늘 때 J의 증가·감소, 절댓값은 그 변화의 빠르기다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">h가 작아지면 할선이 접선에 가까워진다</h2><p class="lead">J(θ) = (θ − 2)²에서 기준점 θ = 4를 고정하고 간격 h를 바꾸면 두 번째 점, 할선, 평균변화율 4 + h가 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="h">간격 h <output id="h-out" class="control-value" for="h">−1.0</output></label><input id="h" type="range" min="-1" max="1" step="0.1" value="-1"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="secant-plot" class="plot" viewBox="0 0 640 300" role="img" aria-labelledby="sec-title sec-desc"><title id="sec-title">포물선과 할선</title><desc id="sec-desc">기준점 θ=4와 θ=4+h를 잇는 할선</desc></svg></div><figcaption class="visual-caption">파란 곡선은 J(θ), 짙은 점선은 θ = 4의 접선(기울기 4), 초록 실선은 두 점을 잇는 할선이다. 초록 점이 θ = 4 + h다.</figcaption></figure>
+      <div id="secant-read" class="visual-readouts" aria-live="polite"></div>
+      <p id="secant-note" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">도함수의 부호와 크기가 국소 변화를 정한다</h2><p class="lead">평가점 θ를 바꾸면 J′(θ) = 2(θ − 2)에 따라 접선의 기울기, J가 변하는 방향, 변화의 빠르기가 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="theta">평가점 θ <output id="theta-out" class="control-value" for="theta">1</output></label><input id="theta" type="range" min="0" max="4" step="0.5" value="1"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="tangent-plot" class="plot" viewBox="0 0 640 300" role="img" aria-labelledby="tan-title tan-desc"><title id="tan-title">평가점의 접선</title><desc id="tan-desc">선택한 θ에서 J(θ)의 접선</desc></svg></div><figcaption class="visual-caption">초록 점이 평가점이고 짙은 선이 그 점의 접선이다.</figcaption></figure>
+      <div id="tangent-read" class="visual-readouts" aria-live="polite"></div>
+      <p id="tangent-note" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../03. vectors-and-matrices/matrix-multiplication.html" rel="prev">이전 · Matrix Multiplication</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="gradients.html" rel="next">다음 · Gradients</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  var J = function (t) { return (t - 2) * (t - 2); };
+  var X = function (t) { return 60 + t * 110; };            // θ ∈ [-0.2, 5.2]
+  var Y = function (j) { return 270 - j * 26; };            // J ∈ [0, 9.8]
+  var fmt = function (v) { return (Math.round(v * 100) / 100).toString().replace("-", "−"); };
+  function base(title, desc) {
+    var s = '<title id="' + title[0] + '">' + title[1] + '</title><desc id="' + desc[0] + '">' + desc[1] + '</desc>';
+    s += '<line class="axis" x1="40" y1="270" x2="630" y2="270"/><line class="axis" x1="60" y1="10" x2="60" y2="280"/>';
+    for (var t = 0; t <= 5; t += 1) s += '<line class="grid" x1="' + X(t) + '" y1="266" x2="' + X(t) + '" y2="274"/><text class="label" x="' + X(t) + '" y="294" text-anchor="middle">' + t + '</text>';
+    var pts = [];
+    for (var u = -0.2; u <= 5.2001; u += 0.05) pts.push(X(u).toFixed(1) + "," + Y(J(u)).toFixed(1));
+    s += '<polyline class="curve" points="' + pts.join(" ") + '"/><text class="label" x="90" y="30">J(θ)</text>';
+    return s;
+  }
+  function line(cls, t0, slope) {
+    var a = t0 - 1.6, b = t0 + 1.6;
+    return '<line class="' + cls + '" x1="' + X(a) + '" y1="' + Y(J(t0) + slope * (a - t0)) + '" x2="' + X(b) + '" y2="' + Y(J(t0) + slope * (b - t0)) + '"/>';
+  }
+  function renderSecant() {
+    var h = Number($("h").value), t2 = 4 + h, rate = h === 0 ? 4 : (J(t2) - J(4)) / h;
+    $("h-out").textContent = h.toFixed(1).replace("-", "−");
+    var s = base(["sec-title", "포물선과 할선"], ["sec-desc", "기준점 θ=4와 두 번째 점 θ=" + fmt(t2) + " 사이의 할선, 기울기 " + fmt(rate)]);
+    s += line("tangent", 4, 4);
+    if (h !== 0) s += line("secant", 4, rate);
+    s += '<circle class="point" cx="' + X(4) + '" cy="' + Y(J(4)) + '" r="7"/><circle class="point moving" cx="' + X(t2) + '" cy="' + Y(J(t2)) + '" r="7"/>';
+    $("secant-plot").innerHTML = s;
+    $("secant-read").innerHTML = rd("두 번째 점", "θ = " + fmt(t2) + ", J = " + fmt(J(t2))) + rd("평균변화율", h === 0 ? "정의되지 않음 · 극한값 4" : "[J(" + fmt(t2) + ") − J(4)] / " + (h < 0 ? "(" + fmt(h) + ")" : fmt(h)) + " = " + fmt(rate)) + rd("J′(4)와의 차이", h === 0 ? "0" : fmt(rate - 4));
+    $("secant-note").textContent = h === 0
+      ? "h = 0이면 두 점이 겹쳐 할선을 그을 수 없다. 이때의 기울기는 h를 0으로 보낸 극한값 J′(4) = 4로 정의한다."
+      : "h = " + fmt(h) + "이면 평균변화율은 4 + h = " + fmt(rate) + "이다. " + (h < 0 ? "h가 음수이면 평균변화율이 4보다 작은 쪽에서" : "h가 양수이면 평균변화율이 4보다 큰 쪽에서") + " 접선 기울기 4에 가까워지고, |h|가 작을수록 할선이 접선에 붙는다.";
+  }
+  function renderTangent() {
+    var t = Number($("theta").value), d = 2 * (t - 2);
+    $("theta-out").textContent = t;
+    var s = base(["tan-title", "평가점의 접선"], ["tan-desc", "θ=" + t + "에서 기울기 " + fmt(d) + "인 접선"]);
+    s += line("tangent", t, d).replace("tangent", "tangent solid");
+    s += '<circle class="point moving" cx="' + X(t) + '" cy="' + Y(J(t)) + '" r="8"/>';
+    $("tangent-plot").innerHTML = s;
+    var dir = d < 0 ? "감소" : d > 0 ? "증가" : "1차 변화 없음";
+    $("tangent-read").innerHTML = rd("함수값 J(θ)", fmt(J(t))) + rd("도함수 J′(θ)", "2(" + t + " − 2) = " + fmt(d)) + rd("θ가 늘 때 J", dir) + rd("변화의 빠르기 |J′(θ)|", fmt(Math.abs(d)));
+    $("tangent-note").textContent = d === 0
+      ? "θ = 2에서 J′(θ) = 0이다. 접선이 수평이라 θ를 조금 움직여도 1차 변화가 없고, 이 점에서 J가 최소다."
+      : "θ − 2의 부호가 J′의 부호를 정한다. θ = " + t + "에서 J′ = " + fmt(d) + "이므로 θ를 조금 늘리면 J는 " + dir + "하며, 변화의 빠르기는 |J′| = " + fmt(Math.abs(d)) + "이다. 함수값 J(θ)가 양수인지와 도함수의 부호는 서로 다른 질문이다.";
+  }
+  $("h").addEventListener("input", renderSecant);
+  $("theta").addEventListener("input", renderTangent);
+  renderSecant(); renderTangent();
+}());
+</script>
+</body>
+</html>

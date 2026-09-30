@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Probability Distributions | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-probability-distributions .mass-board{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:end;height:250px;min-width:420px;padding:10px 20px 0}
+    .topic-probability-distributions .mass{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:230px}
+    .topic-probability-distributions .bar{width:90px;height:calc(var(--h, 0) * 180px);min-height:2px;background:var(--pnu-blue)}
+    .topic-probability-distributions .mass strong{margin-bottom:6px;font-family:var(--mono)}
+    .topic-probability-distributions .sample-strip{display:flex;gap:6px;flex-wrap:wrap;padding:12px}
+    .topic-probability-distributions .sample-strip span{width:38px;height:38px;display:grid;place-items:center;border:2px solid var(--line-200);border-radius:50%;font-weight:800}
+    .topic-probability-distributions .sample-strip span.used{border-color:var(--pnu-blue);background:var(--pnu-blue-tint)}
+    .topic-probability-distributions .sample-strip span.unused{color:var(--ink-600);border-style:dashed}
+    .topic-probability-distributions .plot{display:block;width:100%;min-width:560px;height:auto}
+    .topic-probability-distributions .axis{stroke:var(--ink-600)}
+    .topic-probability-distributions .base{fill:none;stroke:var(--ink-600);stroke-width:3;stroke-dasharray:8 6}
+    .topic-probability-distributions .cur{fill:none;stroke:var(--pnu-green);stroke-width:4}
+    .topic-probability-distributions .label{font-size:14px;fill:var(--ink-900)}
+  </style>
+</head>
+<body class="visual-topic topic-probability-distributions">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Derivatives and Probability</span><span class="nav-tag is-current" aria-current="page">Probability Distributions</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Derivatives and Probability</p><h1 class="page-title">Probability Distributions</h1><hr class="accent-rule"><p class="page-subtitle">확률분포의 매개변수는 가능한 값에 확률을 어떻게 나눌지 정한다. 매개변수를 바꾸면 확률, 기댓값(expectation), 분산과 곡선의 중심·퍼짐이 함께 바뀐다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>베르누이 분포</strong><span>P(X = 1) = p, P(X = 0) = 1 − p다.</span></article><article class="summary-card"><strong>통계량</strong><span>관측값으로 계산한 수이며 분포의 매개변수와 다른 대상이다.</span></article><article class="summary-card"><strong>분산</strong><span>기댓값에서 떨어진 거리의 제곱의 기댓값이다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">p가 두 확률과 분산을 정한다</h2><p class="lead">p를 바꾸면 X = 0과 X = 1의 확률 막대, 기댓값 p, 분산 p(1 − p)가 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="p">p <output id="p-out" class="control-value" for="p">0.5</output></label><input id="p" type="range" min="0" max="1" step="0.1" value="0.5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div id="mass-board" class="mass-board" role="img" aria-label="X가 0과 1일 확률 막대"><div class="mass"><strong id="mass0-label"></strong><div id="bar0" class="bar"></div><span>X = 0</span></div><div class="mass"><strong id="mass1-label"></strong><div id="bar1" class="bar"></div><span>X = 1</span></div></div></div><figcaption class="visual-caption">두 막대의 높이는 각 값의 확률이며 합은 항상 1이다.</figcaption></figure>
+      <div id="bernoulli-read" class="visual-readouts" aria-live="polite"></div>
+      <p id="bernoulli-note" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">같은 p에서도 표본 비율은 관측마다 다르다</h2><p class="lead">p = 0.5인 동전을 던진 기록에서 앞의 관측 몇 개를 쓰는지 바꾸면 앞면(H)의 개수와 표본 비율 p̂가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="n">사용할 관측 수 n <output id="n-out" class="control-value" for="n">5</output></label><input id="n" type="range" min="1" max="10" step="1" value="5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div id="sample-strip" class="sample-strip" role="img" aria-label="H와 T 관측 순서"></div></div><figcaption class="visual-caption">파란 원은 계산에 쓰는 앞의 n개 관측이고 점선 원은 쓰지 않는 관측이다.</figcaption></figure>
+      <div id="sample-read" class="visual-readouts" aria-live="polite"></div>
+      <p id="sample-note" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">평균은 중심을, 표준편차는 퍼짐을 바꾼다</h2><p class="lead">μ와 σ를 바꾸면 가우스 분포의 밀도 곡선이 기준 N(0, 1)에 비해 옮겨지고 넓어지거나 좁아진다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double">
+        <div class="control-field"><label for="mu">평균 μ <output id="mu-out" class="control-value" for="mu">1</output></label><input id="mu" type="range" min="-2" max="2" step="0.5" value="1"></div>
+        <div class="control-field"><label for="sigma">표준편차 σ <output id="sigma-out" class="control-value" for="sigma">1.5</output></label><input id="sigma" type="range" min="0.5" max="2" step="0.25" value="1.5"></div>
+      </div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="gauss-plot" class="plot" viewBox="0 0 640 280" role="img" aria-labelledby="gauss-title gauss-desc"><title id="gauss-title">가우스 밀도 곡선</title><desc id="gauss-desc">기준과 현재 분포</desc></svg></div><figcaption class="visual-caption">회색 점선은 기준 N(0, 1), 초록 실선은 고른 μ와 σ의 밀도 곡선이다. 두 곡선 아래 넓이는 모두 1이다.</figcaption></figure>
+      <div id="gauss-read" class="visual-readouts" aria-live="polite"></div>
+      <p id="gauss-note" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="gradients.html" rel="prev">이전 · Gradients</a><a class="pager-link is-all" href="../index.html">전체</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  var f2 = function (v) { return (Math.round(v * 100) / 100).toFixed(2).replace("-", "−"); };
+  function bernoulli() {
+    var p = Number($("p").value), q = 1 - p, v = p * q;
+    $("p-out").textContent = p.toFixed(1);
+    $("bar0").style.setProperty("--h", q); $("bar1").style.setProperty("--h", p);
+    $("mass0-label").textContent = q.toFixed(1); $("mass1-label").textContent = p.toFixed(1);
+    $("mass-board").setAttribute("aria-label", "P(X=0) " + q.toFixed(1) + ", P(X=1) " + p.toFixed(1));
+    $("bernoulli-read").innerHTML = rd("P(X = 1)", p.toFixed(2)) + rd("P(X = 0)", q.toFixed(2)) + rd("기댓값 E[X]", p.toFixed(2)) + rd("분산 p(1 − p)", f2(v));
+    $("bernoulli-note").textContent = p === 0 || p === 1
+      ? "p = " + p + "이면 한 결과만 가능해 퍼짐이 없으므로 분산이 0이다."
+      : p === 0.5 ? "p = 0.5에서 두 결과의 확률이 같고 분산 0.25가 가장 크다."
+      : "p = " + p.toFixed(1) + "이면 X = " + (p > 0.5 ? 1 : 0) + "이 더 가능성이 크고, 분산 p(1 − p) = " + f2(v) + "이다. 분산은 0과 최댓값 0.25 사이에 있다.";
+  }
+  var seq = ["H", "T", "H", "H", "T", "T", "H", "T", "H", "H"];
+  function sample() {
+    var n = Number($("n").value), heads = seq.slice(0, n).filter(function (x) { return x === "H"; }).length, ph = heads / n;
+    $("n-out").textContent = n;
+    $("sample-strip").innerHTML = seq.map(function (v, i) { return '<span class="' + (i < n ? "used" : "unused") + '">' + v + "</span>"; }).join("");
+    $("sample-strip").setAttribute("aria-label", "관측 " + seq.join(" ") + " 가운데 앞의 " + n + "개 사용");
+    $("sample-read").innerHTML = rd("H 개수", heads + " / " + n) + rd("표본 비율 p̂", ph.toFixed(3)) + rd("p = 0.5와의 차이", f2(ph - 0.5));
+    $("sample-note").textContent = "앞의 " + n + "개 중 H가 " + heads + "개이므로 p̂ = " + heads + "/" + n + " = " + ph.toFixed(3) + "이다. p = 0.5는 분포의 매개변수이고 p̂는 이 표본에서 계산한 통계량이라 관측 수에 따라 달라진다.";
+  }
+  var X = function (x) { return 40 + (x + 5) * 56; };
+  var Y = function (y) { return 250 - y * 290; };
+  var pdf = function (x, m, s) { return Math.exp(-0.5 * Math.pow((x - m) / s, 2)) / (s * Math.sqrt(2 * Math.PI)); };
+  function curve(cls, m, s) {
+    var pts = [];
+    for (var x = -5; x <= 5.001; x += 0.05) pts.push(X(x).toFixed(1) + "," + Math.max(10, Y(pdf(x, m, s))).toFixed(1));
+    return '<polyline class="' + cls + '" points="' + pts.join(" ") + '"/>';
+  }
+  function gauss() {
+    var m = Number($("mu").value), s = Number($("sigma").value), peak = pdf(m, m, s);
+    $("mu-out").textContent = String(m).replace("-", "−"); $("sigma-out").textContent = s.toFixed(2);
+    var svg = '<title id="gauss-title">가우스 밀도 곡선</title><desc id="gauss-desc">기준 N(0,1)과 μ=' + m + ', σ=' + s + '인 분포</desc>';
+    svg += '<line class="axis" x1="30" y1="250" x2="620" y2="250"/>';
+    for (var t = -4; t <= 4; t += 2) svg += '<text class="label" x="' + X(t) + '" y="272" text-anchor="middle">' + String(t).replace("-", "−") + '</text>';
+    svg += curve("base", 0, 1) + curve("cur", m, s);
+    svg += '<line class="axis" x1="' + X(m) + '" y1="250" x2="' + X(m) + '" y2="' + Math.max(10, Y(peak)) + '" stroke-dasharray="3 4"/>';
+    $("gauss-plot").innerHTML = svg;
+    $("gauss-read").innerHTML = rd("중심 μ", String(m).replace("-", "−") + (m === 0 ? " · 기준과 같음" : m < 0 ? " · 기준보다 왼쪽" : " · 기준보다 오른쪽")) + rd("퍼짐 σ", s.toFixed(2) + (s === 1 ? " · 기준과 같음" : s < 1 ? " · 기준보다 좁음" : " · 기준보다 넓음")) + rd("최고 밀도 1/(σ√2π)", peak.toFixed(3));
+    $("gauss-note").textContent = "μ는 곡선의 중심 위치만 정하고 모양은 바꾸지 않는다. σ는 퍼짐을 정하며, 넓이가 1로 유지되므로 σ가 커질수록 최고 밀도가 낮아진다. 지금은 μ = " + String(m).replace("-", "−") + ", σ = " + s.toFixed(2) + ", 최고 밀도 " + peak.toFixed(3) + "이다.";
+  }
+  $("p").addEventListener("input", bernoulli); $("n").addEventListener("input", sample);
+  $("mu").addEventListener("input", gauss); $("sigma").addEventListener("input", gauss);
+  bernoulli(); sample(); gauss();
+}());
+</script>
+</body>
+</html>

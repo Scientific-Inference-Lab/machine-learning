@@ -19,7 +19,7 @@
     <header class="example-header"><h2 class="section-title">같은 추천 기록도 목표에 따라 다른 학습 문제가 된다</h2><p class="lead">학습 목표를 바꾸면 기록의 각 열이 맡는 역할과 학습에 필요한 값이 바뀐다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="goal">학습 목표</label><select id="goal"><option value="predict">다음 클릭 예측</option><option value="group">비슷한 사용자 찾기</option><option value="act">보여 줄 콘텐츠 선택</option></select></div></div>
-      <figure class="visual-figure"><div class="visual-frame"><table class="topic-table" aria-label="추천 기록과 열의 역할"><thead><tr><th scope="col">사용자</th><th scope="col">항목</th><th scope="col">상황</th><th scope="col">사건</th><th scope="col">시각</th></tr><tr id="role-row"></tr></thead><tbody><tr><td>사용자 017</td><td>항목 B</td><td>모바일, 저녁</td><td>클릭</td><td>20:14</td></tr><tr><td>사용자 017</td><td>항목 C</td><td>모바일, 저녁</td><td>건너뜀</td><td>20:15</td></tr><tr><td>사용자 204</td><td>항목 B</td><td>웹, 아침</td><td>조회</td><td>08:31</td></tr></tbody></table></div><figcaption class="visual-caption">표는 추천 기록 세 건이다. 둘째 머리행은 고른 목표에서 각 열의 역할이며, 파란 칸은 모델이 받는 값, 초록 칸은 학습 기준이 되는 값이다.</figcaption></figure>
+      <figure class="visual-figure"><div class="visual-frame"><table class="topic-table" aria-label="추천 기록과 열의 역할"><thead><tr><th scope="col">사용자</th><th scope="col">항목</th><th scope="col">상황</th><th scope="col">사건</th><th scope="col">시각</th></tr><tr id="role-row"></tr></thead><tbody><tr><td>사용자 017</td><td>항목 B</td><td>모바일, 저녁</td><td>클릭</td><td>20:14</td></tr><tr><td>사용자 017</td><td>항목 C</td><td>모바일, 저녁</td><td>건너뜀</td><td>20:15</td></tr><tr><td>사용자 204</td><td>항목 B</td><td>웹, 아침</td><td>건너뜀</td><td>08:31</td></tr></tbody></table></div><figcaption class="visual-caption">표는 추천 기록 세 건이다. 둘째 머리행은 고른 목표에서 각 열의 역할이며, 파란 칸은 모델이 받는 값, 초록 칸은 학습 기준이 되는 값이다.</figcaption></figure>
       <div id="read-1" class="visual-readouts" aria-live="polite"></div>
       <p id="note-1" class="visual-note"></p>
     </div>
@@ -35,7 +35,7 @@
     </div>
   </section>
 
-  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../01. learning-from-data/learning-types.html" rel="prev">이전 · 학습 유형</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../02. labels-structure-rewards/supervised-data.html" rel="next">다음 · 지도학습 자료</a></nav>
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../01. learning-from-data/learning-types.html" rel="prev">이전 · Learning Types</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../02. labels-structure-rewards/supervised-data.html" rel="next">다음 · Supervised Data</a></nav>
 </main>
 <footer class="site-footer">
   <div class="container footer-inner">
@@ -59,10 +59,10 @@
     predict: { cls: ["is-x", "is-x", "is-x", "is-y", ""], txt: ["입력 x", "입력 x", "입력 x", "출력 y", "사용 안 함"],
       rows: [["모델이 받는 값", "사용자, 항목, 상황"], ["함께 관측되는 값", "사건 열의 클릭 결과 y"], ["학습 유형", "지도학습"]],
       note: "다음 클릭을 예측하려면 과거 사례마다 클릭 결과가 기록되어 있어야 한다. 사용자·항목·상황이 입력 x, 사건 열의 클릭 결과가 출력 y가 된다." },
-    group: { cls: ["is-x", "is-x", "", "is-x", ""], txt: ["행동 벡터", "행동 벡터", "사용 안 함", "행동 벡터", "사용 안 함"],
-      rows: [["모델이 받는 값", "사용자별 행동 벡터"], ["함께 관측되는 값", "정답 출력 없음"], ["학습 유형", "비지도학습"]],
-      note: "비슷한 사용자를 묶는 데는 정답 출력이 필요 없다. 사용자마다 어떤 항목에 어떻게 반응했는지를 모은 행동의 유사성만 쓴다." },
-    act: { cls: ["is-x", "is-y", "is-x", "is-y", "is-x"], txt: ["관측", "행동", "관측", "보상", "순서"],
+    group: { cls: ["is-x", "is-x", "", "is-x", ""], txt: ["이용 기록", "이용 기록", "사용 안 함", "이용 기록", "사용 안 함"],
+      rows: [["모델이 받는 값", "사용자 이용 기록 벡터"], ["함께 관측되는 값", "정답 출력 없음"], ["학습 유형", "비지도학습"]],
+      note: "비슷한 사용자를 묶는 데는 정답 출력이 필요 없다. 사용자마다 어떤 항목에 어떻게 반응했는지를 모은 이용 기록의 유사성만 쓴다." },
+    act: { cls: ["is-x", "is-y", "is-x", "is-y", "is-x"], txt: ["상태", "행동", "상태", "보상", "순서"],
       rows: [["모델이 받는 값", "현재 사용자와 상황"], ["함께 관측되는 값", "행동 이후 보상"], ["학습 유형", "강화학습"]],
       note: "콘텐츠를 고르면 사용자의 반응이 보상으로 돌아오고, 그 선택이 다음에 관측할 자료까지 바꾼다. 항목은 에이전트의 행동, 사건은 그 행동의 보상이다." }
   };
