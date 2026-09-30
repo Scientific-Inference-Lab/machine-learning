@@ -19,3 +19,15 @@ Sources are credited on the relevant slides. The following licenses apply to the
 - [scikit-learn MOOC](https://inria.github.io/scikit-learn-mooc/) — [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Its figures are used or adapted with slide-level attribution.
 - [An Introduction to Statistical Learning with Applications in Python](https://www.statlearning.com/resources-python) — figures are used with textbook citation under the source site's teaching/presentation terms.
 - [Google Colab](https://colab.research.google.com/) — the introduction PDF shows a screenshot of its introductory notebook on slide 23. Google retains its rights; no open license for that screenshot is asserted here.
+
+## References
+
+Google. (n.d.). *Welcome to Colab!* [Interactive notebook]. https://colab.research.google.com/notebooks/welcome.ipynb
+
+Inria. (n.d.). *Machine learning in Python with scikit-learn* [Online course]. https://inria.github.io/scikit-learn-mooc/
+
+James, G., Witten, D., Hastie, T., Tibshirani, R., & Taylor, J. (2023). *An introduction to statistical learning: With applications in Python*. Springer. https://www.statlearning.com/
+
+Massachusetts Institute of Technology. (2026). *6.390: Introduction to machine learning* [Course notes]. https://introml.mit.edu/notes/
+
+Zhang, A., Lipton, Z. C., Li, M., & Smola, A. J. (2023). *Dive into deep learning*. Cambridge University Press. https://d2l.ai/

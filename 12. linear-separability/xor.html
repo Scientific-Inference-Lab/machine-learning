@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>XOR | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .cur{fill:var(--pnu-green)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:4 4}
+    .topic-plot .res-pos{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res-neg{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:5 3}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot.plane{max-width:460px;min-width:320px;margin:0 auto}
+    .topic-plot .pos-cell{fill:var(--pnu-green);fill-opacity:.13}
+    .topic-plot .neg-cell{fill:var(--pnu-blue);fill-opacity:.10}
+    .topic-plot .boundary{stroke:var(--pnu-blue-dark);stroke-width:3}
+    .topic-plot .wvec{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .p-pos{fill:var(--white);stroke:var(--pnu-green);stroke-width:3.5}
+    .topic-plot .p-neg{fill:var(--pnu-blue-dark)}
+    .topic-plot .p-bad{stroke:var(--alert-700);stroke-width:3;fill:none}
+    .topic-plot .p-cur{stroke:var(--pnu-green);stroke-width:3;fill:none;stroke-dasharray:4 3}
+    .xor-pair{display:grid;grid-template-columns:320px 1fr;gap:14px;align-items:center;min-width:700px}
+    .xor-pair .topic-plot{min-width:0;max-width:320px}
+    .xor-pair .topic-table{min-width:0}
+  </style>
+</head>
+<body class="visual-topic topic-xor">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">One Line Is Not Enough</span><span class="nav-tag is-current" aria-current="page">XOR</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">One Line Is Not Enough</p><h1 class="page-title">XOR</h1><hr class="accent-rule"><p class="page-subtitle">XOR 자료는 두 입력이 서로 다를 때만 +1이어서 같은 범주가 대각선에 놓인다. 네 부등식이 동시에 성립할 수 없으므로 어떤 직선으로도 분리되지 않지만, 곱 특성 x₁x₂를 더하면 선형 경계로 나눌 수 있다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>XOR</strong><span>(0, 1)과 (1, 0)은 +1, (0, 0)과 (1, 1)은 −1이다.</span></article><article class="summary-card"><strong>부등식의 모순</strong><span>b &lt; 0, w₁ + b &gt; 0, w₂ + b &gt; 0, w₁ + w₂ + b &lt; 0은 함께 성립하지 않는다.</span></article><article class="summary-card"><strong>특성 확장 φ(x)</strong><span>(x₁, x₂, x₁x₂)로 표현을 바꾸면 평면 하나로 가를 수 있다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">XOR의 네 부등식은 동시에 성립하지 않는다</h2><p class="lead">w₁, w₂, b를 바꾸면 네 관측이 요구하는 부등식 가운데 성립하는 것이 바뀌지만, 네 개가 한꺼번에 성립하는 경우는 없다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--triple"><div class="control-field"><label for="xw1">w₁ <output id="xw1-out" class="control-value" for="xw1">1</output></label><input id="xw1" type="range" min="-2" max="2" step="0.25" value="1"></div><div class="control-field"><label for="xw2">w₂ <output id="xw2-out" class="control-value" for="xw2">1</output></label><input id="xw2" type="range" min="-2" max="2" step="0.25" value="1"></div><div class="control-field"><label for="xb">b <output id="xb-out" class="control-value" for="xb">−0.5</output></label><input id="xb" type="range" min="-2" max="2" step="0.25" value="-0.5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div class="xor-pair"><svg id="xor-plane" class="topic-plot plane" viewBox="0 0 320 320" role="img" aria-labelledby="xp-title xp-desc"><title id="xp-title">XOR 자료와 경계</title><desc id="xp-desc">네 점과 경계</desc></svg><table id="ineq-table" class="topic-table" aria-label="관측별 부등식과 성립 여부"></table></div></div><figcaption class="visual-caption">왼쪽: 빈 원은 +1, 채운 원은 −1, 빨간 원은 정답 쪽에 있지 않은 관측이다. 오른쪽 표는 각 관측이 요구하는 부등식과 현재 계수에서의 성립 여부이며 빨간 글자가 성립하지 않는 부등식이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">곱 특성을 더하면 XOR도 선형 점수 하나로 나뉜다</h2><p class="lead">입력 표현을 바꾸면 사용할 수 있는 특성, 점수식, 네 관측의 점수와 올바른 분류 수가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="rep">입력 표현</label><select id="rep"><option value="raw">원래 입력 (x₁, x₂)</option><option value="phi">확장 특성 φ(x) = (x₁, x₂, x₁x₂)</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div class="xor-pair"><svg id="rep-plane" class="topic-plot plane" viewBox="0 0 320 320" role="img" aria-labelledby="rp2-title rp2-desc"><title id="rp2-title">입력 공간의 판정 영역</title><desc id="rp2-desc">판정 영역</desc></svg><table id="rep-table" class="topic-table" aria-label="관측별 특성과 점수"></table></div></div><figcaption class="visual-caption">왼쪽은 원래 입력 평면에서 본 판정 영역이다. 초록 칠이 +1, 파란 칠이 −1로 예측하는 곳이다. 오른쪽 표는 관측별 x₁x₂, 점수, 예측이며 빨간 글자가 틀린 예측이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../12. linear-separability/linear-separability.html" rel="prev">이전 · Linear Separability</a><a class="pager-link is-all" href="../index.html">전체</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  function plane(P, x0, x1, y0, y1, w, b, n) {
+    var s = "", dx = (x1 - x0) / n, dy = (y1 - y0) / n;
+    for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) {
+      var cx = x0 + (i + 0.5) * dx, cy = y0 + (j + 0.5) * dy, sc = w[0] * cx + w[1] * cy + b, a = P(x0 + i * dx, y0 + (j + 1) * dy), c = P(x0 + (i + 1) * dx, y0 + j * dy);
+      if (w[0] === 0 && w[1] === 0 && b === 0) continue;
+      s += '<rect class="' + (sc >= 0 ? "pos-cell" : "neg-cell") + '" x="' + a[0].toFixed(1) + '" y="' + a[1].toFixed(1) + '" width="' + (c[0] - a[0] + 0.3).toFixed(1) + '" height="' + (c[1] - a[1] + 0.3).toFixed(1) + '"/>';
+    }
+    return s;
+  }
+  function gridlines(P, x0, x1, y0, y1, step) {
+    var s = "";
+    for (var x = Math.ceil(x0); x <= x1; x += step) s += '<line class="' + (x === 0 ? "axis" : "grid") + '" x1="' + P(x, y0)[0] + '" y1="' + P(x, y0)[1] + '" x2="' + P(x, y1)[0] + '" y2="' + P(x, y1)[1] + '"/>';
+    for (var y = Math.ceil(y0); y <= y1; y += step) s += '<line class="' + (y === 0 ? "axis" : "grid") + '" x1="' + P(x0, y)[0] + '" y1="' + P(x0, y)[1] + '" x2="' + P(x1, y)[0] + '" y2="' + P(x1, y)[1] + '"/>';
+    return s;
+  }
+  function boundary(P, x0, x1, y0, y1, w, b) {
+    var pts = [];
+    if (w[1] !== 0) [x0, x1].forEach(function (x) { var y = -(w[0] * x + b) / w[1]; if (y >= y0 - 1e-9 && y <= y1 + 1e-9) pts.push([x, y]); });
+    if (w[0] !== 0) [y0, y1].forEach(function (y) { var x = -(w[1] * y + b) / w[0]; if (x >= x0 - 1e-9 && x <= x1 + 1e-9) pts.push([x, y]); });
+    var best = null, far = 1e-9;
+    for (var i = 0; i < pts.length; i++) for (var j = i + 1; j < pts.length; j++) {
+      var dd = Math.hypot(pts[i][0] - pts[j][0], pts[i][1] - pts[j][1]);
+      if (dd > far) { far = dd; best = [pts[i], pts[j]]; }
+    }
+    if (!best) return "";
+    var a = P(best[0][0], best[0][1]), c = P(best[1][0], best[1][1]);
+    return '<line class="boundary" x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + c[0].toFixed(1) + '" y2="' + c[1].toFixed(1) + '"/>';
+  }
+  function point(P, x, y, lab, extra) {
+    var p = P(x, y);
+    return '<circle class="' + (lab > 0 ? "p-pos" : "p-neg") + '" cx="' + p[0] + '" cy="' + p[1] + '" r="8"/>' + (extra ? '<circle class="' + extra + '" cx="' + p[0] + '" cy="' + p[1] + '" r="14"/>' : "");
+  }
+  var n2 = function (v) { return neg(Math.round(v * 100) / 100); };
+  var sgn = function (s) { return s >= 0 ? "+1" : "−1"; };
+
+  var sets = { AND: [-1, -1, -1, 1], OR: [-1, 1, 1, 1], XOR: [-1, 1, 1, -1] }, X4 = [[0, 0], [0, 1], [1, 0], [1, 1]];
+  var P = function (x, y) { return [80 + 160 * x, 240 - 160 * y]; };
+
+  var lab = sets.XOR, req = ["b < 0", "w₂ + b > 0", "w₁ + b > 0", "w₁ + w₂ + b < 0"];
+  function renderIneq() {
+    var w = [Number($("xw1").value), Number($("xw2").value)], b = Number($("xb").value), ok = 0, rows = "";
+    ["xw1", "xw2", "xb"].forEach(function (id) { $(id + "-out").textContent = neg($(id).value); });
+    var g = '<title id="xp-title">XOR 자료와 경계</title>';
+    g += plane(P, -0.4, 1.4, -0.4, 1.4, w, b, 18) + gridlines(P, -0.4, 1.4, -0.4, 1.4, 1) + boundary(P, -0.4, 1.4, -0.4, 1.4, w, b);
+    X4.forEach(function (x, i) {
+      var s = w[0] * x[0] + w[1] * x[1] + b, hold = lab[i] * s > 0;
+      if (hold) ok++;
+      g += point(P, x[0], x[1], lab[i], hold ? "" : "p-bad");
+      rows += '<tr><th scope="row">(' + x.join(", ") + ")</th><td>" + (lab[i] > 0 ? "+1" : "−1") + "</td><td>" + req[i] + '</td><td class="' + (hold ? "is-y" : "is-alert") + '">' + neg(n2(s)) + (lab[i] > 0 ? " > 0" : " < 0") + (hold ? " 성립" : " 불성립") + "</td></tr>";
+    });
+    $("xor-plane").innerHTML = g + '<desc id="xp-desc">성립 ' + ok + '/4</desc>';
+    $("ineq-table").innerHTML = '<thead><tr><th scope="col">관측</th><th scope="col">정답</th><th scope="col">필요한 부등식</th><th scope="col">현재</th></tr></thead><tbody>' + rows + "</tbody>";
+    show(1, [["성립한 부등식", ok + " / 4"], ["b와 w₁ + w₂ + b", neg(b) + " · " + n2(w[0] + w[1] + b)]],
+      "(0, 1)과 (1, 0)의 두 부등식을 더하면 w₁ + w₂ + 2b > 0이다. (0, 0)에서 b < 0이면 w₁ + w₂ + b > −b > 0이 되어 (1, 1)의 w₁ + w₂ + b < 0과 모순이다. 지금은 " + ok + "개가 성립하며, 어떤 계수로도 4개가 함께 성립하지는 않는다. 그래서 퍼셉트론은 XOR에서 갱신 0회인 에포크에 도달하지 못하고 별도의 종료 조건이 필요하다.");
+  }
+  function renderRep() {
+    var phi = $("rep").value === "phi", rows = "", ok = 0;
+    var score = phi ? function (x) { return x[0] + x[1] - 2 * x[0] * x[1] - 0.5; } : function (x) { return x[0] + x[1] - 0.5; };
+    var g = '<title id="rp2-title">입력 공간의 판정 영역</title>', n = 36, x0 = -0.4, x1 = 1.4;
+    for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) {
+      var cx = x0 + (i + 0.5) * (x1 - x0) / n, cy = x0 + (j + 0.5) * (x1 - x0) / n, a = P(x0 + i * (x1 - x0) / n, x0 + (j + 1) * (x1 - x0) / n), c = P(x0 + (i + 1) * (x1 - x0) / n, x0 + j * (x1 - x0) / n);
+      g += '<rect class="' + (score([cx, cy]) >= 0 ? "pos-cell" : "neg-cell") + '" x="' + a[0].toFixed(1) + '" y="' + a[1].toFixed(1) + '" width="' + (c[0] - a[0] + 0.3).toFixed(1) + '" height="' + (c[1] - a[1] + 0.3).toFixed(1) + '"/>';
+    }
+    g += gridlines(P, x0, x1, x0, x1, 1);
+    X4.forEach(function (x, k) {
+      var s = score(x), yh = s >= 0 ? 1 : -1, good = yh === lab[k];
+      if (good) ok++;
+      g += point(P, x[0], x[1], lab[k], good ? "" : "p-bad");
+      rows += '<tr><th scope="row">(' + x.join(", ") + ")</th><td>" + (x[0] * x[1]) + "</td><td>" + neg(s) + "</td><td>" + (lab[k] > 0 ? "+1" : "−1") + '</td><td class="' + (good ? "is-y" : "is-alert") + '">' + (yh > 0 ? "+1" : "−1") + "</td></tr>";
+    });
+    $("rep-plane").innerHTML = g + '<desc id="rp2-desc">' + (phi ? "확장 특성" : "원래 입력") + ', 올바른 분류 ' + ok + '/4</desc>';
+    $("rep-table").innerHTML = '<thead><tr><th scope="col">관측</th><th scope="col">x₁x₂</th><th scope="col">점수 s</th><th scope="col">정답</th><th scope="col">예측</th></tr></thead><tbody>' + rows + "</tbody>";
+    show(2, [["사용한 특성", phi ? "x₁, x₂, x₁x₂" : "x₁, x₂"], ["점수식", phi ? "s = x₁ + x₂ − 2x₁x₂ − 0.5" : "s = x₁ + x₂ − 0.5 (OR 경계)"], ["올바른 분류", ok + " / 4"]],
+      phi ? "x₁x₂는 (1, 1)에서만 1이라 이 관측만 점수에서 2를 뺀다. 확장한 3차원 특성 공간에서는 평면 하나로 네 점이 모두 맞고, 원래 평면에서는 s = −2(x₁ − 0.5)(x₂ − 0.5)이므로 경계가 두 직선 x₁ = 0.5와 x₂ = 0.5이고, 두 좌표 가운데 하나만 0.5보다 큰 영역이 +1이다. 이 경계는 직선 하나가 아니다."
+        : "원래 입력의 직선으로는 OR 경계처럼 (0, 0)만 떼어 내도 (1, 1)이 +1 쪽에 남아 3개만 맞는다. x₁이 늘 때 정답이 바뀌는 방향이 x₂에 따라 반대라, 상수 계수 w₁ 하나로 두 변화를 함께 나타낼 수 없다.");
+  }
+  ["xw1", "xw2", "xb"].forEach(function (id) { on(id, renderIneq); }); on("rep", renderRep);
+  renderIneq(); renderRep();
+}());
+</script>
+</body>
+</html>

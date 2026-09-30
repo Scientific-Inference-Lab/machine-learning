@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Perceptron Prediction | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .cur{fill:var(--pnu-green)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:4 4}
+    .topic-plot .res-pos{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res-neg{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:5 3}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot.plane{max-width:460px;min-width:320px;margin:0 auto}
+    .topic-plot .pos-cell{fill:var(--pnu-green);fill-opacity:.13}
+    .topic-plot .neg-cell{fill:var(--pnu-blue);fill-opacity:.10}
+    .topic-plot .boundary{stroke:var(--pnu-blue-dark);stroke-width:3}
+    .topic-plot .wvec{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .p-pos{fill:var(--white);stroke:var(--pnu-green);stroke-width:3.5}
+    .topic-plot .p-neg{fill:var(--pnu-blue-dark)}
+    .topic-plot .p-bad{stroke:var(--alert-700);stroke-width:3;fill:none}
+    .topic-plot .p-cur{stroke:var(--pnu-green);stroke-width:3;fill:none;stroke-dasharray:4 3}
+  </style>
+</head>
+<body class="visual-topic topic-perceptron-prediction">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">The Perceptron</span><span class="nav-tag is-current" aria-current="page">Perceptron Prediction</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">The Perceptron</p><h1 class="page-title">Perceptron Prediction</h1><hr class="accent-rule"><p class="page-subtitle">퍼셉트론(perceptron)은 선형 점수 s = wᵀx + b를 계산하고 그 부호로 −1 또는 +1을 예측한다. 확률을 계산하지 않고, s = 0인 결정 경계가 공간을 두 반공간으로 나눈다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>선형 점수 s</strong><span>wᵀx + b이며 가중치 w와 입력 x의 성분 수가 같아야 한다.</span></article><article class="summary-card"><strong>부호 판정</strong><span>s ≥ 0이면 +1, s < 0이면 −1로 예측한다.</span></article><article class="summary-card"><strong>결정 경계</strong><span>{x : wᵀx + b = 0}이며 2차원에서는 직선, p차원에서는 초평면이다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">점수의 부호가 점이 놓인 반공간과 예측 범주를 정한다</h2><p class="lead">w = (−1, 1.5)ᵀ, b = 3으로 고정하고 입력 x의 두 성분을 바꾸면 점의 위치, 선형 점수, 예측 범주가 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="px1">x₁ <output id="px1-out" class="control-value" for="px1">3</output></label><input id="px1" type="range" min="-4" max="6" step="0.5" value="3"></div><div class="control-field"><label for="px2">x₂ <output id="px2-out" class="control-value" for="px2">2</output></label><input id="px2" type="range" min="-4" max="6" step="0.5" value="2"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="pred-plane" class="topic-plot plane" viewBox="0 0 320 320" role="img" aria-labelledby="pp-title pp-desc"><title id="pp-title">결정 경계와 입력 점</title><desc id="pp-desc">경계와 점</desc></svg></div><figcaption class="visual-caption">초록으로 옅게 칠한 쪽은 s ≥ 0(+1), 파랗게 칠한 쪽은 s < 0(−1)이다. 짙은 직선이 결정 경계, 점선 원이 입력 점이다. 눈금 한 칸이 1이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">w는 경계의 방향을, b는 경계의 위치를 정한다</h2><p class="lead">w₁, w₂, b를 바꾸면 결정 경계가 회전하거나 평행 이동하고, 고정한 두 점 x⁽¹⁾ = (3, 2), x⁽²⁾ = (4, −1)의 점수와 예측이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--triple"><div class="control-field"><label for="w1">w₁ <output id="w1-out" class="control-value" for="w1">−1</output></label><input id="w1" type="range" min="-2" max="2" step="0.5" value="-1"></div><div class="control-field"><label for="w2">w₂ <output id="w2-out" class="control-value" for="w2">1.5</output></label><input id="w2" type="range" min="-2" max="2" step="0.5" value="1.5"></div><div class="control-field"><label for="bb">b <output id="bb-out" class="control-value" for="bb">3</output></label><input id="bb" type="range" min="-5" max="5" step="0.5" value="3"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="wb-plane" class="topic-plot plane" viewBox="0 0 320 320" role="img" aria-labelledby="wb-title wb-desc"><title id="wb-title">가중치와 절편에 따른 경계</title><desc id="wb-desc">경계와 두 점</desc></svg></div><figcaption class="visual-caption">짙은 직선은 결정 경계, 초록 화살표는 경계 위 한 점에서 그린 w이며 s가 커지는 쪽을 가리킨다. 두 점의 색은 +1(빈 원)과 −1(채운 원) 예측이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../10. stochastic-gradient-descent/mini-batches-and-epochs.html" rel="prev">이전 · Mini-batches and Epochs</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../11. the-perceptron/perceptron-learning-rule.html" rel="next">다음 · Perceptron Learning Rule</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  function plane(P, x0, x1, y0, y1, w, b, n) {
+    var s = "", dx = (x1 - x0) / n, dy = (y1 - y0) / n;
+    for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) {
+      var cx = x0 + (i + 0.5) * dx, cy = y0 + (j + 0.5) * dy, sc = w[0] * cx + w[1] * cy + b, a = P(x0 + i * dx, y0 + (j + 1) * dy), c = P(x0 + (i + 1) * dx, y0 + j * dy);
+      if (w[0] === 0 && w[1] === 0 && b === 0) continue;
+      s += '<rect class="' + (sc >= 0 ? "pos-cell" : "neg-cell") + '" x="' + a[0].toFixed(1) + '" y="' + a[1].toFixed(1) + '" width="' + (c[0] - a[0] + 0.3).toFixed(1) + '" height="' + (c[1] - a[1] + 0.3).toFixed(1) + '"/>';
+    }
+    return s;
+  }
+  function gridlines(P, x0, x1, y0, y1, step) {
+    var s = "";
+    for (var x = Math.ceil(x0); x <= x1; x += step) s += '<line class="' + (x === 0 ? "axis" : "grid") + '" x1="' + P(x, y0)[0] + '" y1="' + P(x, y0)[1] + '" x2="' + P(x, y1)[0] + '" y2="' + P(x, y1)[1] + '"/>';
+    for (var y = Math.ceil(y0); y <= y1; y += step) s += '<line class="' + (y === 0 ? "axis" : "grid") + '" x1="' + P(x0, y)[0] + '" y1="' + P(x0, y)[1] + '" x2="' + P(x1, y)[0] + '" y2="' + P(x1, y)[1] + '"/>';
+    return s;
+  }
+  function boundary(P, x0, x1, y0, y1, w, b) {
+    var pts = [];
+    if (w[1] !== 0) [x0, x1].forEach(function (x) { var y = -(w[0] * x + b) / w[1]; if (y >= y0 - 1e-9 && y <= y1 + 1e-9) pts.push([x, y]); });
+    if (w[0] !== 0) [y0, y1].forEach(function (y) { var x = -(w[1] * y + b) / w[0]; if (x >= x0 - 1e-9 && x <= x1 + 1e-9) pts.push([x, y]); });
+    if (pts.length < 2) return "";
+    var a = P(pts[0][0], pts[0][1]), c = P(pts[pts.length - 1][0], pts[pts.length - 1][1]);
+    return '<line class="boundary" x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + c[0].toFixed(1) + '" y2="' + c[1].toFixed(1) + '"/>';
+  }
+  function point(P, x, y, lab, extra) {
+    var p = P(x, y);
+    return '<circle class="' + (lab > 0 ? "p-pos" : "p-neg") + '" cx="' + p[0] + '" cy="' + p[1] + '" r="8"/>' + (extra ? '<circle class="' + extra + '" cx="' + p[0] + '" cy="' + p[1] + '" r="14"/>' : "");
+  }
+  var n2 = function (v) { return neg(Math.round(v * 100) / 100); };
+  var sgn = function (s) { return s >= 0 ? "+1" : "−1"; };
+
+  var P = function (x, y) { return [140 + 26 * x, 180 - 26 * y]; };
+  function renderPred() {
+    var x = [Number($("px1").value), Number($("px2").value)], w = [-1, 1.5], b = 3, s = w[0] * x[0] + w[1] * x[1] + b;
+    $("px1-out").textContent = neg(x[0]); $("px2-out").textContent = neg(x[1]);
+    var g = '<title id="pp-title">결정 경계와 입력 점</title><desc id="pp-desc">x=(' + x.join(",") + '), s=' + s + ', 예측 ' + sgn(s) + '</desc>';
+    g += plane(P, -5, 6.5, -4.5, 6.9, w, b, 24) + gridlines(P, -5, 6.5, -4.5, 6.9, 1) + boundary(P, -5, 6.5, -4.5, 6.9, w, b) + point(P, x[0], x[1], s >= 0 ? 1 : -1, "p-cur");
+    $("pred-plane").innerHTML = g;
+    show(1, [["wᵀx", "−1(" + neg(x[0]) + ") + 1.5(" + neg(x[1]) + ") = " + n2(w[0] * x[0] + w[1] * x[1])], ["s = wᵀx + b", n2(s)], ["예측 ŷ", sgn(s)]],
+      s === 0 ? "s = 0이라 점이 결정 경계 위에 있다. 경계 위의 점은 규약으로 범주를 정하며, 여기서는 s ≥ 0이면 +1로 예측한다."
+        : "s = " + jro(n2(s)) + " " + (s > 0 ? "양수라 경계의 +1 쪽" : "음수라 경계의 −1 쪽") + "에 있다. 점을 경계 쪽으로 옮길수록 |s|가 줄고, 경계를 넘는 순간 예측이 바뀐다.");
+  }
+  function renderWB() {
+    var w = [Number($("w1").value), Number($("w2").value)], b = Number($("bb").value), pts = [[3, 2], [4, -1]];
+    $("w1-out").textContent = neg(w[0]); $("w2-out").textContent = neg(w[1]); $("bb-out").textContent = neg(b);
+    var zero = w[0] === 0 && w[1] === 0;
+    var g = '<title id="wb-title">가중치와 절편에 따른 경계</title><desc id="wb-desc">w=(' + w.join(",") + '), b=' + b + '</desc>';
+    g += plane(P, -5, 6.5, -4.5, 6.9, w, b, 24) + gridlines(P, -5, 6.5, -4.5, 6.9, 1) + boundary(P, -5, 6.5, -4.5, 6.9, w, b);
+    if (!zero) {
+      var nn = w[0] * w[0] + w[1] * w[1], f = [-b * w[0] / nn, -b * w[1] / nn], a = P(f[0], f[1]), len = Math.sqrt(nn), c = P(f[0] + 1.6 * w[0] / len, f[1] + 1.6 * w[1] / len);
+      g += '<defs><marker id="mw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#00a651"/></marker></defs>';
+      if (f[0] > -5 && f[0] < 6.5 && f[1] > -4.5 && f[1] < 6.9) g += '<line class="wvec" x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + c[0].toFixed(1) + '" y2="' + c[1].toFixed(1) + '" marker-end="url(#mw)"/>';
+    }
+    var ss = pts.map(function (p) { return w[0] * p[0] + w[1] * p[1] + b; });
+    pts.forEach(function (p, k) { g += point(P, p[0], p[1], ss[k] >= 0 ? 1 : -1); });
+    $("wb-plane").innerHTML = g;
+    show(2, [["경계 식", zero ? "w = 0이라 경계 없음" : n2(w[0]) + "x₁ + " + n2(w[1]) + "x₂ + " + n2(b) + " = 0"], ["x⁽¹⁾ = (3, 2)", "s = " + n2(ss[0]) + " → " + sgn(ss[0])], ["x⁽²⁾ = (4, −1)", "s = " + n2(ss[1]) + " → " + sgn(ss[1])], ["원점을 지나는가", b === 0 ? "지남 (b = 0)" : "지나지 않음"]],
+      zero ? "w = (0, 0)이면 모든 점의 점수가 b로 같아 경계가 생기지 않는다."
+        : "w를 바꾸면 경계가 w에 수직인 채로 회전하고, w를 고정한 채 b만 바꾸면 경계가 평행 이동한다. b = 0이면 경계가 반드시 원점을 지나므로, 원점에서 떨어진 경계를 만들려면 절편이 필요하다.");
+  }
+  ["px1", "px2"].forEach(function (k) { on(k, renderPred); }); ["w1", "w2", "bb"].forEach(function (k) { on(k, renderWB); });
+  renderPred(); renderWB();
+}());
+</script>
+</body>
+</html>

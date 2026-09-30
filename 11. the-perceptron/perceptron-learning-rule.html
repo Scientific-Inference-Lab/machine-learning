@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Perceptron Learning Rule | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .cur{fill:var(--pnu-green)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:4 4}
+    .topic-plot .res-pos{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res-neg{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:5 3}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot.plane{max-width:460px;min-width:320px;margin:0 auto}
+    .topic-plot .pos-cell{fill:var(--pnu-green);fill-opacity:.13}
+    .topic-plot .neg-cell{fill:var(--pnu-blue);fill-opacity:.10}
+    .topic-plot .boundary{stroke:var(--pnu-blue-dark);stroke-width:3}
+    .topic-plot .wvec{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .p-pos{fill:var(--white);stroke:var(--pnu-green);stroke-width:3.5}
+    .topic-plot .p-neg{fill:var(--pnu-blue-dark)}
+    .topic-plot .p-bad{stroke:var(--alert-700);stroke-width:3;fill:none}
+    .topic-plot .p-cur{stroke:var(--pnu-green);stroke-width:3;fill:none;stroke-dasharray:4 3}
+    .rule-pair{display:grid;grid-template-columns:320px 1fr;gap:14px;align-items:start;min-width:760px}
+    .rule-pair .topic-plot{min-width:0;max-width:320px}
+    .rule-pair .topic-table{min-width:0;font-size:14px}
+    .rule-pair .topic-table td,.rule-pair .topic-table th{padding:6px 8px}
+    .topic-perceptron-learning-rule tr.is-now td,.topic-perceptron-learning-rule tr.is-now th{outline:3px solid var(--pnu-green);outline-offset:-3px;font-weight:700}
+  </style>
+</head>
+<body class="visual-topic topic-perceptron-learning-rule">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">The Perceptron</span><span class="nav-tag is-current" aria-current="page">Perceptron Learning Rule</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">The Perceptron</p><h1 class="page-title">Perceptron Learning Rule</h1><hr class="accent-rule"><p class="page-subtitle">퍼셉트론 학습 규칙은 yᵢsᵢ ≤ 0인 관측, 곧 오분류했거나 경계 위에 놓인 관측에서만 w ← w + yᵢxᵢ, b ← b + yᵢ로 갱신한다. 한 에포크의 갱신이 0회이면 모든 관측이 정답 쪽 반공간에 있다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>갱신 조건</strong><span>mᵢ = yᵢ(wᵀxᵢ + b) ≤ 0이면 갱신하고, mᵢ > 0이면 그대로 둔다.</span></article><article class="summary-card"><strong>갱신 방향 yᵢxᵢ</strong><span>정답이 +1이면 xᵢ 쪽으로, −1이면 반대쪽으로 w를 옮긴다.</span></article><article class="summary-card"><strong>종료 조건</strong><span>한 에포크의 갱신 0회, 또는 미리 정한 최대 에포크 수다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">오분류하거나 경계 위에 있는 관측에서만 가중치가 바뀐다</h2><p class="lead">관측 순서를 고르고 한 단계씩 진행하면 현재 관측의 점수 s, 판정 yᵢsᵢ, 갱신된 w와 b, 결정 경계가 바뀐다. 초기값은 w = (0, 0), b = 0이다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="porder">관측 순서</label><select id="porder"><option value="a">1 → 2 → 3 → 4</option><option value="b">3 → 1 → 4 → 2</option></select></div><div class="action-row"><button id="p-first" class="btn btn-outline" type="button">처음으로</button><button id="p-prev" class="btn btn-outline" type="button">이전</button><button id="p-next" class="btn" type="button">다음</button></div></div>
+      <p id="reason-1" class="control-reason" hidden></p>
+      <figure class="visual-figure"><div class="visual-frame"><div class="rule-pair"><svg id="rule-plane" class="topic-plot plane" viewBox="0 20 320 190" role="img" aria-labelledby="rp-title rp-desc"><title id="rp-title">학습 중인 경계</title><desc id="rp-desc">현재 경계</desc></svg><table id="rule-table" class="topic-table" aria-label="단계별 판정과 매개변수"></table></div></div><figcaption class="visual-caption">왼쪽: 빈 원은 정답 +1, 채운 원은 −1, 점선 원이 방금 본 관측, 빨간 원은 현재 경계에서 yᵢsᵢ ≤ 0인 관측이다. 오른쪽 표는 지금까지의 단계이며 마지막 행이 현재 단계다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">경사하강법과 퍼셉트론은 갱신 방향을 구하는 방법이 다르다</h2><p class="lead">두 방법 모두 매개변수를 반복해서 바꾸지만 갱신 기준, 시점, 방향이 다르다.</p></header>
+    <div class="visual-lab">
+      <figure class="visual-figure"><div class="visual-frame"><table class="topic-table" aria-label="경사하강법과 퍼셉트론 비교"><thead><tr><th scope="col">항목</th><th scope="col">경사하강법</th><th scope="col">퍼셉트론 학습 규칙</th></tr></thead><tbody><tr><th scope="row">갱신 기준</th><td>목적함수의 그래디언트</td><td>현재 관측의 yᵢsᵢ ≤ 0</td></tr><tr><th scope="row">갱신 시점</th><td>각 반복</td><td>오분류 또는 경계 위</td></tr><tr><th scope="row">방향</th><td>−∇J</td><td class="is-y">yᵢxᵢ</td></tr><tr><th scope="row">갱신 크기</th><td>학습률 η</td><td>학습률을 1로 둔 갱신</td></tr></tbody></table></div><figcaption class="visual-caption">행은 비교 항목이다. 초록 칸은 퍼셉트론의 갱신 방향이다.</figcaption></figure>
+      <p class="visual-note">퍼셉트론은 자료 전체 목적함수의 그래디언트를 계산하지 않는다. 틀린 관측 하나의 정답 부호와 특성 벡터를 그대로 더해 그 관측의 점수를 정답 부호 쪽으로 움직인다. 이 갱신은 그 관측의 손실 −yᵢsᵢ에 학습률 1을 적용한 확률적 경사하강법 한 단계와 같다.</p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../11. the-perceptron/perceptron-prediction.html" rel="prev">이전 · Perceptron Prediction</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../12. linear-separability/linear-separability.html" rel="next">다음 · Linear Separability</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  function plane(P, x0, x1, y0, y1, w, b, n) {
+    var s = "", dx = (x1 - x0) / n, dy = (y1 - y0) / n;
+    for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) {
+      var cx = x0 + (i + 0.5) * dx, cy = y0 + (j + 0.5) * dy, sc = w[0] * cx + w[1] * cy + b, a = P(x0 + i * dx, y0 + (j + 1) * dy), c = P(x0 + (i + 1) * dx, y0 + j * dy);
+      if (w[0] === 0 && w[1] === 0 && b === 0) continue;
+      s += '<rect class="' + (sc >= 0 ? "pos-cell" : "neg-cell") + '" x="' + a[0].toFixed(1) + '" y="' + a[1].toFixed(1) + '" width="' + (c[0] - a[0] + 0.3).toFixed(1) + '" height="' + (c[1] - a[1] + 0.3).toFixed(1) + '"/>';
+    }
+    return s;
+  }
+  function gridlines(P, x0, x1, y0, y1, step) {
+    var s = "";
+    for (var x = Math.ceil(x0); x <= x1; x += step) s += '<line class="' + (x === 0 ? "axis" : "grid") + '" x1="' + P(x, y0)[0] + '" y1="' + P(x, y0)[1] + '" x2="' + P(x, y1)[0] + '" y2="' + P(x, y1)[1] + '"/>';
+    for (var y = Math.ceil(y0); y <= y1; y += step) s += '<line class="' + (y === 0 ? "axis" : "grid") + '" x1="' + P(x0, y)[0] + '" y1="' + P(x0, y)[1] + '" x2="' + P(x1, y)[0] + '" y2="' + P(x1, y)[1] + '"/>';
+    return s;
+  }
+  function boundary(P, x0, x1, y0, y1, w, b) {
+    var pts = [];
+    if (w[1] !== 0) [x0, x1].forEach(function (x) { var y = -(w[0] * x + b) / w[1]; if (y >= y0 - 1e-9 && y <= y1 + 1e-9) pts.push([x, y]); });
+    if (w[0] !== 0) [y0, y1].forEach(function (y) { var x = -(w[1] * y + b) / w[0]; if (x >= x0 - 1e-9 && x <= x1 + 1e-9) pts.push([x, y]); });
+    if (pts.length < 2) return "";
+    var a = P(pts[0][0], pts[0][1]), c = P(pts[pts.length - 1][0], pts[pts.length - 1][1]);
+    return '<line class="boundary" x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + c[0].toFixed(1) + '" y2="' + c[1].toFixed(1) + '"/>';
+  }
+  function point(P, x, y, lab, extra) {
+    var p = P(x, y);
+    return '<circle class="' + (lab > 0 ? "p-pos" : "p-neg") + '" cx="' + p[0] + '" cy="' + p[1] + '" r="8"/>' + (extra ? '<circle class="' + extra + '" cx="' + p[0] + '" cy="' + p[1] + '" r="14"/>' : "");
+  }
+  var n2 = function (v) { return neg(Math.round(v * 100) / 100); };
+  var sgn = function (s) { return s >= 0 ? "+1" : "−1"; };
+
+  var D = [[2, 1, 1], [-1, 2, -1], [2, 2, 1], [-2, 1, -1]], orders = { a: [0, 1, 2, 3], b: [2, 0, 3, 1] };
+  var P = function (x, y) { return [160 + 40 * x, 160 - 40 * y]; };
+  var run = [], step = 0;
+  function simulate() {
+    var ord = orders[$("porder").value], w = [0, 0], b = 0, out = [];
+    for (var ep = 1; ep <= 5; ep++) {
+      var ups = 0;
+      ord.forEach(function (i) {
+        var d = D[i], s = w[0] * d[0] + w[1] * d[1] + b, m = d[2] * s, up = m <= 0;
+        if (up) { w = [w[0] + d[2] * d[0], w[1] + d[2] * d[1]]; b += d[2]; ups++; }
+        out.push({ ep: ep, i: i, s: s, m: m, up: up, w: w.slice(), b: b, ups: ups });
+      });
+      if (ups === 0) break;
+    }
+    return out;
+  }
+  function render() {
+    var cur = step > 0 ? run[step - 1] : null, w = cur ? cur.w : [0, 0], b = cur ? cur.b : 0;
+    var g = '<title id="rp-title">학습 중인 경계</title><desc id="rp-desc">' + step + '단계 뒤 w=(' + w.join(",") + '), b=' + b + '</desc>';
+    g += plane(P, -3, 3, -1, 3.9, w, b, 20) + gridlines(P, -3, 3, -1, 3.9, 1) + boundary(P, -3, 3, -1, 3.9, w, b);
+    D.forEach(function (d, i) {
+      var m = d[2] * (w[0] * d[0] + w[1] * d[1] + b), p = P(d[0], d[1]);
+      g += point(P, d[0], d[1], d[2], cur && cur.i === i ? "p-cur" : (m <= 0 ? "p-bad" : "")) + '<text class="small" x="' + (p[0] + 12) + '" y="' + (p[1] - 10) + '">' + (i + 1) + "</text>";
+    });
+    $("rule-plane").innerHTML = g;
+    var h = '<thead><tr><th scope="col">에포크</th><th scope="col">관측</th><th scope="col">s</th><th scope="col">yᵢsᵢ</th><th scope="col">판정</th><th scope="col">(w, b)</th></tr></thead><tbody><tr' + (step === 0 ? ' class="is-now"' : "") + '><td>시작</td><td>·</td><td>·</td><td>·</td><td>·</td><td>((0, 0), 0)</td></tr>';
+    run.slice(0, step).forEach(function (r, k) {
+      h += '<tr' + (k === step - 1 ? ' class="is-now"' : "") + "><td>" + r.ep + "</td><td>" + (r.i + 1) + "</td><td>" + neg(r.s) + '</td><td class="' + (r.m <= 0 ? "is-alert" : "") + '">' + neg(r.m) + "</td><td>" + (r.up ? (r.m === 0 ? "경계 위: 갱신" : "오분류: 갱신") : "유지") + "</td><td>((" + r.w.map(neg).join(", ") + "), " + neg(r.b) + ")</td></tr>";
+    });
+    $("rule-table").innerHTML = h + "</tbody>";
+    var last = run[run.length - 1], done = step === run.length;
+    $("p-first").disabled = step === 0; $("p-prev").disabled = step === 0; $("p-next").disabled = done;
+    var reason = step === 0 ? "처음 상태라 이전 단계가 없다." : done ? "갱신이 0회인 에포크를 마쳐 학습이 끝났으므로 다음 단계가 없다." : "";
+    $("reason-1").textContent = reason; $("reason-1").hidden = !reason;
+    var totalUps = run.slice(0, step).filter(function (r) { return r.up; }).length;
+    if (!cur) { show(1, [["현재 단계", "시작 전"], ["(w, b)", "((0, 0), 0)"], ["지금까지 갱신", "0회"]], "모든 관측의 점수가 0이라 yᵢsᵢ = 0이다. 첫 관측부터 경계 위의 경우로 갱신된다."); return; }
+    var d = D[cur.i];
+    show(1, [["현재 관측", (cur.i + 1) + "번 x = (" + d[0] + ", " + d[1] + "), y = " + (d[2] > 0 ? "+1" : "−1")], ["점수 s와 yᵢsᵢ", neg(cur.s) + " · " + neg(cur.m)], ["갱신 뒤 (w, b)", "((" + cur.w.map(neg).join(", ") + "), " + neg(cur.b) + ")"], ["지금까지 갱신", totalUps + "회"]],
+      done ? "에포크 " + last.ep + "에서 네 관측 모두 yᵢsᵢ > 0이라 갱신이 0회였다. 총 " + totalUps + "번 갱신한 w = (" + last.w.map(neg).join(", ") + "), b = " + neg(last.b) + "의 경계가 네 점을 모두 정답 쪽에 둔다. 순서를 바꾸면 중간 가중치와 갱신 횟수가 달라질 수 있다."
+        : cur.up ? (cur.m === 0 ? "점수가 0이라 경계 위에 있어 " : "정답 부호와 점수 부호가 달라 ") + "w에 yᵢxᵢ = (" + neg(d[2] * d[0]) + ", " + neg(d[2] * d[1]) + "), b에 yᵢ = " + (d[2] > 0 ? "+1" : "−1") + "을 더했다. 이 관측의 점수가 정답 부호 쪽으로 움직인다."
+        : "yᵢsᵢ = " + neg(cur.m) + " > 0으로 이미 정답 쪽에 있어 w와 b를 그대로 둔다.");
+  }
+  function reset() { run = simulate(); step = 0; render(); }
+  $("p-next").addEventListener("click", function () { if (step < run.length) { step++; render(); } });
+  $("p-prev").addEventListener("click", function () { if (step > 0) { step--; render(); } });
+  $("p-first").addEventListener("click", function () { step = 0; render(); });
+  on("porder", reset);
+  reset();
+}());
+</script>
+</body>
+</html>
