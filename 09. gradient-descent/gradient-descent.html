@@ -23,7 +23,7 @@
 <body class="visual-topic topic-gradient-descent">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Walking Downhill</span><span class="nav-tag is-current" aria-current="page">Gradient Descent</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><p class="eyebrow">Walking Downhill</p><h1 class="page-title">Gradient Descent</h1><hr class="accent-rule"><p class="page-subtitle">경사하강법(gradient descent)은 현재 매개변수에서 도함수나 그래디언트를 계산하고 그 반대 방향으로 학습률(learning rate) η만큼 갱신하기를 반복한다. η와 목적함수의 모양이 도착점과 수렴 여부를 정한다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/09.%20Walking%20Downhill.pdf">Walking <span class="publication-lecture-tail">Downhill<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Gradient Descent</h1><hr class="accent-rule"><p class="page-subtitle">경사하강법(gradient descent)은 현재 매개변수에서 도함수나 그래디언트를 계산하고 그 반대 방향으로 학습률(learning rate) η만큼 갱신하기를 반복한다. η와 목적함수의 모양이 도착점과 수렴 여부를 정한다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>갱신 규칙</strong><span>θ⁽ᵗ⁾ = θ⁽ᵗ⁻¹⁾ − η f′(θ⁽ᵗ⁻¹⁾)이며 기울기의 부호 반대로 움직인다.</span></article><article class="summary-card"><strong>학습률 η</strong><span>갱신 폭을 정하는 하이퍼파라미터이며 너무 크면 발산할 수 있다.</span></article><article class="summary-card"><strong>국소 최솟값</strong><span>주변에서 가장 작은 값이며 비볼록 함수에서는 전역 최솟값과 다를 수 있다.</span></article></div></section>
 
@@ -98,7 +98,7 @@
     $("gd-plot").innerHTML = s;
     var d = 2 * (x - 2), nx = x - eta * d, factor = 1 - 2 * eta, fmt = function (v) { return Math.abs(v) >= 1000 ? neg(v.toExponential(2)) : neg(Math.round(v * 1000) / 1000); };
     show(1, [["x⁽" + T + "⁾", fmt(x)], ["f′(x) = 2(x − 2)", fmt(d)], ["다음 x = x − ηf′", fmt(nx)], ["|x − 2|", fmt(Math.abs(x - 2))]],
-      "한 번 갱신하면 x − 2가 (1 − 2η) = " + neg(factor.toFixed(2)) + "배가 된다. " + (Math.abs(factor) < 1e-9 ? "η = 0.5에서는 한 번에 최솟점 2에 도달하고 이후 갱신량은 0이다."
+      "한 번 갱신하면 x − 2가 (1 − 2η) = " + neg(factor.toFixed(2)) + "배가 된다. " + (Number($("gx0").value) === 2 ? "시작점이 최솟점 2라 f′(2) = 0이다. 어떤 η에서도 갱신량이 0이라 x는 움직이지 않는다." : Math.abs(factor) < 1e-9 ? "η = 0.5에서는 한 번에 최솟점 2에 도달하고 이후 갱신량은 0이다."
         : Math.abs(factor) < 1 - 1e-9 ? (factor > 0 ? "0과 1 사이라 같은 쪽에서 2에 점점 가까워진다. η가 작을수록 갱신 폭이 작아 반복이 더 필요하다." : "음수라 최솟점을 넘나들지만 크기가 줄어 2에 가까워진다.")
         : Math.abs(Math.abs(factor) - 1) < 1e-9 ? "크기가 1이라 두 점 사이를 오가며 가까워지지 않는다." : "크기가 1보다 커 갱신마다 |x − 2|가 커지고 f(x)가 발산한다. η를 줄여 다시 실행해야 한다."));
   }

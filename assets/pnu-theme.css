@@ -1498,3 +1498,57 @@ table.spec tr.is-focus td {
     gap: 6px;
   }
 }
+
+/* Public course pages: lecture PDF link in the hero eyebrow and the concept-check mark. */
+.eyebrow-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.eyebrow-link:hover {
+  color: var(--pnu-blue-dark);
+}
+
+.eyebrow-link span[aria-hidden="true"] {
+  display: inline-block;
+  margin-left: 0.3em;
+  text-decoration: none;
+}
+
+.page-title .check-mark {
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-right: 0.3em;
+  padding: 0.14em;
+  border-radius: 50%;
+  vertical-align: -0.08em;
+  background: var(--pnu-blue-dark);
+  color: var(--white);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.publication-lecture-tail {
+  white-space: nowrap;
+}
+
+/* The index arrow rule (.publication-lecture span) must not shrink the wrapped last word. */
+.publication-lecture .publication-lecture-tail {
+  display: inline;
+  margin-left: 0;
+  font-size: inherit;
+  text-decoration: inherit;
+}
