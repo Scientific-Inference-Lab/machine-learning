@@ -2,11 +2,11 @@
 
 [Open the course materials](https://scientific-inference-lab.github.io/machine-learning/).
 
-## Contact
+## Instructor
 
-YongKyung Oh · [yongkyung.oh@pusan.ac.kr](mailto:yongkyung.oh@pusan.ac.kr)
+[YongKyung Oh](https://scientific-inference-lab.github.io/people/) is an Assistant Professor in the Data Science Major, School of BioMedical Convergence Engineering, Pusan National University, and Principal Investigator of the Scientific Inference Lab.
 
-[Personal website](https://yongkyung-oh.github.io/) · [Scientific Inference Lab](https://scientific-inference-lab.github.io/) · [Department](https://data.pusan.ac.kr/)
+[yongkyung.oh@pusan.ac.kr](mailto:yongkyung.oh@pusan.ac.kr) · [Personal website](https://yongkyung-oh.github.io/) · [Scientific Inference Lab](https://scientific-inference-lab.github.io/)
 
 ## Rights and sources
 
