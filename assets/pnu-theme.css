@@ -238,6 +238,8 @@ a {
   }
 
   .header-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: flex-start;
     padding: 12px 16px;
   }
@@ -247,13 +249,24 @@ a {
   }
 
   .header-actions {
-    width: 100%;
-    align-items: flex-start;
-    justify-content: space-between;
+    display: contents;
   }
 
-  .header-actions--index {
-    justify-content: flex-end;
+  .brand {
+    grid-column: 1;
+    grid-row: 1;
+    flex-wrap: wrap;
+  }
+
+  .lab-site-link {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .course-nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
 
   .course-nav {
