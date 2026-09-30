@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Least Squares | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .cur{fill:var(--pnu-green)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:4 4}
+    .topic-plot .res-pos{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res-neg{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:5 3}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .ls-pair{display:grid;grid-template-columns:1.25fr 1fr;gap:12px;min-width:620px}
+    .ls-pair .topic-plot{min-width:0}
+    .topic-plot .abs{fill:none;stroke:var(--ink-600);stroke-width:2;stroke-dasharray:6 5}
+    .topic-plot .cross{stroke:var(--alert-700);stroke-width:3}
+  </style>
+</head>
+<body class="visual-topic topic-least-squares">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Linear Models</span><span class="nav-tag is-current" aria-current="page">Least Squares</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Linear Models</p><h1 class="page-title">Least Squares</h1><hr class="accent-rule"><p class="page-subtitle">잔차(residual)는 관측값에서 예측값을 뺀 값이다. 최소제곱법(least squares)은 잔차를 제곱해 더한 잔차 제곱합(RSS)이 가장 작은 계수를 고른다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>잔차 eᵢ</strong><span>yᵢ − ŷᵢ이며 양수면 과소 예측, 음수면 과대 예측이다.</span></article><article class="summary-card"><strong>제곱 손실</strong><span>eᵢ²이며 부호를 없애고 큰 오차를 더 무겁게 센다.</span></article><article class="summary-card"><strong>RSS(β₀, β₁)</strong><span>Σ(yᵢ − β₀ − β₁xᵢ)²이며 계수마다 값이 하나 정해진다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">계수를 바꾸면 모든 잔차와 RSS가 함께 바뀐다</h2><p class="lead">후보 계수 β₀, β₁을 바꾸면 직선, 관측별 잔차, RSS 지도 위의 현재 위치가 함께 움직인다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="c0">절편 β₀ <output id="c0-out" class="control-value" for="c0">2.5</output></label><input id="c0" type="range" min="-1" max="4" step="0.25" value="2.5"></div><div class="control-field"><label for="c1">계수 β₁ <output id="c1-out" class="control-value" for="c1">0.5</output></label><input id="c1" type="range" min="0" max="2" step="0.05" value="0.5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div class="ls-pair"><svg id="fit-plot" class="topic-plot" viewBox="0 0 380 300" role="img" aria-labelledby="fit-title fit-desc"><title id="fit-title">후보 직선과 잔차</title><desc id="fit-desc">관측 6개와 후보 직선</desc></svg><svg id="rss-map" class="topic-plot" viewBox="0 0 300 300" role="img" aria-labelledby="map-title map-desc"><title id="map-title">RSS 지도</title><desc id="map-desc">계수 조합별 RSS</desc></svg></div></div><figcaption class="visual-caption">왼쪽: 점은 관측, 파란 직선은 후보 직선이다. 초록 실선은 양의 잔차(과소 예측), 빨간 점선은 음의 잔차(과대 예측)다. 오른쪽: 가로축 β₀, 세로축 β₁이며 칸이 짙을수록 RSS가 작다. 초록 점이 현재 후보, 빨간 십자가 RSS 최소 계수다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">제곱 손실은 큰 잔차를 더 무겁게 센다</h2><p class="lead">잔차 e를 바꾸면 손실 e²이 곡선을 따라 바뀌고, 잔차가 2배일 때 벌점은 4배가 된다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="e">잔차 e <output id="e-out" class="control-value" for="e">2</output></label><input id="e" type="range" min="-3" max="3" step="0.5" value="2"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="loss-plot" class="topic-plot" viewBox="0 0 600 260" role="img" aria-labelledby="loss-title loss-desc"><title id="loss-title">제곱 손실 곡선</title><desc id="loss-desc">잔차와 제곱 손실</desc></svg></div><figcaption class="visual-caption">파란 곡선은 e², 회색 점선은 절댓값 |e|다. 초록 점이 현재 잔차의 제곱 손실이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../07. linear-regression-revisited/linear-regression.html" rel="prev">이전 · Linear Regression</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../08. predicting-a-probability/logistic-regression.html" rel="next">다음 · Logistic Regression</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; return String(v) + (k ? a : b); }
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  function axes(X, Y, xs, ys, xl, yl, x0, x1, y0, y1) {
+    var s = '<line class="axis" x1="' + X(x0) + '" y1="' + Y(y0) + '" x2="' + X(x1) + '" y2="' + Y(y0) + '"/><line class="axis" x1="' + X(x0) + '" y1="' + Y(y0) + '" x2="' + X(x0) + '" y2="' + Y(y1) + '"/>';
+    xs.forEach(function (t) { s += '<text class="small" x="' + X(t) + '" y="' + (Y(y0) + 18) + '" text-anchor="middle">' + neg(t) + "</text>"; });
+    ys.forEach(function (t) { s += '<text class="small" x="' + (X(x0) - 8) + '" y="' + (Y(t) + 4) + '" text-anchor="end">' + neg(t) + "</text>"; });
+    s += '<text x="' + X(x1) + '" y="' + (Y(y0) + 36) + '" text-anchor="end">' + xl + '</text><text x="' + (X(x0) + 6) + '" y="' + (Y(y1) + 4) + '">' + yl + "</text>";
+    return s;
+  }
+  var f2 = function (v) { return neg((Math.round(v * 100) / 100).toFixed(2)); };
+  var f1 = function (v) { return neg(Math.round(v * 100) / 100); };
+
+  var xs = [1, 2, 3, 4, 5, 6], ys = [2.4, 3.1, 4.6, 4.9, 6.3, 6.8];
+  function rss(b0, b1) { return xs.reduce(function (s, x, i) { var e = ys[i] - b0 - b1 * x; return s + e * e; }, 0); }
+  var mx = 3.5, my = ys.reduce(function (a, b) { return a + b; }, 0) / 6, sxy = 0, sxx = 0;
+  xs.forEach(function (x, i) { sxy += (x - mx) * (ys[i] - my); sxx += (x - mx) * (x - mx); });
+  var hb1 = sxy / sxx, hb0 = my - hb1 * mx, hrss = rss(hb0, hb1);
+  var X = function (x) { return 50 + x * 45; }, Y = function (y) { return 260 - y * 28; };
+  var MX = function (b0) { return 30 + (b0 + 1) * 50; }, MY = function (b1) { return 270 - b1 * 120; };
+  var cells = "";
+  for (var i = 0; i < 20; i++) for (var j = 0; j < 20; j++) {
+    var b0 = -1 + (i + 0.5) * 0.25, b1 = (j + 0.5) * 0.1, r = rss(b0, b1), a = Math.max(0.04, Math.min(0.9, 1 - Math.log(1 + r - hrss) / 5));
+    cells += '<rect x="' + (30 + i * 12.5) + '" y="' + (270 - (j + 1) * 12) + '" width="12.6" height="12.1" fill="#005baa" fill-opacity="' + a.toFixed(2) + '"/>';
+  }
+  function renderFit() {
+    var b0 = Number($("c0").value), b1 = Number($("c1").value), r = rss(b0, b1), big = 0, bigi = 0;
+    $("c0-out").textContent = neg(b0); $("c1-out").textContent = neg(b1);
+    var s = '<title id="fit-title">후보 직선과 잔차</title><desc id="fit-desc">β₀=' + b0 + ', β₁=' + b1 + ', RSS=' + r.toFixed(2) + '</desc>';
+    s += axes(X, Y, [0, 2, 4, 6], [0, 2, 4, 6, 8], "x", "y", 0, 7, 0, 8.5);
+    s += '<line class="fit" x1="' + X(0) + '" y1="' + Y(b0) + '" x2="' + X(7) + '" y2="' + Y(b0 + 7 * b1) + '"/>';
+    xs.forEach(function (x, k) {
+      var yh = b0 + b1 * x, e = ys[k] - yh;
+      if (Math.abs(e) > Math.abs(big)) { big = e; bigi = k; }
+      s += '<line class="' + (e >= 0 ? "res-pos" : "res-neg") + '" x1="' + X(x) + '" y1="' + Y(ys[k]) + '" x2="' + X(x) + '" y2="' + Y(yh) + '"/><circle class="pt" cx="' + X(x) + '" cy="' + Y(ys[k]) + '" r="5"/>';
+    });
+    $("fit-plot").innerHTML = s;
+    var m = '<title id="map-title">RSS 지도</title><desc id="map-desc">현재 (' + b0 + ', ' + b1 + '), 최소 (' + hb0.toFixed(2) + ', ' + hb1.toFixed(2) + ')</desc>' + cells;
+    m += '<line class="axis" x1="30" y1="270" x2="280" y2="270"/><line class="axis" x1="30" y1="270" x2="30" y2="30"/>';
+    [-1, 0, 1, 2, 3, 4].forEach(function (t) { m += '<text class="small" x="' + MX(t) + '" y="288" text-anchor="middle">' + neg(t) + "</text>"; });
+    [0, 1, 2].forEach(function (t) { m += '<text class="small" x="22" y="' + (MY(t) + 4) + '" text-anchor="end">' + t + "</text>"; });
+    m += '<text x="280" y="22" text-anchor="end">β₀ →, β₁ ↑</text>';
+    var cx = MX(hb0), cy = MY(hb1);
+    m += '<line class="cross" x1="' + (cx - 7) + '" y1="' + (cy - 7) + '" x2="' + (cx + 7) + '" y2="' + (cy + 7) + '"/><line class="cross" x1="' + (cx - 7) + '" y1="' + (cy + 7) + '" x2="' + (cx + 7) + '" y2="' + (cy - 7) + '"/>';
+    m += '<circle class="cur" cx="' + MX(b0) + '" cy="' + MY(b1) + '" r="7" stroke="#ffffff" stroke-width="2"/>';
+    $("rss-map").innerHTML = m;
+    show(1, [["RSS(현재)", r.toFixed(2)], ["RSS 최소 계수", "β̂₀ = " + f2(hb0) + ", β̂₁ = " + f2(hb1)], ["RSS(최소)", hrss.toFixed(2)], ["가장 큰 잔차", "x = " + xs[bigi] + "에서 " + f2(big)]],
+      r - hrss < 0.05 ? "현재 계수가 RSS 최소 계수에 거의 닿았다. 최소제곱법은 이처럼 후보 직선마다 RSS를 비교해 가장 작은 계수를 고른다."
+        : "현재 RSS는 최소값보다 " + (r - hrss).toFixed(2) + " 크다. 가장 크게 빗나간 x = " + xs[bigi] + "의 잔차 " + kj(f2(big), "은", "는") + " 제곱되어 " + (big * big).toFixed(2) + "만큼 RSS에 더해진다. 큰 잔차일수록 RSS에서 차지하는 몫이 커서, 그 잔차를 줄이는 쪽으로 계수를 옮기면 RSS가 크게 줄 수 있다.");
+  }
+  var LX = function (e) { return 300 + e * 80; }, LY = function (v) { return 230 - v * 22; };
+  function renderLoss() {
+    var e = Number($("e").value), l = e * e;
+    $("e-out").textContent = neg(e);
+    var s = '<title id="loss-title">제곱 손실 곡선</title><desc id="loss-desc">e=' + e + '에서 손실 ' + l + '</desc>';
+    s += axes(LX, LY, [-3, -2, -1, 0, 1, 2, 3], [0, 3, 6, 9], "잔차 e", "손실", -3.3, 3.3, 0, 9.5);
+    var p = [], q = [];
+    for (var t = -3.2; t <= 3.2001; t += 0.1) { p.push(LX(t).toFixed(1) + "," + LY(t * t).toFixed(1)); q.push(LX(t).toFixed(1) + "," + LY(Math.abs(t)).toFixed(1)); }
+    s += '<polyline class="abs" points="' + q.join(" ") + '"/><polyline class="curve" points="' + p.join(" ") + '"/>';
+    s += '<line class="guide" x1="' + LX(e) + '" y1="' + LY(0) + '" x2="' + LX(e) + '" y2="' + LY(l) + '"/><circle class="cur" cx="' + LX(e) + '" cy="' + LY(l) + '" r="7"/>';
+    $("loss-plot").innerHTML = s;
+    show(2, [["잔차 e", neg(e)], ["제곱 손실 e²", f1(l)], ["|e| = 1일 때와 비교", e === 0 ? "0배" : f1(l) + "배"]],
+      e === 0 ? "관측과 예측이 일치해 손실이 0이다." : "e = " + kj(neg(e), "과", "와") + " e = " + kj(neg(-e), "은", "는") + " 부호가 달라도 손실이 " + jro(f1(l)) + " 같다. 잔차 크기가 |e| = " + f1(Math.abs(e)) + "이면 벌점은 그 제곱이라, 멀리 빗나간 관측일수록 RSS에서 차지하는 몫이 빠르게 커진다.");
+  }
+  on("c0", renderFit); on("c1", renderFit); on("e", renderLoss);
+  renderFit(); renderLoss();
+}());
+</script>
+</body>
+</html>

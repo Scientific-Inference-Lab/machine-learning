@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Linear Regression | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .cur{fill:var(--pnu-green)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:4 4}
+    .topic-plot .res-pos{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res-neg{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:5 3}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+  </style>
+</head>
+<body class="visual-topic topic-linear-regression">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Linear Models</span><span class="nav-tag is-current" aria-current="page">Linear Regression</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Linear Models</p><h1 class="page-title">Linear Regression</h1><hr class="accent-rule"><p class="page-subtitle">선형 회귀(linear regression)는 설명변수의 가중합 β₀ + β₁x를 수치 예측값 ŷ로 쓴다. 학습 자료로 계수를 추정한 뒤, 새 입력에 그 계수를 적용해 예측한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>절편 β₀</strong><span>x = 0일 때의 예측값이며 직선이 세로축과 만나는 높이다.</span></article><article class="summary-card"><strong>계수 β₁</strong><span>x가 1 증가할 때의 예측값 변화량이며 직선의 기울기다.</span></article><article class="summary-card"><strong>추정과 예측</strong><span>추정은 학습 자료에서 계수를, 예측은 새 입력에서 ŷ를 얻는다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">절편은 직선의 높이를, 계수는 기울기를 정한다</h2><p class="lead">β₀과 β₁을 바꾸면 회귀선의 위치와 기울기, x = 0과 x = 4에서의 예측값이 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="b0">절편 β₀ <output id="b0-out" class="control-value" for="b0">2</output></label><input id="b0" type="range" min="-2" max="6" step="0.5" value="2"></div><div class="control-field"><label for="b1">계수 β₁ <output id="b1-out" class="control-value" for="b1">0.5</output></label><input id="b1" type="range" min="-1" max="1.5" step="0.25" value="0.5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="line-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="line-title line-desc"><title id="line-title">회귀선</title><desc id="line-desc">절편과 계수로 정해진 직선</desc></svg></div><figcaption class="visual-caption">파란 직선은 ŷ = β₀ + β₁x다. 점선은 x = 0에서의 높이 β₀과 x가 3에서 4로 1 늘 때의 예측값 변화 β₁을 표시한다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">추정한 계수를 고정하고 새 입력에 적용하면 예측값이 나온다</h2><p class="lead">새 입력 x₀을 바꾸면 추정한 β̂₀ = 2, β̂₁ = 0.5는 그대로이고 예측값 ŷ₀만 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="x0">새 입력 x₀ <output id="x0-out" class="control-value" for="x0">6</output></label><input id="x0" type="range" min="0" max="10" step="1" value="6"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div class="topic-flow"><div class="flow-box"><strong>추정</strong><span>학습 자료 (X, y)</span><span>→ β̂₀ = 2, β̂₁ = 0.5</span></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-box is-x"><strong>입력</strong><span id="flow-in"></span></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-box is-on"><strong>예측</strong><span id="flow-out"></span></div></div></div><figcaption class="visual-caption">왼쪽 상자는 학습 자료로 한 번 끝나는 추정, 파란 상자는 새 입력, 초록 상자는 고정한 계수를 적용한 예측값이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">설명변수의 단위가 바뀌면 같은 관계라도 계수의 크기가 달라진다</h2><p class="lead">키의 단위와 키 증가량을 바꾸면 계수와 입력 변화량은 달라지지만 예측값 변화는 같다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="unit">키의 단위</label><select id="unit"><option value="cm">cm</option><option value="m">m</option></select></div><div class="control-field"><label for="dh">키 증가량 <output id="dh-out" class="control-value" for="dh">10 cm</output></label><input id="dh" type="range" min="0" max="30" step="5" value="10"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><table id="unit-table" class="topic-table" aria-label="단위별 계수와 예측값 변화"></table></div><figcaption class="visual-caption">두 행은 같은 관계를 cm와 m로 나타낸 모델이다. 초록 테두리 행이 고른 단위다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../06. data-leakage/pipelines.html" rel="prev">이전 · Pipelines</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../07. linear-regression-revisited/least-squares.html" rel="next">다음 · Least Squares</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; return String(v) + (k ? a : b); }
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  function axes(X, Y, xs, ys, xl, yl, x0, x1, y0, y1) {
+    var s = '<line class="axis" x1="' + X(x0) + '" y1="' + Y(y0) + '" x2="' + X(x1) + '" y2="' + Y(y0) + '"/><line class="axis" x1="' + X(x0) + '" y1="' + Y(y0) + '" x2="' + X(x0) + '" y2="' + Y(y1) + '"/>';
+    xs.forEach(function (t) { s += '<text class="small" x="' + X(t) + '" y="' + (Y(y0) + 18) + '" text-anchor="middle">' + neg(t) + "</text>"; });
+    ys.forEach(function (t) { s += '<text class="small" x="' + (X(x0) - 8) + '" y="' + (Y(t) + 4) + '" text-anchor="end">' + neg(t) + "</text>"; });
+    s += '<text x="' + X(x1) + '" y="' + (Y(y0) + 36) + '" text-anchor="end">' + xl + '</text><text x="' + (X(x0) + 6) + '" y="' + (Y(y1) + 4) + '">' + yl + "</text>";
+    return s;
+  }
+  var f2 = function (v) { return neg((Math.round(v * 100) / 100).toFixed(2)); };
+  var f1 = function (v) { return neg(Math.round(v * 100) / 100); };
+
+  var X = function (x) { return 60 + x * 50; }, Y = function (y) { return 260 - y * 26; };
+  function renderLine() {
+    var b0 = Number($("b0").value), b1 = Number($("b1").value);
+    $("b0-out").textContent = neg(b0); $("b1-out").textContent = neg(b1);
+    var s = '<title id="line-title">회귀선</title><desc id="line-desc">절편 ' + b0 + ', 기울기 ' + b1 + '인 직선</desc>';
+    s += axes(X, Y, [0, 2, 4, 6, 8, 10], [0, 2, 4, 6, 8], "x", "ŷ", 0, 10, 0, 9);
+    var ya = b0, yb = b0 + b1 * 10, clip = function (v) { return Math.max(-0.5, Math.min(9.5, v)); };
+    s += '<clipPath id="lp-clip"><rect x="' + X(0) + '" y="' + Y(9.5) + '" width="' + (X(10) - X(0)) + '" height="' + (Y(0) - Y(9.5)) + '"/></clipPath>';
+    s += '<line class="fit" clip-path="url(#lp-clip)" x1="' + X(0) + '" y1="' + Y(ya) + '" x2="' + X(10) + '" y2="' + Y(yb) + '"/>';
+    if (b0 >= 0) s += '<circle class="cur" cx="' + X(0) + '" cy="' + Y(b0) + '" r="6"/><text x="' + (X(0) + 10) + '" y="' + (Y(b0) - 8) + '">β₀</text>';
+    var y3 = b0 + 3 * b1, y4 = b0 + 4 * b1;
+    if (y3 >= 0 && y4 >= 0 && y3 <= 9 && y4 <= 9) s += '<line class="guide" x1="' + X(3) + '" y1="' + Y(y3) + '" x2="' + X(4) + '" y2="' + Y(y3) + '"/><line class="guide" x1="' + X(4) + '" y1="' + Y(y3) + '" x2="' + X(4) + '" y2="' + Y(y4) + '"/><text x="' + (X(4) + 8) + '" y="' + ((Y(y3) + Y(y4)) / 2 + 4) + '">β₁</text>';
+    $("line-plot").innerHTML = s;
+    show(1, [["회귀선", "ŷ = " + neg(b0) + " + " + neg(b1) + "x"], ["x = 0에서 ŷ", neg(b0) + " (절편)"], ["x = 4에서 ŷ", neg(b0) + " + " + neg(b1) + " × 4 = " + f1(b0 + 4 * b1)], ["x가 1 늘 때", (b1 > 0 ? "+" : "") + neg(b1)]],
+      "β₀ = " + kj(neg(b0), "은", "는") + " 직선을 위아래로 옮길 뿐 기울기를 바꾸지 않는다. β₁ = " + kj(neg(b1), "은", "는") + " x가 1 늘 때마다 ŷ가 " + (b1 === 0 ? "변하지 않게" : Math.abs(b1) + "씩 " + (b1 > 0 ? "커지게" : "작아지게")) + " 한다.");
+  }
+  function renderPredict() {
+    var x0 = Number($("x0").value), y0 = 2 + 0.5 * x0;
+    $("x0-out").textContent = x0; $("flow-in").textContent = "x₀ = " + x0; $("flow-out").textContent = "ŷ₀ = " + f1(y0);
+    show(2, [["고정한 계수", "β̂₀ = 2, β̂₁ = 0.5"], ["새 입력", "x₀ = " + x0], ["예측값", "ŷ₀ = 2 + 0.5 × " + x0 + " = " + f1(y0)]],
+      "예측은 학습 자료를 다시 보지 않는다. 추정 단계에서 정한 β̂를 그대로 두고 x₀ = " + x0 + "만 넣어 ŷ₀ = " + kj(f1(y0), "을", "를") + " 계산한다. x₀이 1 늘 때마다 ŷ₀은 β̂₁ = 0.5씩 커진다.");
+  }
+  function renderUnit() {
+    var u = $("unit").value, dcm = Number($("dh").value), change = 0.4 * dcm;
+    $("dh-out").textContent = u === "cm" ? dcm + " cm" : f2(dcm / 100) + " m";
+    var rows = [["cm", "0.4", dcm + " cm", "0.4 × " + dcm], ["m", "40", f2(dcm / 100) + " m", "40 × " + f2(dcm / 100)]];
+    $("unit-table").innerHTML = '<thead><tr><th scope="col">키의 단위</th><th scope="col">계수</th><th scope="col">입력 변화</th><th scope="col">예측값 변화</th></tr></thead><tbody>' + rows.map(function (r) { return '<tr' + (r[0] === u ? ' class="is-sel"' : "") + '><th scope="row">' + r[0] + "</th><td>" + r[1] + "</td><td>" + r[2] + '</td><td class="' + (r[0] === u ? "is-on" : "") + '">' + r[3] + " = " + f1(change) + "</td></tr>"; }).join("") + "</tbody>";
+    show(3, [["계수", u === "cm" ? "0.4 (1 cm당)" : "40 (1 m당)"], ["입력 변화", u === "cm" ? dcm + " cm" : f2(dcm / 100) + " m"], ["예측값 변화", f1(change)]],
+      "cm 단위의 계수 0.4와 m 단위의 계수 40은 크기가 100배 다르지만, 같은 키 증가에 대한 예측값 변화는 " + jro(f1(change)) + " 같다. 계수의 절댓값만으로 설명변수의 중요도를 비교할 수 없는 이유다.");
+  }
+  on("b0", renderLine); on("b1", renderLine); on("x0", renderPredict); on("unit", renderUnit); on("dh", renderUnit);
+  renderLine(); renderPredict(); renderUnit();
+}());
+</script>
+</body>
+</html>

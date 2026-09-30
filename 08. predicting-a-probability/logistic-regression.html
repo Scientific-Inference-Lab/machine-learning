@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Logistic Regression | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .cur{fill:var(--pnu-green)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:4 4}
+    .topic-plot .res-pos{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res-neg{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:5 3}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .bound{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:3 5}
+  </style>
+</head>
+<body class="visual-topic topic-logistic-regression">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Predicting a Probability</span><span class="nav-tag is-current" aria-current="page">Logistic Regression</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Predicting a Probability</p><h1 class="page-title">Logistic Regression</h1><hr class="accent-rule"><p class="page-subtitle">로지스틱 회귀(logistic regression)는 선형 점수 z = β₀ + β₁x를 sigmoid(S자 함수)로 0과 1 사이의 확률 p(x)로 바꾸고, 임계값(threshold)을 적용해 예측 범주를 정한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>sigmoid σ(z)</strong><span>1 / (1 + e⁻ᶻ)이며 실수를 (0, 1)로 바꾼다.</span></article><article class="summary-card"><strong>승산(odds)</strong><span>p / (1 − p)이며 로그 승산(log odds)은 선형 점수 z와 같다.</span></article><article class="summary-card"><strong>계수 β₁</strong><span>입력이 1 늘 때 로그 승산에 더해지고 승산에는 e^β₁을 곱한다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">선형 점수는 로그 승산이고, sigmoid가 그것을 확률로 바꾼다</h2><p class="lead">β₀, β₁, 입력 x를 바꾸면 선형 점수 z, 승산 eᶻ, 확률 p(x)와 곡선 위의 위치가 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--triple"><div class="control-field"><label for="lb0">절편 β₀ <output id="lb0-out" class="control-value" for="lb0">−4</output></label><input id="lb0" type="range" min="-8" max="2" step="0.5" value="-4"></div><div class="control-field"><label for="lb1">계수 β₁ <output id="lb1-out" class="control-value" for="lb1">1</output></label><input id="lb1" type="range" min="-1" max="2" step="0.25" value="1"></div><div class="control-field"><label for="lx">입력 x <output id="lx-out" class="control-value" for="lx">3</output></label><input id="lx" type="range" min="0" max="10" step="0.5" value="3"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="sig-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="sig-title sig-desc"><title id="sig-title">로지스틱 곡선</title><desc id="sig-desc">x에 따른 p(x)</desc></svg></div><figcaption class="visual-caption">가로축은 입력 x, 세로축은 확률 p(x)다. 파란 곡선은 σ(β₀ + β₁x), 회색 점선은 p = 0.5와 p = 1, 초록 점은 현재 입력의 확률이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">β₁은 로그 승산을 더하고 승산을 곱하지만, 확률 변화는 위치에 따라 다르다</h2><p class="lead">β₀ = −4, β₁ = 1로 고정하고 출발점 x를 바꾸면 x가 1 늘 때의 승산 비는 그대로이고 확률 변화량만 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="sx">출발점 x <output id="sx-out" class="control-value" for="sx">4</output></label><input id="sx" type="range" min="0" max="8" step="1" value="4"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><table id="odds-table" class="topic-table" aria-label="x와 x+1의 로그 승산, 승산, 확률"></table></div><figcaption class="visual-caption">두 행은 출발점 x와 x + 1이다. 마지막 행은 두 행의 차이 또는 비이며 초록 테두리 칸이 확률 변화량이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../07. linear-regression-revisited/least-squares.html" rel="prev">이전 · Least Squares</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="probability-to-decision.html" rel="next">다음 · Probability to Decision</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; return String(v) + (k ? a : b); }
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  function axes(X, Y, xs, ys, xl, yl, x0, x1, y0, y1) {
+    var s = '<line class="axis" x1="' + X(x0) + '" y1="' + Y(y0) + '" x2="' + X(x1) + '" y2="' + Y(y0) + '"/><line class="axis" x1="' + X(x0) + '" y1="' + Y(y0) + '" x2="' + X(x0) + '" y2="' + Y(y1) + '"/>';
+    xs.forEach(function (t) { s += '<text class="small" x="' + X(t) + '" y="' + (Y(y0) + 18) + '" text-anchor="middle">' + neg(t) + "</text>"; });
+    ys.forEach(function (t) { s += '<text class="small" x="' + (X(x0) - 8) + '" y="' + (Y(t) + 4) + '" text-anchor="end">' + neg(t) + "</text>"; });
+    s += '<text x="' + X(x1) + '" y="' + (Y(y0) + 36) + '" text-anchor="end">' + xl + '</text><text x="' + (X(x0) + 6) + '" y="' + (Y(y1) + 4) + '">' + yl + "</text>";
+    return s;
+  }
+  var f2 = function (v) { return neg((Math.round(v * 100) / 100).toFixed(2)); };
+  var f1 = function (v) { return neg(Math.round(v * 100) / 100); };
+
+  var sig = function (z) { return 1 / (1 + Math.exp(-z)); };
+  var X = function (x) { return 60 + x * 50; }, Y = function (p) { return 250 - p * 220; };
+  function renderSig() {
+    var b0 = Number($("lb0").value), b1 = Number($("lb1").value), x = Number($("lx").value), z = b0 + b1 * x, p = sig(z);
+    $("lb0-out").textContent = neg(b0); $("lb1-out").textContent = neg(b1); $("lx-out").textContent = x;
+    var s = '<title id="sig-title">로지스틱 곡선</title><desc id="sig-desc">x=' + x + '에서 z=' + z + ', p=' + p.toFixed(3) + '</desc>';
+    s += axes(X, Y, [0, 2, 4, 6, 8, 10], [0, 0.5, 1], "x", "p(x)", 0, 10, 0, 1.08);
+    s += '<line class="bound" x1="' + X(0) + '" y1="' + Y(1) + '" x2="' + X(10) + '" y2="' + Y(1) + '"/><line class="bound" x1="' + X(0) + '" y1="' + Y(0.5) + '" x2="' + X(10) + '" y2="' + Y(0.5) + '"/>';
+    var pts = [];
+    for (var t = 0; t <= 10.001; t += 0.1) pts.push(X(t).toFixed(1) + "," + Y(sig(b0 + b1 * t)).toFixed(1));
+    s += '<polyline class="curve" points="' + pts.join(" ") + '"/><line class="guide" x1="' + X(x) + '" y1="' + Y(0) + '" x2="' + X(x) + '" y2="' + Y(p) + '"/><circle class="cur" cx="' + X(x) + '" cy="' + Y(p) + '" r="7"/>';
+    $("sig-plot").innerHTML = s;
+    var odds = Math.exp(z);
+    show(1, [["선형 점수 z = 로그 승산", neg(b0) + " + " + neg(b1) + " × " + x + " = " + f2(z)], ["승산 eᶻ", odds < 0.01 ? odds.toExponential(1) : odds > 999 ? odds.toExponential(1) : f2(odds)], ["확률 p(x) = σ(z)", p.toFixed(3)]],
+      (z === 0 ? "z = 0이면 승산이 1이고 확률은 두 범주가 같은 0.5다. " : z > 0 ? "z가 양수라 승산이 1보다 크고 확률이 0.5를 넘는다. " : "z가 음수라 승산이 1보다 작고 확률이 0.5보다 낮다. ") + "z는 실수 전체를 오갈 수 있지만 σ(z)는 항상 0과 1 사이에 머물러 확률로 읽을 수 있다.");
+  }
+  function renderOdds() {
+    var x = Number($("sx").value), z0 = -4 + x, z1 = z0 + 1, p0 = sig(z0), p1 = sig(z1);
+    $("sx-out").textContent = x;
+    var row = function (lab, z, p) { return '<tr><th scope="row">' + lab + "</th><td>" + neg(z) + "</td><td>" + f2(Math.exp(z)) + "</td><td>" + p.toFixed(3) + "</td></tr>"; };
+    $("odds-table").innerHTML = '<thead><tr><th scope="col">입력</th><th scope="col">로그 승산 z</th><th scope="col">승산 eᶻ</th><th scope="col">확률 p</th></tr></thead><tbody>' + row("x = " + x, z0, p0) + row("x = " + (x + 1), z1, p1) +
+      '<tr><th scope="row">변화</th><td>+1 (= β₁)</td><td>× ' + Math.E.toFixed(2) + ' (= e^β₁)</td><td class="is-on">+' + (p1 - p0).toFixed(3) + "</td></tr></tbody>";
+    show(2, [["로그 승산 변화", "+1"], ["승산 비", "× " + Math.E.toFixed(2)], ["확률 변화", "+" + (p1 - p0).toFixed(3)]],
+      "x가 1 늘면 어느 출발점에서든 로그 승산은 β₁ = 1만큼 더해지고 승산은 e ≈ 2.72배가 된다. 확률 변화는 " + jro((p1 - p0).toFixed(3)) + ", p가 0.5 근처인 가운데 구간에서 가장 크고 양 끝으로 갈수록 작다. 계수를 확률의 고정 증가량으로 읽지 않는다.");
+  }
+  on("lb0", renderSig); on("lb1", renderSig); on("lx", renderSig); on("sx", renderOdds);
+  renderSig(); renderOdds();
+}());
+</script>
+</body>
+</html>

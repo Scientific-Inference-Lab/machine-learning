@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Probability to Decision | 기계학습개론</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>.topic-table .is-y{background:var(--callout-bg);font-weight:700}.topic-table .is-alert{outline:2px dashed var(--alert-700);outline-offset:-3px}</style>
+</head>
+<body class="visual-topic">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Predicting a Probability</span><span class="nav-tag is-current" aria-current="page">Probability to Decision</span></nav></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow">Predicting a Probability</p><h1 class="page-title">Probability to Decision</h1><hr class="accent-rule"><p class="page-subtitle">로지스틱 회귀가 낸 확률에 임계값을 적용하면 예측 범주가 정해진다. 임계값을 바꾸면 확률은 그대로이고 놓치는 양성과 잘못 예측하는 양성의 수가 달라진다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>예측 확률 p(x)</strong><span>모델이 입력마다 계산한 값이며 임계값을 바꿔도 그대로다.</span></article><article class="summary-card"><strong>임계값 t</strong><span>p(x) ≥ t이면 1, 아니면 0으로 예측한다.</span></article><article class="summary-card"><strong>결정 경계</strong><span>선형 점수와 임계값이 예측이 바뀌는 입력 위치를 정한다.</span></article></div></section>
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">임계값이 같은 확률을 다른 범주로 바꾼다</h2><p class="lead">임계값 t를 바꾸면 여덟 명의 예측 범주, 놓친 연체, 연체로 오인한 수, 결정 경계가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="thr">임계값 t <output id="thr-out" class="control-value" for="thr">0.50</output></label><input id="thr" type="range" min="0.05" max="0.95" step="0.05" value="0.5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><table id="thr-table" class="topic-table" aria-label="고객별 예측 확률, 실제 연체, 예측 범주"></table></div><figcaption class="visual-caption">열 하나가 고객 한 명이다. 초록 칸은 연체(1)로 예측한 고객, 빨간 글자는 예측이 실제와 다른 고객이다. 확률은 β₀ = −4, β₁ = 1에서 계산했다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="logistic-regression.html" rel="prev">이전 · Logistic Regression</a><a class="pager-link is-all" href="../index.html">전체</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-instructor">오용경</span>
+      <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var sigmoid = function (z) { return 1 / (1 + Math.exp(-z)); };
+  var customers = [[1, 0], [2, 0], [3, 0], [3.5, 1], [4, 0], [4.5, 1], [5, 1], [6, 1]];
+  function rd(label, value) { return '<div class="visual-readout"><span class="visual-readout-label">' + label + '</span><strong class="visual-readout-value">' + value + '</strong></div>'; }
+  function render() {
+    var threshold = Number($("thr").value), missed = 0, falsePositive = 0, positive = 0;
+    $("thr-out").textContent = threshold.toFixed(2);
+    var head = '<tr><th scope="row">고객</th>', input = '<tr><th scope="row">x</th>', probability = '<tr><th scope="row">p(x)</th>', actual = '<tr><th scope="row">실제 연체 y</th>', predicted = '<tr><th scope="row">예측 ŷ</th>';
+    customers.forEach(function (customer, index) {
+      var p = sigmoid(-4 + customer[0]), value = p >= threshold ? 1 : 0, wrong = value !== customer[1];
+      if (value) positive++; if (wrong && customer[1] === 1) missed++; if (wrong && customer[1] === 0) falsePositive++;
+      head += '<th scope="col">' + (index + 1) + '</th>'; input += '<td>' + customer[0] + '</td>'; probability += '<td>' + p.toFixed(2) + '</td>'; actual += '<td>' + customer[1] + '</td>'; predicted += '<td class="' + (value ? "is-y" : "") + (wrong ? " is-alert" : "") + '">' + value + '</td>';
+    });
+    $("thr-table").innerHTML = '<tbody>' + head + '</tr>' + input + '</tr>' + probability + '</tr>' + actual + '</tr>' + predicted + '</tr></tbody>';
+    var boundary = Math.log(threshold / (1 - threshold)) + 4;
+    $("read-1").innerHTML = rd("연체로 예측", positive + "명") + rd("놓친 연체", missed + "명") + rd("연체로 오인", falsePositive + "명") + rd("결정 경계", "x = " + boundary.toFixed(2));
+    $("note-1").textContent = "p(x) ≥ " + threshold.toFixed(2) + "인 고객을 연체로 예측한다. 임계값을 낮추면 놓친 연체는 줄거나 유지되고, 연체로 오인한 수는 늘거나 유지된다. 모델의 확률은 그대로이고 결정만 바뀐다.";
+  }
+  $("thr").addEventListener("input", render);
+  render();
+}());
+</script>
+</body>
+</html>
