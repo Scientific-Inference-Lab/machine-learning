@@ -1,4 +1,4 @@
-# Introduction to Machine Learning
+# Machine Learning
 
 [Open the course materials](https://scientific-inference-lab.github.io/machine-learning/).
 

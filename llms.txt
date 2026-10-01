@@ -1,4 +1,4 @@
-# Introduction to Machine Learning (기계학습개론)
+# Machine Learning (기계학습개론)
 
 > Korean-language course materials from Pusan National University: lecture slides (PDF), interactive topic pages, and concept-check problem sets.
 
