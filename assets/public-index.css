@@ -70,6 +70,25 @@
   background: var(--pnu-blue-dark);
   color: var(--white);
 }
+.publication-upcoming {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 62px;
+  padding: 14px 16px;
+  border: 1px solid var(--line-200);
+  border-radius: var(--radius-md);
+  background: var(--surface-050);
+  background: color-mix(in srgb, var(--line-200) 40%, var(--surface-050));
+  color: var(--ink-600);
+  cursor: default;
+}
+.publication-upcoming-icon {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+}
 .publication-index a:focus-visible { outline: 3px solid var(--pnu-green); outline-offset: 3px; }
 .publication-index .site-footer { margin-top: 0; background: var(--white); }
 @media (max-width: 700px) {
