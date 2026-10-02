@@ -1,9 +1,8 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Perceptron Learning Rule | 기계학습개론</title><meta name="description" content="퍼셉트론 학습 규칙은 yᵢsᵢ ≤ 0인 관측, 곧 오분류했거나 경계 위에 놓인 관측에서만 w ← w + yᵢxᵢ, b ← b + yᵢ로 갱신한다. 한 에포크의 갱신이 0회이면 모든 관측이 정답 쪽 반공간에 있다."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/11.%20the-perceptron/perceptron-learning-rule.html"><meta property="og:type" content="website"><meta property="og:site_name" content="기계학습개론"><meta property="og:title" content="Perceptron Learning Rule | 기계학습개론"><meta property="og:description" content="퍼셉트론 학습 규칙은 yᵢsᵢ ≤ 0인 관측, 곧 오분류했거나 경계 위에 놓인 관측에서만 w ← w + yᵢxᵢ, b ← b + yᵢ로 갱신한다. 한 에포크의 갱신이 0회이면 모든 관측이 정답 쪽 반공간에 있다."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/11.%20the-perceptron/perceptron-learning-rule.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" href="data:,">
-  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Perceptron Learning Rule | Machine Learning | Pusan National University</title><meta name="description" content="퍼셉트론 학습 규칙은 yᵢsᵢ ≤ 0인 관측, 곧 오분류했거나 경계 위에 놓인 관측에서만 w ← w + yᵢxᵢ, b ← b + yᵢ로 갱신한다. 한 에포크의 갱신이 0회이면 모든 관측이 정답 쪽 반공간에 있다."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/11.%20the-perceptron/perceptron-learning-rule.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Perceptron Learning Rule | Machine Learning | Pusan National University"><meta property="og:description" content="퍼셉트론 학습 규칙은 yᵢsᵢ ≤ 0인 관측, 곧 오분류했거나 경계 위에 놓인 관측에서만 w ← w + yᵢxᵢ, b ← b + yᵢ로 갱신한다. 한 에포크의 갱신이 0회이면 모든 관측이 정답 쪽 반공간에 있다."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/11.%20the-perceptron/perceptron-learning-rule.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png"><link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
   <style>
     .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
     .topic-plot .pt{fill:var(--pnu-blue-dark)}
@@ -71,7 +70,7 @@
   <div class="container footer-inner">
     <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
     <address class="footer-contact" aria-label="강의자 연락처">
-      <span class="footer-instructor">오용경</span>
+      <span class="footer-contact-label">Contact:</span>
       <a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>
     </address>
   </div>
