@@ -44,4 +44,4 @@ The slides credit sources where they are used. Source-specific licenses below co
 
 - Zhang, A., Lipton, Z. C., Li, M., & Smola, A. J. (2023). *Dive into deep learning*. Cambridge University Press. https://d2l.ai/
 
-  Crops, renders, Korean captions, and other adaptations follow [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Credited material appears in *Labels, Structure, Rewards*, *Vectors and Matrices*, *Derivatives and Probability*, *Walking Downhill*, *Fewer Examples per Step*, and *The Perceptron*.
+  Crops, renders, Korean captions, and other adaptations follow [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Credited material appears in *What a Model Learns* (slide 22), *Labels, Structure, Rewards*, *Vectors and Matrices*, *Derivatives and Probability*, *Walking Downhill*, *Fewer Examples per Step*, and *The Perceptron*.

@@ -201,16 +201,21 @@ a {
   display: flex;
   flex: 0 0 auto;
   align-items: baseline;
-  gap: 6px 12px;
+  gap: 4px 6px;
   margin-left: auto;
   color: inherit;
   font-style: normal;
   line-height: 1.5;
 }
 
-.footer-contact-label {
+.footer-contact-label,
+.footer-contact-name {
   color: var(--ink-900);
   font-weight: 600;
+}
+
+.footer-contact-email {
+  color: inherit;
 }
 
 .footer-email {
@@ -267,9 +272,6 @@ a {
   .course-nav {
     grid-column: 1 / -1;
     grid-row: 2;
-  }
-
-  .course-nav {
     min-width: 0;
     flex: 1 1 auto;
   }
@@ -1499,7 +1501,7 @@ table.spec tr.is-focus td {
   }
 }
 
-/* Public course pages: lecture PDF link in the hero eyebrow and the concept-check mark. */
+
 .eyebrow-link {
   color: inherit;
   text-decoration: underline;
@@ -1545,7 +1547,7 @@ table.spec tr.is-focus td {
   white-space: nowrap;
 }
 
-/* The index arrow rule (.publication-lecture span) must not shrink the wrapped last word. */
+
 .publication-lecture .publication-lecture-tail {
   display: inline;
   margin-left: 0;
