@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Computational Graphs | Machine Learning | Pusan National University</title><meta name="description" content="A computational graph shows dependencies among values and operations, with forward evaluation and backward propagation of derivatives."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/14.%20backpropagation/computational-graphs.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Computational Graphs | Machine Learning | Pusan National University"><meta property="og:description" content="A computational graph shows dependencies among values and operations, with forward evaluation and backward propagation of derivatives."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/14.%20backpropagation/computational-graphs.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .cur{fill:var(--pnu-green)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:4 4}
+    .topic-plot .res-pos{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res-neg{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:5 3}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot.plane{max-width:460px;min-width:320px;margin:0 auto}
+    .topic-plot .pos-cell{fill:var(--pnu-green);fill-opacity:.13}
+    .topic-plot .neg-cell{fill:var(--pnu-blue);fill-opacity:.10}
+    .topic-plot .boundary{stroke:var(--pnu-blue-dark);stroke-width:3}
+    .topic-plot .wvec{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .p-pos{fill:var(--white);stroke:var(--pnu-green);stroke-width:3.5}
+    .topic-plot .p-neg{fill:var(--pnu-blue-dark)}
+    .topic-plot .p-bad{stroke:var(--alert-700);stroke-width:3;fill:none}
+    .topic-plot .p-cur{stroke:var(--pnu-green);stroke-width:3;fill:none;stroke-dasharray:4 3}
+    .topic-plot.net{min-width:620px}
+    .topic-plot .edge{stroke:var(--line-200);stroke-width:2.5}
+    .topic-plot .edge.is-on{stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .edge.is-back{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:6 4}
+    .topic-plot .node{fill:var(--white);stroke:var(--pnu-blue);stroke-width:2.5}
+    .topic-plot .node.is-on{stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .node.is-zero{stroke:var(--ink-600);stroke-dasharray:4 3}
+    .topic-plot .nlab{font-size:13px;fill:var(--ink-600)}
+    .topic-plot .nval{font-size:15px;font-weight:800;fill:var(--pnu-blue-dark)}
+    .topic-plot .elab{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .glab{font-size:12px;font-weight:700;fill:var(--alert-700);paint-order:stroke;stroke:var(--white);stroke-width:5px;stroke-linejoin:round}
+    .topic-flow .dlab{color:var(--alert-700);font-weight:700}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-computational-graphs">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Working Backwards</span><span class="nav-tag is-current" aria-current="page">Computational Graphs</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/14.%20Working%20Backwards.pdf">Working <span class="publication-lecture-tail">Backwards<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Computational Graphs</h1><hr class="accent-rule"><p class="page-subtitle">계산 그래프(computational graph)는 값과 연산을 노드와 연결로 나타내 계산의 의존 관계를 보인다. 순전파는 입력에서 출력으로 값을 계산해 저장하고, 역전파는 출력에서 입력 방향으로 미분값을 전달한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>순전파의 저장</strong><span>z, h, s처럼 중간값을 저장해 역전파에서 다시 쓴다.</span></article><article class="summary-card"><strong>경로의 미분</strong><span>한 경로 위의 연산 미분을 곱한다.</span></article><article class="summary-card"><strong>여러 경로의 합</strong><span>같은 값이 두 연산에 쓰이면 두 경로의 미분값을 더한다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">순전파는 손실까지의 모든 중간값을 차례로 계산해 저장한다</h2><p class="lead">입력 x₁, x₂와 정답 y를 바꾸면 z, h, s, L이 입력 쪽부터 다시 계산된다. 가중치는 h₁ = ReLU(x₁ + x₂), h₂ = ReLU(x₁ + x₂ − 1), s = h₁ − 4h₂ − 0.5다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--triple"><div class="control-field"><label for="gx1">x₁ <output id="gx1-out" class="control-value" for="gx1">1</output></label><input id="gx1" type="range" min="0" max="1" step="0.25" value="1"></div><div class="control-field"><label for="gx2">x₂ <output id="gx2-out" class="control-value" for="gx2">1</output></label><input id="gx2" type="range" min="0" max="1" step="0.25" value="1"></div><div class="control-field"><label for="gy">정답 y</label><select id="gy"><option value="-1" selected>−1</option><option value="1">+1</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div id="cg-flow" class="topic-flow"></div></div><figcaption class="visual-caption">상자 하나가 값과 그 값을 만든 연산이다. 왼쪽에서 오른쪽이 순전파 순서이고, 초록 상자는 역전파에서 다시 쓰려고 저장하는 중간값이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">같은 값이 두 연산에 쓰이면 두 경로의 미분을 더한다</h2><p class="lead">u를 바꾸면 L = a(u) + b(u)의 두 경로 a(u) = u², b(u) = 3u에서 각각 돌아오는 미분값과 그 합 dL/du가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="uu">u <output id="uu-out" class="control-value" for="uu">1</output></label><input id="uu" type="range" min="-3" max="3" step="0.5" value="1"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="branch" class="topic-plot net" viewBox="0 0 620 240" role="img" aria-labelledby="br-title br-desc"><title id="br-title">갈라진 경로</title><desc id="br-desc">u에서 a와 b를 거쳐 L로</desc></svg></div><figcaption class="visual-caption">원 안의 수는 순전파 값, 빨간 점선과 빨간 수는 역전파에서 L에서 u 쪽으로 돌아오는 미분값이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../13. multilayer-perceptrons/forward-pass.html" rel="prev">이전 · Forward Pass</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../14. backpropagation/chain-rule.html" rel="next">다음 · Chain Rule</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  function pj(w, t) { var s = String(w), c = s.replace(/[\])\s]+$/, "").slice(-1), P = { "을": ["을", "를"], "이": ["이", "가"], "은": ["은", "는"], "과": ["과", "와"], "으로": ["으로", "로"] }, f = false, l = false; if (/[가-힣]/.test(c)) { var k = (c.charCodeAt(0) - 44032) % 28; f = k > 0; l = k === 8; } else if (/[0-9]/.test(c)) { f = "013678".indexOf(c) >= 0; l = "178".indexOf(c) >= 0; } else if (/[a-z]/i.test(c)) { f = "lmnr".indexOf(c.toLowerCase()) >= 0; l = "lr".indexOf(c.toLowerCase()) >= 0; } var p = P[t]; return s + (t === "으로" ? (f && !l ? p[0] : p[1]) : (f ? p[0] : p[1])); }
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  var relu = function (z) { return Math.max(0, z); }, drelu = function (z) { return z > 0 ? 1 : 0; };
+  var fx = function (v) { return neg(Math.round(v * 1000) / 1000); };
+  var NP = { x1: [70, 70], x2: [70, 190], h1: [290, 70], h2: [290, 190], s: [500, 130], L: [640, 130] };
+  function node(k, lab, val, cls) { var p = NP[k]; return '<circle class="node ' + (cls || "") + '" cx="' + p[0] + '" cy="' + p[1] + '" r="30"/><text class="nlab" x="' + p[0] + '" y="' + (p[1] - 38) + '" text-anchor="middle">' + lab + '</text><text class="nval" x="' + p[0] + '" y="' + (p[1] + 5) + '" text-anchor="middle">' + val + "</text>"; }
+  function edge(a, b, lab, cls, glab, frac) {
+    var p = NP[a], q = NP[b], t = frac || 0.5, mx = p[0] + (q[0] - p[0]) * t, my = p[1] + (q[1] - p[1]) * t;
+    return '<line class="edge ' + (cls || "") + '" x1="' + (p[0] + 30) + '" y1="' + p[1] + '" x2="' + (q[0] - 30) + '" y2="' + q[1] + '"/>' + (lab ? '<text class="elab" x="' + mx + '" y="' + (my - 6) + '" text-anchor="middle">' + lab + "</text>" : "") + (glab ? '<text class="glab" x="' + mx + '" y="' + (my + (Math.min(p[1], q[1]) < 100 ? -16 : 30)) + '" text-anchor="middle">' + glab + "</text>" : "");
+  }
+
+  function renderCG() {
+    var x = [Number($("gx1").value), Number($("gx2").value)], y = Number($("gy").value), z = [x[0] + x[1], x[0] + x[1] - 1], h = [relu(z[0]), relu(z[1])], s = h[0] - 4 * h[1] - 0.5, L = 0.5 * (s - y) * (s - y);
+    $("gx1-out").textContent = x[0]; $("gx2-out").textContent = x[1];
+    var boxes = [["is-x", "입력 x", "(" + fx(x[0]) + ", " + fx(x[1]) + ")"], ["is-on", "z = W₁x + b₁", "(" + fx(z[0]) + ", " + fx(z[1]) + ")"], ["is-on", "h = ReLU(z)", "(" + fx(h[0]) + ", " + fx(h[1]) + ")"], ["is-on", "s = w₂ᵀh + b₂", fx(s)], ["", "L = ½(s − y)²", fx(L)]];
+    $("cg-flow").innerHTML = boxes.map(function (b) { return '<div class="flow-box ' + b[0] + '"><strong>' + b[1] + "</strong><span>" + b[2] + "</span></div>"; }).join('<div class="flow-arrow" aria-hidden="true">→</div>');
+    show(1, [["z", "(" + fx(z[0]) + ", " + fx(z[1]) + ")"], ["h", "(" + fx(h[0]) + ", " + fx(h[1]) + ")"], ["s", fx(s)], ["L", fx(L)]],
+      "W₁의 영향은 z, h, s를 차례로 거쳐 L에 닿는다. 순전파에서 계산한 h는 s를 구할 때 쓰고, 역전파에서 ∂L/∂w₂ = (s − y)h를 구할 때 다시 쓰므로 저장해 둔다. 지금 s − y = " + fx(s - y) + "이다.");
+  }
+  NP = { u: [80, 120], a: [300, 50], b: [300, 190], L: [520, 120] };
+  function renderBranch() {
+    var u = Number($("uu").value), a = u * u, b = 3 * u, L = a + b, da = 2 * u, db = 3;
+    $("uu-out").textContent = neg(u);
+    var g = '<title id="br-title">갈라진 경로</title><desc id="br-desc">u=' + u + ', dL/du=' + (da + db) + '</desc>';
+    g += edge("u", "a", "", "is-back", "∂a/∂u = " + fx(da)) + edge("u", "b", "", "is-back", "∂b/∂u = 3") + edge("a", "L", "", "is-back", "∂L/∂a = 1") + edge("b", "L", "", "is-back", "∂L/∂b = 1");
+    g += node("u", "u", fx(u)) + node("a", "a = u²", fx(a)) + node("b", "b = 3u", fx(b)) + node("L", "L = a + b", fx(L), "is-on");
+    $("branch").innerHTML = g;
+    show(2, [["경로 u → a → L", "1 × " + fx(da) + " = " + fx(da)], ["경로 u → b → L", "1 × 3 = 3"], ["dL/du", fx(da) + " + 3 = " + fx(da + db)]],
+      "u는 a와 b 두 연산에 쓰이므로 u를 조금 바꾸면 두 경로로 L이 함께 바뀐다. 각 경로에서 국소 미분을 곱하고, 두 경로의 값을 더해 dL/du = 2u + 3 = " + pj(fx(da + db), "을") + " 얻는다. 은닉 유닛 하나가 다음 층의 여러 유닛에 연결될 때도 같은 규칙으로 더한다.");
+  }
+  on("gx1", renderCG); on("gx2", renderCG); on("gy", renderCG); on("uu", renderBranch);
+  renderCG(); renderBranch();
+}());
+</script>
+</body>
+</html>

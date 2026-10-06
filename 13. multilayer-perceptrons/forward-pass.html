@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Forward Pass | Machine Learning | Pusan National University</title><meta name="description" content="A forward pass computes weighted sums and activations layer by layer, so changing one weight affects only subsequent values on its path."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/13.%20multilayer-perceptrons/forward-pass.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Forward Pass | Machine Learning | Pusan National University"><meta property="og:description" content="A forward pass computes weighted sums and activations layer by layer, so changing one weight affects only subsequent values on its path."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/13.%20multilayer-perceptrons/forward-pass.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .cur{fill:var(--pnu-green)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:4 4}
+    .topic-plot .res-pos{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res-neg{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:5 3}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot.plane{max-width:460px;min-width:320px;margin:0 auto}
+    .topic-plot .pos-cell{fill:var(--pnu-green);fill-opacity:.13}
+    .topic-plot .neg-cell{fill:var(--pnu-blue);fill-opacity:.10}
+    .topic-plot .boundary{stroke:var(--pnu-blue-dark);stroke-width:3}
+    .topic-plot .wvec{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .p-pos{fill:var(--white);stroke:var(--pnu-green);stroke-width:3.5}
+    .topic-plot .p-neg{fill:var(--pnu-blue-dark)}
+    .topic-plot .p-bad{stroke:var(--alert-700);stroke-width:3;fill:none}
+    .topic-plot .p-cur{stroke:var(--pnu-green);stroke-width:3;fill:none;stroke-dasharray:4 3}
+    .topic-plot.net{min-width:620px}
+    .topic-plot .edge{stroke:var(--line-200);stroke-width:2.5}
+    .topic-plot .edge.is-on{stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .edge.is-back{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:6 4}
+    .topic-plot .node{fill:var(--white);stroke:var(--pnu-blue);stroke-width:2.5}
+    .topic-plot .node.is-on{stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .node.is-zero{stroke:var(--ink-600);stroke-dasharray:4 3}
+    .topic-plot .nlab{font-size:13px;fill:var(--ink-600)}
+    .topic-plot .nval{font-size:15px;font-weight:800;fill:var(--pnu-blue-dark)}
+    .topic-plot .elab{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .glab{font-size:12px;font-weight:700;fill:var(--alert-700)}
+    .topic-flow .dlab{color:var(--alert-700);font-weight:700}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-forward-pass">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Stacking the Layers</span><span class="nav-tag is-current" aria-current="page">Forward Pass</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/13.%20Stacking%20the%20Layers.pdf">Stacking the <span class="publication-lecture-tail">Layers<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Forward Pass</h1><hr class="accent-rule"><p class="page-subtitle">순전파(forward pass)는 입력에서 시작해 각 층의 가중합과 활성화를 차례로 계산해 출력을 얻는 과정이다. 가중치 하나를 바꾸면 그 연결 뒤에 계산되는 값만 달라진다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>순전파</strong><span>입력 → 은닉층 → 출력 순서로 값을 계산한다.</span></article><article class="summary-card"><strong>은닉 유닛 값</strong><span>hⱼ = ReLU(zⱼ)이며 다음 층의 입력이 된다.</span></article><article class="summary-card"><strong>출력 점수 s</strong><span>s = h₁ − 4h₂ − 0.5이며 부호로 범주를 예측한다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">입력을 넣으면 은닉 유닛과 출력이 차례로 계산된다</h2><p class="lead">입력 x₁, x₂를 바꾸면 두 은닉 유닛의 가중합과 활성화 값, 출력 점수와 예측이 앞에서부터 차례로 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="fx1">x₁ <output id="fx1-out" class="control-value" for="fx1">1</output></label><input id="fx1" type="range" min="-1" max="2" step="0.25" value="1"></div><div class="control-field"><label for="fx2">x₂ <output id="fx2-out" class="control-value" for="fx2">0</output></label><input id="fx2" type="range" min="-1" max="2" step="0.25" value="0"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="fwd-net" class="topic-plot net" viewBox="0 0 580 250" role="img" aria-labelledby="fn-title fn-desc"><title id="fn-title">순전파 계산</title><desc id="fn-desc">입력, 은닉, 출력 값</desc></svg></div><figcaption class="visual-caption">원 안의 수가 각 노드의 값이고 선 위의 수가 가중치다. 초록 테두리는 0보다 큰 값을 내보낸 유닛, 회색 점선 테두리는 ReLU가 0으로 바꾼 유닛이다. 은닉 유닛 1의 절편은 0, 유닛 2의 절편은 −1, 출력 절편은 −0.5다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">출력 가중치 하나를 바꾸면 그 뒤의 점수만 달라진다</h2><p class="lead">h₂에서 출력으로 가는 가중치 w를 바꾸면 은닉값은 그대로이고, XOR 네 관측의 출력 점수와 예측만 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="ow">h₂ → s 가중치 w <output id="ow-out" class="control-value" for="ow">−4</output></label><input id="ow" type="range" min="-6" max="2" step="0.5" value="-4"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><table id="w-table" class="topic-table" aria-label="가중치에 따른 출력 점수"></table></div><figcaption class="visual-caption">행은 XOR 관측이다. 은닉값 열은 w와 무관하고, 점수 열 s = h₁ + w·h₂ − 0.5만 바뀐다. 초록 칸은 정답과 같은 예측, 빨간 글자는 틀린 예측이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../13. multilayer-perceptrons/activation-functions.html" rel="prev">이전 · Activation Functions</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../14. backpropagation/computational-graphs.html" rel="next">다음 · Computational Graphs</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  function pj(w, t) { var s = String(w), c = s.replace(/[\])\s]+$/, "").slice(-1), P = { "을": ["을", "를"], "이": ["이", "가"], "은": ["은", "는"], "과": ["과", "와"], "으로": ["으로", "로"] }, f = false, l = false; if (/[가-힣]/.test(c)) { var k = (c.charCodeAt(0) - 44032) % 28; f = k > 0; l = k === 8; } else if (/[0-9]/.test(c)) { f = "013678".indexOf(c) >= 0; l = "178".indexOf(c) >= 0; } else if (/[a-z]/i.test(c)) { f = "lmnr".indexOf(c.toLowerCase()) >= 0; l = "lr".indexOf(c.toLowerCase()) >= 0; } var p = P[t]; return s + (t === "으로" ? (f && !l ? p[0] : p[1]) : (f ? p[0] : p[1])); }
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  var relu = function (z) { return Math.max(0, z); }, drelu = function (z) { return z > 0 ? 1 : 0; };
+  var fx = function (v) { return neg(Math.round(v * 1000) / 1000); };
+  var NP = { x1: [70, 70], x2: [70, 190], h1: [290, 70], h2: [290, 190], s: [500, 130], L: [640, 130] };
+  function node(k, lab, val, cls) { var p = NP[k]; return '<circle class="node ' + (cls || "") + '" cx="' + p[0] + '" cy="' + p[1] + '" r="30"/><text class="nlab" x="' + p[0] + '" y="' + (p[1] - 38) + '" text-anchor="middle">' + lab + '</text><text class="nval" x="' + p[0] + '" y="' + (p[1] + 5) + '" text-anchor="middle">' + val + "</text>"; }
+  function edge(a, b, lab, cls, glab, frac) {
+    var p = NP[a], q = NP[b], t = frac || 0.5, mx = p[0] + (q[0] - p[0]) * t, my = p[1] + (q[1] - p[1]) * t;
+    return '<line class="edge ' + (cls || "") + '" x1="' + (p[0] + 30) + '" y1="' + p[1] + '" x2="' + (q[0] - 30) + '" y2="' + q[1] + '"/>' + (lab ? '<text class="elab" x="' + mx + '" y="' + (my - 6) + '" text-anchor="middle">' + lab + "</text>" : "") + (glab ? '<text class="glab" x="' + mx + '" y="' + (my + 14) + '" text-anchor="middle">' + glab + "</text>" : "");
+  }
+
+  NP = { x1: [60, 70], x2: [60, 190], h1: [290, 70], h2: [290, 190], s: [510, 130] };
+  function renderFwd() {
+    var x = [Number($("fx1").value), Number($("fx2").value)], z1 = x[0] + x[1], z2 = x[0] + x[1] - 1, h1 = relu(z1), h2 = relu(z2), s = h1 - 4 * h2 - 0.5;
+    $("fx1-out").textContent = neg(x[0]); $("fx2-out").textContent = neg(x[1]);
+    var g = '<title id="fn-title">순전파 계산</title><desc id="fn-desc">x=(' + x.join(",") + '), h=(' + h1 + ',' + h2 + '), s=' + s + '</desc>';
+    g += edge("x1", "h1", "1", h1 > 0 ? "is-on" : "", "", 0.3) + edge("x2", "h1", "1", h1 > 0 ? "is-on" : "", "", 0.3) + edge("x1", "h2", "1", h2 > 0 ? "is-on" : "", "", 0.3) + edge("x2", "h2", "1", h2 > 0 ? "is-on" : "", "", 0.3) + edge("h1", "s", "1", h1 > 0 ? "is-on" : "") + edge("h2", "s", "−4", h2 > 0 ? "is-on" : "");
+    g += node("x1", "x₁", fx(x[0])) + node("x2", "x₂", fx(x[1])) + node("h1", "h₁", fx(h1), h1 > 0 ? "is-on" : "is-zero") + node("h2", "h₂", fx(h2), h2 > 0 ? "is-on" : "is-zero") + node("s", "s", fx(s));
+    $("fwd-net").innerHTML = g;
+    show(1, [["z₁ = x₁ + x₂", fx(z1)], ["z₂ = x₁ + x₂ − 1", fx(z2)], ["h = ReLU(z)", "(" + fx(h1) + ", " + fx(h2) + ")"], ["s와 예측", fx(s) + " → " + (s >= 0 ? "+1" : "−1")]],
+      "먼저 두 은닉 유닛이 같은 입력에서 z₁ = " + fx(z1) + ", z₂ = " + pj(fx(z2), "을") + " 계산하고 ReLU를 적용한다." + (z2 <= 0 ? " z₂ ≤ 0이라 h₂ = 0이 되어 출력 가중치 −4가 점수에 작용하지 않는다." : " h₂ = " + pj(fx(h2), "이") + " 남아 출력에서 4배로 깎인다.") + " 그다음 출력 s = h₁ − 4h₂ − 0.5 = " + pj(fx(s), "을") + " 계산한다.");
+  }
+  var X4 = [[0, 0], [0, 1], [1, 0], [1, 1]], lab = [-1, 1, 1, -1];
+  function renderW() {
+    var w = Number($("ow").value), ok = 0, rows = "";
+    $("ow-out").textContent = neg(w);
+    X4.forEach(function (x, i) {
+      var h1 = relu(x[0] + x[1]), h2 = relu(x[0] + x[1] - 1), s = h1 + w * h2 - 0.5, yh = s >= 0 ? 1 : -1, good = yh === lab[i];
+      if (good) ok++;
+      rows += '<tr><th scope="row">(' + x.join(", ") + ")</th><td>(" + h1 + ", " + h2 + ")</td><td>" + fx(s) + "</td><td>" + (lab[i] > 0 ? "+1" : "−1") + '</td><td class="' + (good ? "is-y" : "is-alert") + '">' + (yh > 0 ? "+1" : "−1") + "</td></tr>";
+    });
+    $("w-table").innerHTML = '<thead><tr><th scope="col">관측</th><th scope="col">은닉값 (h₁, h₂)</th><th scope="col">점수 s</th><th scope="col">정답</th><th scope="col">예측</th></tr></thead><tbody>' + rows + "</tbody>";
+    var s11 = 2 + w - 0.5;
+    show(2, [["(1, 1)의 점수", "2 + " + neg(w) + " × 1 − 0.5 = " + fx(s11)], ["올바른 분류", ok + " / 4"], ["바뀌지 않은 값", "모든 관측의 h₁, h₂"]],
+      "h₂는 (1, 1)에서만 1이고 나머지에서는 0이라, w는 (1, 1)의 점수만 바꾼다. " + (s11 < 0 ? "w < −1.5이면 (1, 1)의 점수가 음수가 되어 네 점이 모두 맞는다." : "w ≥ −1.5이면 (1, 1)의 점수가 0 이상이라 +1로 틀린다.") + " 가중치를 바꾸면 그 연결 뒤에서 계산되는 값만 다시 계산하면 된다.");
+  }
+  on("fx1", renderFwd); on("fx2", renderFwd); on("ow", renderW);
+  renderFwd(); renderW();
+}());
+</script>
+</body>
+</html>

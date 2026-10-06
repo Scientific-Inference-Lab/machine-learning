@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Hidden Layers | Machine Learning | Pusan National University</title><meta name="description" content="A hidden layer transforms weighted inputs into intermediate coordinates where observations may become linearly separable."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/13.%20multilayer-perceptrons/hidden-layers.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Hidden Layers | Machine Learning | Pusan National University"><meta property="og:description" content="A hidden layer transforms weighted inputs into intermediate coordinates where observations may become linearly separable."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/13.%20multilayer-perceptrons/hidden-layers.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .cur{fill:var(--pnu-green)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:4 4}
+    .topic-plot .res-pos{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res-neg{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:5 3}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot.plane{max-width:460px;min-width:320px;margin:0 auto}
+    .topic-plot .pos-cell{fill:var(--pnu-green);fill-opacity:.13}
+    .topic-plot .neg-cell{fill:var(--pnu-blue);fill-opacity:.10}
+    .topic-plot .boundary{stroke:var(--pnu-blue-dark);stroke-width:3}
+    .topic-plot .wvec{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .p-pos{fill:var(--white);stroke:var(--pnu-green);stroke-width:3.5}
+    .topic-plot .p-neg{fill:var(--pnu-blue-dark)}
+    .topic-plot .p-bad{stroke:var(--alert-700);stroke-width:3;fill:none}
+    .topic-plot .p-cur{stroke:var(--pnu-green);stroke-width:3;fill:none;stroke-dasharray:4 3}
+    .topic-plot.net{min-width:620px}
+    .topic-plot .edge{stroke:var(--line-200);stroke-width:2.5}
+    .topic-plot .edge.is-on{stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .edge.is-back{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:6 4}
+    .topic-plot .node{fill:var(--white);stroke:var(--pnu-blue);stroke-width:2.5}
+    .topic-plot .node.is-on{stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .node.is-zero{stroke:var(--ink-600);stroke-dasharray:4 3}
+    .topic-plot .nlab{font-size:13px;fill:var(--ink-600)}
+    .topic-plot .nval{font-size:15px;font-weight:800;fill:var(--pnu-blue-dark)}
+    .topic-plot .elab{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .glab{font-size:12px;font-weight:700;fill:var(--alert-700)}
+    .topic-flow .dlab{color:var(--alert-700);font-weight:700}
+    .hid-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:640px}
+    .hid-pair .topic-plot{min-width:0}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-hidden-layers">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Stacking the Layers</span><span class="nav-tag is-current" aria-current="page">Hidden Layers</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/13.%20Stacking%20the%20Layers.pdf">Stacking the <span class="publication-lecture-tail">Layers<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Hidden Layers</h1><hr class="accent-rule"><p class="page-subtitle">은닉층(hidden layer)은 입력의 가중합에 활성함수를 적용해 새로운 중간값 h = g(W₁x + b₁)를 만든다. 은닉 좌표에서는 입력 공간에서 직선으로 나뉘지 않던 관측도 직선으로 나뉠 수 있다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>은닉 유닛</strong><span>z = wᵀx + b를 계산하고 h = g(z)로 변환한 값 하나다.</span></article><article class="summary-card"><strong>W₁의 모양</strong><span>K × p이며 행 하나가 은닉 유닛 하나의 가중치 벡터다.</span></article><article class="summary-card"><strong>구조 하이퍼파라미터</strong><span>층 수와 유닛 수는 학습 전에 정하고 검증 성능으로 고른다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">은닉층을 지나면 XOR 관측이 직선으로 나뉘는 좌표로 옮겨진다</h2><p class="lead">h₁ = ReLU(x₁ + x₂), h₂ = ReLU(x₁ + x₂ − 1)로 고정하고 관측을 고르면 입력 좌표와 은닉 좌표에서의 위치, 출력 점수가 함께 강조된다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="hobs">관측</label><select id="hobs"><option value="0">(0, 0) · 정답 −1</option><option value="1">(0, 1) · 정답 +1</option><option value="2">(1, 0) · 정답 +1</option><option value="3" selected>(1, 1) · 정답 −1</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><div class="hid-pair"><svg id="in-space" class="topic-plot plane" viewBox="0 0 320 320" role="img" aria-labelledby="is-title is-desc"><title id="is-title">입력 좌표</title><desc id="is-desc">XOR 네 점</desc></svg><svg id="h-space" class="topic-plot plane" viewBox="0 0 320 320" role="img" aria-labelledby="hs-title hs-desc"><title id="hs-title">은닉 좌표</title><desc id="hs-desc">은닉층을 지난 네 점</desc></svg></div></div><figcaption class="visual-caption">왼쪽은 입력 좌표 (x₁, x₂), 오른쪽은 은닉 좌표 (h₁, h₂)다. 빈 원은 정답 +1, 채운 원은 −1이며 점선 원이 고른 관측이다. 오른쪽 짙은 직선은 출력 s = h₁ − 4h₂ − 0.5의 경계이고, 초록 칠이 +1 쪽이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">유닛 수와 입력 수가 매개변수 수를 정한다</h2><p class="lead">입력 특성 수 p와 은닉 유닛 수 K를 바꾸면 W₁의 모양, 연결 수, 출력이 하나인 신경망의 매개변수 수 pK + K + K + 1이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="pp">입력 특성 수 p <output id="pp-out" class="control-value" for="pp">2</output></label><input id="pp" type="range" min="1" max="6" step="1" value="2"></div><div class="control-field"><label for="kk">은닉 유닛 수 K <output id="kk-out" class="control-value" for="kk">2</output></label><input id="kk" type="range" min="1" max="8" step="1" value="2"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="size-net" class="topic-plot net" viewBox="0 0 640 300" role="img" aria-labelledby="sn-title sn-desc"><title id="sn-title">완전 연결 신경망</title><desc id="sn-desc">p→K→1 구조</desc></svg></div><figcaption class="visual-caption">왼쪽 열은 입력, 가운데 열은 은닉 유닛, 오른쪽은 출력 하나다. 선 하나가 가중치 하나이며, 은닉 유닛과 출력 원마다 절편이 하나씩 있다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../12. linear-separability/xor.html" rel="prev">이전 · XOR</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../13. multilayer-perceptrons/activation-functions.html" rel="next">다음 · Activation Functions</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  function plane(P, x0, x1, y0, y1, w, b, n) {
+    var s = "", dx = (x1 - x0) / n, dy = (y1 - y0) / n;
+    for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) {
+      var cx = x0 + (i + 0.5) * dx, cy = y0 + (j + 0.5) * dy, sc = w[0] * cx + w[1] * cy + b, a = P(x0 + i * dx, y0 + (j + 1) * dy), c = P(x0 + (i + 1) * dx, y0 + j * dy);
+      if (w[0] === 0 && w[1] === 0 && b === 0) continue;
+      s += '<rect class="' + (sc >= 0 ? "pos-cell" : "neg-cell") + '" x="' + a[0].toFixed(1) + '" y="' + a[1].toFixed(1) + '" width="' + (c[0] - a[0] + 0.3).toFixed(1) + '" height="' + (c[1] - a[1] + 0.3).toFixed(1) + '"/>';
+    }
+    return s;
+  }
+  function gridlines(P, x0, x1, y0, y1, step) {
+    var s = "";
+    for (var x = Math.ceil(x0); x <= x1; x += step) s += '<line class="' + (x === 0 ? "axis" : "grid") + '" x1="' + P(x, y0)[0] + '" y1="' + P(x, y0)[1] + '" x2="' + P(x, y1)[0] + '" y2="' + P(x, y1)[1] + '"/>';
+    for (var y = Math.ceil(y0); y <= y1; y += step) s += '<line class="' + (y === 0 ? "axis" : "grid") + '" x1="' + P(x0, y)[0] + '" y1="' + P(x0, y)[1] + '" x2="' + P(x1, y)[0] + '" y2="' + P(x1, y)[1] + '"/>';
+    return s;
+  }
+  function boundary(P, x0, x1, y0, y1, w, b) {
+    var pts = [];
+    if (w[1] !== 0) [x0, x1].forEach(function (x) { var y = -(w[0] * x + b) / w[1]; if (y >= y0 - 1e-9 && y <= y1 + 1e-9) pts.push([x, y]); });
+    if (w[0] !== 0) [y0, y1].forEach(function (y) { var x = -(w[1] * y + b) / w[0]; if (x >= x0 - 1e-9 && x <= x1 + 1e-9) pts.push([x, y]); });
+    if (pts.length < 2) return "";
+    var a = P(pts[0][0], pts[0][1]), c = P(pts[pts.length - 1][0], pts[pts.length - 1][1]);
+    return '<line class="boundary" x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + c[0].toFixed(1) + '" y2="' + c[1].toFixed(1) + '"/>';
+  }
+  function point(P, x, y, lab, extra) {
+    var p = P(x, y);
+    return '<circle class="' + (lab > 0 ? "p-pos" : "p-neg") + '" cx="' + p[0] + '" cy="' + p[1] + '" r="8"/>' + (extra ? '<circle class="' + extra + '" cx="' + p[0] + '" cy="' + p[1] + '" r="14"/>' : "");
+  }
+  var n2 = function (v) { return neg(Math.round(v * 100) / 100); };
+  var sgn = function (s) { return s >= 0 ? "+1" : "−1"; };
+
+  var relu = function (z) { return Math.max(0, z); }, drelu = function (z) { return z > 0 ? 1 : 0; };
+  var fx = function (v) { return neg(Math.round(v * 1000) / 1000); };
+  var NP = { x1: [70, 70], x2: [70, 190], h1: [290, 70], h2: [290, 190], s: [500, 130], L: [640, 130] };
+  function node(k, lab, val, cls) { var p = NP[k]; return '<circle class="node ' + (cls || "") + '" cx="' + p[0] + '" cy="' + p[1] + '" r="30"/><text class="nlab" x="' + p[0] + '" y="' + (p[1] - 38) + '" text-anchor="middle">' + lab + '</text><text class="nval" x="' + p[0] + '" y="' + (p[1] + 5) + '" text-anchor="middle">' + val + "</text>"; }
+  function edge(a, b, lab, cls, glab, frac) {
+    var p = NP[a], q = NP[b], t = frac || 0.5, mx = p[0] + (q[0] - p[0]) * t, my = p[1] + (q[1] - p[1]) * t;
+    return '<line class="edge ' + (cls || "") + '" x1="' + (p[0] + 30) + '" y1="' + p[1] + '" x2="' + (q[0] - 30) + '" y2="' + q[1] + '"/>' + (lab ? '<text class="elab" x="' + mx + '" y="' + (my - 6) + '" text-anchor="middle">' + lab + "</text>" : "") + (glab ? '<text class="glab" x="' + mx + '" y="' + (my + 14) + '" text-anchor="middle">' + glab + "</text>" : "");
+  }
+
+  var X4 = [[0, 0], [0, 1], [1, 0], [1, 1]], lab = [-1, 1, 1, -1];
+  var PI = function (x, y) { return [60 + 180 * x, 250 - 180 * y]; }, PH = function (x, y) { return [50 + 110 * x, 260 - 110 * y]; };
+  function renderHidden() {
+    var k = Number($("hobs").value), x = X4[k], z1 = x[0] + x[1], z2 = x[0] + x[1] - 1, h = [relu(z1), relu(z2)], s = h[0] - 4 * h[1] - 0.5;
+    var a = '<title id="is-title">입력 좌표</title><desc id="is-desc">XOR 네 점, 고른 점 (' + x.join(",") + ')</desc>' + gridlines(PI, -0.3, 1.3, -0.3, 1.3, 1);
+    X4.forEach(function (p, i) { a += point(PI, p[0], p[1], lab[i], i === k ? "p-cur" : ""); });
+    $("in-space").innerHTML = a;
+    var b = '<title id="hs-title">은닉 좌표</title><desc id="hs-desc">고른 점의 은닉 좌표 (' + h.join(",") + ')</desc>';
+    b += plane(PH, -0.3, 2.4, -0.3, 2.1, [1, -4], -0.5, 22) + gridlines(PH, -0.3, 2.4, -0.3, 2.1, 1) + boundary(PH, -0.3, 2.4, -0.3, 2.1, [1, -4], -0.5);
+    var seen = {};
+    X4.forEach(function (p, i) { var hh = [relu(p[0] + p[1]), relu(p[0] + p[1] - 1)], key = hh.join(","); b += point(PH, hh[0], hh[1], lab[i], i === k ? "p-cur" : ""); if (!seen[key]) { var q = PH(hh[0], hh[1]); b += '<text class="small" x="' + (q[0] + 14) + '" y="' + (q[1] + 22) + '">(' + key + ")</text>"; seen[key] = 1; } });
+    $("h-space").innerHTML = b;
+    show(1, [["입력 x", "(" + x.join(", ") + ")"], ["z = (z₁, z₂)", "(" + z1 + ", " + neg(z2) + ")"], ["h = ReLU(z)", "(" + h.join(", ") + ")"], ["s와 예측", neg(s) + " → " + (s >= 0 ? "+1" : "−1")]],
+      k === 1 || k === 2 ? "(0, 1)과 (1, 0)은 입력에서 서로 떨어져 있지만 은닉층을 지나면 같은 점 (1, 0)으로 모인다. 그래서 은닉 좌표에서는 +1 두 점과 −1 두 점을 직선 하나로 가를 수 있다."
+        : k === 3 ? "(1, 1)은 z₂ = 1이 양수라 h₂ = 1이 남아 은닉 좌표 (2, 1)로 간다. 출력 가중치 −4가 이 h₂를 크게 깎아 s = −2.5가 된다."
+        : "(0, 0)은 z₂ = −1이지만 ReLU가 0으로 바꿔 은닉 좌표 (0, 0)에 머문다. 이 점은 출력 경계의 −1 쪽에 있다.");
+  }
+  function renderSize() {
+    var p = Number($("pp").value), K = Number($("kk").value), params = p * K + K + K + 1;
+    $("pp-out").textContent = p; $("kk-out").textContent = K;
+    var ys = function (n, i) { return 150 + (i - (n - 1) / 2) * Math.min(34, 240 / Math.max(n, 1)); };
+    var g = '<title id="sn-title">완전 연결 신경망</title><desc id="sn-desc">' + p + '→' + K + '→1, 매개변수 ' + params + '개</desc>';
+    for (var i = 0; i < p; i++) for (var j = 0; j < K; j++) g += '<line class="edge" x1="120" y1="' + ys(p, i) + '" x2="320" y2="' + ys(K, j) + '"/>';
+    for (var j2 = 0; j2 < K; j2++) g += '<line class="edge is-on" x1="320" y1="' + ys(K, j2) + '" x2="520" y2="150"/>';
+    for (var i2 = 0; i2 < p; i2++) g += '<circle class="node" cx="120" cy="' + ys(p, i2) + '" r="11"/>';
+    for (var j3 = 0; j3 < K; j3++) g += '<circle class="node is-on" cx="320" cy="' + ys(K, j3) + '" r="11"/>';
+    g += '<circle class="node" cx="520" cy="150" r="14"/><text class="nlab" x="120" y="24" text-anchor="middle">입력 p = ' + p + '</text><text class="nlab" x="320" y="24" text-anchor="middle">은닉 K = ' + K + '</text><text class="nlab" x="520" y="24" text-anchor="middle">출력 1</text>';
+    $("size-net").innerHTML = g;
+    show(2, [["W₁의 모양", K + " × " + p], ["입력→은닉", p * K + " + " + K + " (가중치 + 절편)"], ["은닉→출력", K + " + 1"], ["매개변수 수", p + "×" + K + " + " + K + " + " + K + " + 1 = " + params]],
+      "W₁의 행 수는 은닉 유닛 수 " + K + ", 열 수는 입력 수 " + p + (/[013678]$/.test(String(p)) ? "이다." : "다.") + " 유닛 하나를 더하면 입력 쪽 가중치 " + p + "개와 절편 1개, 출력 쪽 가중치 1개가 함께 늘어 매개변수가 " + (p + 2) + "개 늘어난다. 784 → 256 → 128 → 1처럼 층을 쌓으면 233,985개에 이르러, 편미분을 하나씩 따로 계산하기보다 계산을 재사용하는 방법이 필요해진다.");
+  }
+  on("hobs", renderHidden); on("pp", renderSize); on("kk", renderSize);
+  renderHidden(); renderSize();
+}());
+</script>
+</body>
+</html>

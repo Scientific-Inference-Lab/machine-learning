@@ -30,6 +30,12 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/11.%20the-perceptron/perceptron-prediction.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/12.%20linear-separability/linear-separability.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/12.%20linear-separability/xor.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/13.%20multilayer-perceptrons/activation-functions.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/13.%20multilayer-perceptrons/forward-pass.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/13.%20multilayer-perceptrons/hidden-layers.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/14.%20backpropagation/backpropagation.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/14.%20backpropagation/chain-rule.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/14.%20backpropagation/computational-graphs.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/00.%20Intro.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/01.%20Learning%20from%20Data.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/02.%20Labels%2C%20Structure%2C%20Rewards.pdf</loc></url>
@@ -43,6 +49,9 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/10.%20Fewer%20Examples%20per%20Step.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/11.%20The%20Perceptron.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/12.%20One%20Line%20Is%20Not%20Enough.pdf</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/13.%20Stacking%20the%20Layers.pdf</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/14.%20Working%20Backwards.pdf</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/backpropagation.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/data-and-learning-types.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/data-leakage.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/derivatives-and-probability.html</loc></url>
@@ -52,6 +61,7 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/linear-models.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/linear-separability.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/logistic-regression.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/multilayer-perceptrons.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/perceptron.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/stochastic-gradient-descent.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/vectors-and-matrices.html</loc></url>
