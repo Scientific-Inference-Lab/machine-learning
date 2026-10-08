@@ -51,18 +51,18 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/12.%20One%20Line%20Is%20Not%20Enough.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/13.%20Stacking%20the%20Layers.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/14.%20Working%20Backwards.pdf</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/backpropagation.html</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/data-and-learning-types.html</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/data-leakage.html</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/derivatives-and-probability.html</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/gradient-descent.html</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/labels-structure-and-rewards.html</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/learning-and-generalization.html</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/linear-models.html</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/linear-separability.html</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/logistic-regression.html</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/multilayer-perceptrons.html</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/perceptron.html</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/stochastic-gradient-descent.html</loc></url>
-  <url><loc>https://scientific-inference-lab.github.io/machine-learning/problem-sets/vectors-and-matrices.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/backpropagation.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/data-and-learning-types.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/data-leakage.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/derivatives-and-probability.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/gradient-descent.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/labels-structure-and-rewards.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/learning-and-generalization.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/linear-models.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/linear-separability.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/logistic-regression.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/multilayer-perceptrons.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/perceptron.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/stochastic-gradient-descent.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/vectors-and-matrices.html</loc></url>
 </urlset>
