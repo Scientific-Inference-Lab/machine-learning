@@ -2,7 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
-  <title>Actions and Rewards | Machine Learning | Pusan National University</title><meta name="description" content="In reinforcement learning an agent chooses actions from states while the environment changes state and returns rewards, which may arrive immediately or after several actions."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/02.%20labels-structure-rewards/actions-and-rewards.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Actions and Rewards | Machine Learning | Pusan National University"><meta property="og:description" content="In reinforcement learning an agent chooses actions from states while the environment changes state and returns rewards, which may arrive immediately or after several actions."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/02.%20labels-structure-rewards/actions-and-rewards.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png"><link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <title>Actions and Rewards | Machine Learning | Pusan National University</title><meta name="description" content="In reinforcement learning an agent chooses actions from states while the environment changes state and returns rewards, which may arrive immediately or after several actions."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/02.%20labels-structure-rewards/actions-and-rewards.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Actions and Rewards | Machine Learning | Pusan National University"><meta property="og:description" content="In reinforcement learning an agent chooses actions from states while the environment changes state and returns rewards, which may arrive immediately or after several actions."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/02.%20labels-structure-rewards/actions-and-rewards.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
   <style>
 
   </style>
@@ -25,7 +26,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>상태 sₜ와 행동 aₜ</strong><span>시점 t의 상황과 그때 에이전트가 고른 행동이다.</span></article><article class="summary-card"><strong>보상 rₜ</strong><span>선택한 행동의 결과를 평가하는 수치다.</span></article><article class="summary-card"><strong>지연된 보상</strong><span>여러 번 행동한 뒤에야 관측되는 보상이다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">보상 기준에 따라 보상이 관측되는 시점이 달라진다</h2><p class="lead">보상 기준과 시점 t를 바꾸면 그때까지의 상태, 행동, 보상과 누적 보상이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">보상 기준에 따라 보상이 관측되는 시점이 달라진다</h2><p class="lead">보상 기준과 시점 t를 바꾸면 해당 시점의 상태, 행동, 보상이 바뀐다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="criterion">보상 기준</label><select id="criterion"><option value="click">클릭하면 +1</option><option value="buy">구매 완료하면 +5</option></select></div><div class="control-field"><label for="t">시점 t <output id="t-out" class="control-value" for="t">0</output></label><input id="t" type="range" min="0" max="2" step="1" value="0"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div class="topic-flow" id="episode"></div></div><figcaption class="visual-caption">상자 하나가 한 시점의 상태, 행동, 사용자 반응, 보상이다. 초록 상자가 현재 시점 t이고 흐린 상자는 아직 일어나지 않은 시점이다.</figcaption></figure>
@@ -72,19 +73,18 @@
   ];
   function reward(c, k) { return c === "click" ? (steps[k].react.indexOf("클릭") === 0 ? 1 : 0) : (k === 2 ? 5 : 0); }
   function renderEpisode() {
-    var c = $("criterion").value, t = Number($("t").value), total = 0;
+    var c = $("criterion").value, t = Number($("t").value);
     $("t-out").textContent = t;
     $("episode").innerHTML = steps.map(function (st, k) {
       var r = reward(c, k), cls = k === t ? "is-on" : k > t ? "is-off" : "";
       return '<div class="flow-box ' + cls + '"><strong>t = ' + k + '</strong><span>s' + k + ": " + st.s + "</span><span>a" + k + ": " + st.a + "</span><span>반응: " + st.react + "</span><span>r" + k + " = " + (r > 0 ? "+" + r : "0") + "</span></div>";
     }).join('<div class="flow-arrow" aria-hidden="true">→</div>');
-    for (var k = 0; k <= t; k++) total += reward(c, k);
     var r = reward(c, t);
-    show(1, [["상태 s" + t, steps[t].s], ["행동 a" + t, steps[t].a], ["보상 r" + t, r > 0 ? "+" + r : "0"], ["t까지 누적 보상", String(total)]],
+    show(1, [["상태 s" + t, steps[t].s], ["행동 a" + t, steps[t].a], ["보상 r" + t, r > 0 ? "+" + r : "0"]],
       c === "click"
         ? "클릭을 보상으로 쓰면 행동 직후 사용자 반응이 곧바로 보상이 된다. t = " + t + "에서 " + steps[t].a + "에 대한 반응은 " + steps[t].react + "이므로 r" + t + " = " + (r > 0 ? "+" + r : "0") + "이다."
         : t < 2 ? "구매를 보상으로 쓰면 t = " + t + "까지는 행동을 해도 보상이 0이다. 행동이 좋았는지는 여러 번 추천한 뒤에야 알 수 있다."
-        : "구매 완료가 t = 2에서야 관측되어 r2 = +5다. 이 보상은 D 하나가 아니라 B, C, D로 이어진 선택 전체의 결과이며, 이것이 지연된 보상이다.");
+        : "여러 번 추천한 뒤 t = 2에서 구매 완료가 관측되어 r2 = +5다. 이런 보상을 지연된 보상이라 한다.");
   }
   var uses = {
     y: { boxes: [["is-x", "입력 x", "사용자, 항목, 상황"], ["is-on", "출력 y", "클릭했는가"], ["", "모델", "x와 y의 관계를 학습"], ["", "예측값 ŷ", "새 추천의 클릭 여부"]],
