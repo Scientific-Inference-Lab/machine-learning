@@ -2,7 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
-  <title>Learning Problems | Machine Learning | Pusan National University</title><meta name="description" content="The same recommendation-service records define different learning problems depending on what is to be learned; the available data and the learning goal determine the problem."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/02.%20labels-structure-rewards/learning-problems.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Learning Problems | Machine Learning | Pusan National University"><meta property="og:description" content="The same recommendation-service records define different learning problems depending on what is to be learned; the available data and the learning goal determine the problem."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/02.%20labels-structure-rewards/learning-problems.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png"><link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <title>Learning Problems | Machine Learning | Pusan National University</title><meta name="description" content="The same recommendation-service records define different learning problems depending on what is to be learned; the available data and the learning goal determine the problem."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/02.%20labels-structure-rewards/learning-problems.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Learning Problems | Machine Learning | Pusan National University"><meta property="og:description" content="The same recommendation-service records define different learning problems depending on what is to be learned; the available data and the learning goal determine the problem."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/02.%20labels-structure-rewards/learning-problems.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
   <style>
 
   </style>
@@ -72,7 +73,7 @@
     group: { cls: ["is-x", "is-x", "", "is-x", ""], txt: ["이용 기록", "이용 기록", "사용 안 함", "이용 기록", "사용 안 함"],
       rows: [["모델이 받는 값", "사용자 이용 기록 벡터"], ["함께 관측되는 값", "정답 출력 없음"], ["학습 유형", "비지도학습"]],
       note: "비슷한 사용자를 묶는 데는 정답 출력이 필요 없다. 사용자마다 어떤 항목에 어떻게 반응했는지를 모은 이용 기록의 유사성만 쓴다." },
-    act: { cls: ["is-x", "is-y", "is-x", "is-y", "is-x"], txt: ["상태", "행동", "상태", "보상", "순서"],
+    act: { cls: ["is-x", "", "is-x", "is-y", ""], txt: ["상태", "행동", "상태", "보상", "순서"],
       rows: [["모델이 받는 값", "현재 사용자와 상황"], ["함께 관측되는 값", "행동 이후 보상"], ["학습 유형", "강화학습"]],
       note: "콘텐츠를 고르면 사용자의 반응이 보상으로 돌아오고, 그 선택이 다음에 관측할 자료까지 바꾼다. 항목은 에이전트의 행동, 사건은 그 행동의 보상이다." }
   };

@@ -121,9 +121,17 @@
     g += node("x1", "x₁", x[0]) + node("x2", "x₂", x[1]) + node("h1", "h₁ (z " + fx(G.z[0]) + ")", fx(G.h[0]), G.z[0] > 0 ? "" : "is-zero") + node("h2", "h₂ (z " + fx(G.z[1]) + ")", fx(G.h[1]), G.z[1] > 0 ? "" : "is-zero") + node("s", "s", fx(G.s)) + node("L", "L", fx(G.L), "is-on");
     $("bp-net").innerHTML = g;
     var all = [G.dw2[0], G.dw2[1], G.db2, G.dW[0][0], G.dW[0][1], G.dW[1][0], G.dW[1][1], G.db1[0], G.db1[1]], zeros = all.filter(function (v) { return v === 0; }).length;
+    var note = "∂L/∂s = " + fx(G.e) + "에 출력 가중치 1, −4를 곱해 ∂L/∂h = (" + fx(G.dh[0]) + ", " + pj(fx(G.dh[1]) + ")", "이") + " 은닉층으로 간다.";
+    G.z.forEach(function (z, j) {
+      var sub = j === 0 ? "₁" : "₂";
+      if (z < 0) note += " z" + sub + " = " + fx(z) + " < 0이므로 ReLU′ = 0이다. 이 유닛의 입력 가중치와 절편의 미분은 0이다.";
+      else if (z === 0) note += " z" + sub + " = 0에서 ReLU의 미분은 정의되지 않아 여기서는 0으로 둔다. 이 유닛의 입력 가중치와 절편의 미분은 0이다.";
+    });
+    if (G.z.every(function (z) { return z > 0; })) note += " 두 유닛 모두 z > 0이라 ReLU′ = 1로 미분이 통과한다.";
+    if (G.h.some(function (h) { return h === 0; })) note += " 출력 가중치의 미분은 (s − y)h이므로 h = 0인 유닛의 출력 가중치 미분도 0이다.";
+    if (x.some(function (v) { return v === 0; })) note += " 입력 가중치의 미분은 ∂L/∂z에 해당 입력을 곱하므로 입력 성분이 0인 연결의 미분은 0이다.";
     show(1, [["L = ½(s − y)²", fx(G.L)], ["∂L/∂s = s − y", fx(G.e)], ["∂L/∂h = (s − y)w₂", "(" + fx(G.dh[0]) + ", " + fx(G.dh[1]) + ")"], ["0인 미분 (9개 중)", zeros + "개"]],
-      G.e === 0 ? "점수가 정답과 같아 s − y = 0이므로 모든 미분이 0이다."
-        : "∂L/∂s = " + fx(G.e) + "에 출력 가중치 1, −4를 곱해 ∂L/∂h = (" + fx(G.dh[0]) + ", " + pj(fx(G.dh[1]) + ")", "이") + " 은닉층으로 간다." + (G.z[1] <= 0 ? " h₂는 z₂ = " + fx(G.z[1]) + (G.z[1] < 0 ? " < 0이라 ReLU′ = 0이므로" : "이다. z = 0에서 ReLU의 미분은 정의되지 않아 관례대로 0으로 두므로") + " 미분이 막혀 h₂로 들어가는 가중치의 미분이 0이다." : " 두 유닛 모두 z > 0이라 ReLU′ = 1로 그대로 통과하고, 입력 1을 곱해 입력 쪽 가중치의 미분이 된다.") + " 한 번의 역전파로 아홉 미분이 모두 나온다.");
+      G.e === 0 ? "점수가 정답과 같아 s − y = 0이므로 모든 미분이 0이다." : note);
   }
   function renderUpd() {
     var eta = Number($("beta").value), x = [1, 1], y = -1, G = grads(x, y, P0);
