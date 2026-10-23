@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
-  <title>Raw Data Preparation | Machine Learning | Pusan National University</title><meta name="description" content="Preprocessing turns raw data's missing values, value ranges, and categories into model inputs; any step computed across rows stores its state from the training data."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/06.%20data-leakage/raw-data-preparation.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Raw Data Preparation | Machine Learning | Pusan National University"><meta property="og:description" content="Preprocessing turns raw data's missing values, value ranges, and categories into model inputs; any step computed across rows stores its state from the training data."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/06.%20data-leakage/raw-data-preparation.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png"><link rel="stylesheet" href="../assets/pnu-theme.css">
+  <title>Raw Data Preparation | Machine Learning | Pusan National University</title><meta name="description" content="Preprocessing turns raw data's missing values, value ranges, and categories into model inputs; any step computed across rows stores its state from the training data."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/06.%20data-leakage/raw-data-preparation.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Raw Data Preparation | Machine Learning | Pusan National University"><meta property="og:description" content="Preprocessing turns raw data's missing values, value ranges, and categories into model inputs; any step computed across rows stores its state from the training data."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/06.%20data-leakage/raw-data-preparation.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css">
   <link rel="stylesheet" href="../assets/topic-visual-shell.css">
   <style>
 .topic-raw-data-preparation .prep-svg text {fill:var(--ink-600);font-family:var(--font-sans);font-size:14px}
@@ -68,7 +69,7 @@
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single">
         <div class="control-field"><label for="raw-issue-buttons">강조할 원자료 문제</label><select id="raw-issue-buttons"><option value="missing" selected>결측값</option><option value="outlier">이상치</option><option value="scale">다른 값 범위</option><option value="category">범주 값</option></select></div>
-
+        
       </div>
       <figure class="visual-figure">
         <div class="visual-frame">
@@ -108,7 +109,7 @@
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single">
         <div class="control-field"><label for="fit-kind">처리</label><select id="fit-kind"><option value="num-impute">수치형 결측값 대체</option><option value="standardize">수치형 표준화</option><option value="cat-impute">범주형 결측값 대체</option></select></div>
-
+        
       </div>
       <figure class="visual-figure"><div class="visual-frame">
         <svg class="visual-svg prep-svg" viewBox="0 0 760 330" role="img" aria-labelledby="missing-title missing-desc">
@@ -128,7 +129,7 @@
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single">
         <div class="control-field"><label for="encoding-buttons">부호화 관계</label><select id="encoding-buttons"><option value="ordinal" selected>순서형</option><option value="onehot">one-hot</option><option value="unknown">학습에 없던 범주</option></select></div>
-
+        
       </div>
       <figure class="visual-figure"><div class="visual-frame">
         <svg class="visual-svg prep-svg" viewBox="0 0 760 305" role="img" aria-labelledby="encoding-title encoding-desc">
@@ -136,7 +137,7 @@
           <g id="encoding-ordinal"><rect class="primary" x="25" y="55" width="220" height="230" rx="12"></rect><text class="strong" x="135" y="88" text-anchor="middle">순서형 부호화</text><text x="70" y="135">낮음</text><text class="strong" x="195" y="135">0</text><text x="70" y="180">중간</text><text class="strong" x="195" y="180">1</text><text x="70" y="225">높음</text><text class="strong" x="195" y="225">2</text><path class="arrow" d="M220 145 V205"></path><text class="small" x="135" y="265" text-anchor="middle">0 &lt; 1 &lt; 2</text></g>
           <g id="encoding-onehot" class="muted"><rect class="reference" x="270" y="55" width="220" height="230" rx="12"></rect><text class="strong" x="380" y="88" text-anchor="middle">one-hot encoding</text><text x="310" y="145">서울</text><text class="strong" x="420" y="145">(1,0)</text><text x="310" y="205">부산</text><text class="strong" x="420" y="205">(0,1)</text><text class="small" x="380" y="265" text-anchor="middle">범주 사이 순서 없음</text></g>
           <g id="encoding-unknown" class="muted"><rect class="problem" x="515" y="55" width="220" height="230" rx="12"></rect><text class="strong" x="625" y="88" text-anchor="middle">학습에 없던 범주</text><text x="550" y="135">새 범주 가</text><text class="strong" x="680" y="135">(0,0)</text><text x="550" y="185">새 범주 나</text><text class="strong" x="680" y="185">(0,0)</text><path class="red-arrow" d="M570 220 H680"></path><text class="small" x="625" y="265" text-anchor="middle">서로 다른 범주가 같은 표현</text></g>
-
+          
         </svg>
       </div><figcaption class="visual-caption">세 상자는 순서형 부호화, one-hot encoding, 학습에 없던 새 범주다. 흐리지 않은 상자가 고른 관계이고, 빨간 상자는 표현 충돌이다.</figcaption></figure>
       <div id="read-3" class="visual-readouts" aria-live="polite"></div>

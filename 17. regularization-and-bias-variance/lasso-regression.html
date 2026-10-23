@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Lasso Regression | Machine Learning | Pusan National University</title><meta name="description" content="Lasso adds an L1 penalty to residual sum of squares, and its penalty shape can make some coefficients exactly zero."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/17.%20regularization-and-bias-variance/lasso-regression.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Lasso Regression | Machine Learning | Pusan National University"><meta property="og:description" content="Lasso adds an L1 penalty to residual sum of squares, and its penalty shape can make some coefficients exactly zero."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/17.%20regularization-and-bias-variance/lasso-regression.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .lab{font-size:15px;font-weight:700}
+    .topic-plot .bar{fill:var(--pnu-blue)}
+    .topic-plot .bar.is-l{fill:var(--pnu-green)}
+    .topic-plot .zero{fill:var(--white);stroke:var(--alert-700);stroke-width:2;stroke-dasharray:4 3}
+    .topic-plot .region{fill:var(--pnu-blue-tint);stroke:var(--pnu-blue);stroke-width:2}
+    .topic-plot .ell{fill:none;stroke:var(--alert-700);stroke-width:1.8}
+    .topic-plot .ls{fill:var(--ink-900)}
+    .topic-plot .sol{fill:var(--pnu-green);stroke:var(--pnu-green-deep);stroke-width:2}
+    .topic-plot .ax{stroke:var(--ink-500);stroke-width:1.2}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-lasso-regression">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Paying to Fit Less</span><span class="nav-tag is-current" aria-current="page">Lasso Regression</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/17.%20Paying%20to%20Fit%20Less.pdf">Paying to Fit <span class="publication-lecture-tail">Less<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Lasso Regression</h1><hr class="accent-rule"><p class="page-subtitle">lasso(ℓ1 penalty를 더한 선형 회귀)는 RSS에 계수 절댓값 합의 벌점 λΣ|βⱼ|를 더한다. 벌점의 모양 때문에 λ에 따라 일부 계수가 정확히 0이 되어, 그 특성은 예측식에 기여하지 않는다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>RSS + λΣ|βⱼ|</strong><span>ridge regression의 제곱합 벌점을 절댓값 합으로 바꾼 목적함수다.</span></article><article class="summary-card"><strong>variable selection</strong><span>계수가 0이 된 특성을 빼는 결과이며, 그 특성이 중요하지 않다는 뜻은 아니다.</span></article><article class="summary-card"><strong>제약 영역</strong><span>|β₁| + |β₂| ≤ s는 축 위에 모서리가 있는 마름모라 해가 모서리에 닿으면 한 계수가 0이다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">λ를 키우면 lasso는 일부 계수를 정확히 0으로 만들 수 있다</h2><p class="lead">관측 30개, 표준화한 특성 8개 자료(자료를 만들 때 쓴 특성은 x₁, x₄, x₇)에 두 방법을 적합했다. λ를 바꾸면 두 계수 막대와 정확히 0인 계수의 수가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="lam">정규화 강도 λ <output id="lam-out" class="control-value" for="lam">30</output></label><input id="lam" type="range" min="0" max="7" step="1" value="4"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="cmp-plot" class="topic-plot" viewBox="0 0 900 320" role="img" aria-labelledby="cp-title cp-desc"><title id="cp-title">ridge regression과 lasso의 계수</title><desc id="cp-desc">같은 λ에서 두 방법의 계수 막대</desc></svg></div><figcaption class="visual-caption">왼쪽은 ridge regression, 오른쪽은 lasso의 계수다. 빨간 점선 칸은 계수가 정확히 0인 특성이다. 특성 이름의 굵은 글씨는 자료를 만들 때 쓴 특성이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">마름모 제약의 모서리에 닿으면 한 계수가 0이 된다</h2><p class="lead">두 계수 (β₁, β₂)의 RSS 등고선은 같고 제약의 크기 s만 바꾼다. s를 바꾸면 lasso 제약 |β₁| + |β₂| ≤ s와 ridge 제약 β₁² + β₂² ≤ s에서 RSS가 가장 작은 점이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="s">제약 크기 s <output id="s-out" class="control-value" for="s">1.00</output></label><input id="s" type="range" min="0.25" max="3" step="0.25" value="1"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="geo-plot" class="topic-plot" viewBox="0 0 900 360" role="img" aria-labelledby="gp-title gp-desc"><title id="gp-title">제약 영역과 RSS 등고선</title><desc id="gp-desc">lasso와 ridge 제약에서의 해</desc></svg></div><figcaption class="visual-caption">왼쪽 lasso, 오른쪽 ridge regression이다. 파란 영역이 제약(ridge regression 원의 반지름은 √s), 검은 점이 벌점 없는 최소제곱 해, 빨간 타원이 해를 지나는 RSS 등고선, 초록 점이 제약 안에서 RSS가 가장 작은 해다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">강하게 상관된 특성이 있으면 ridge regression은 계수를 나누고 lasso는 한쪽만 남길 수 있다</h2><p class="lead">상관계수 0.91인 두 특성 x₁, x₂로 관측값을 만든 자료다. λ를 바꾸면 두 방법이 두 계수를 나누는 방식이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="lc">정규화 강도 λ <output id="lc-out" class="control-value" for="lc">20</output></label><input id="lc" type="range" min="0" max="5" step="1" value="2"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="corr-plot" class="topic-plot" viewBox="0 0 900 260" role="img" aria-labelledby="cr-title cr-desc"><title id="cr-title">상관된 두 특성의 계수</title><desc id="cr-desc">ridge regression과 lasso의 두 계수</desc></svg></div><figcaption class="visual-caption">행이 방법, 막대가 두 계수다. 빨간 점선 칸은 계수가 정확히 0인 특성이다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../17. regularization-and-bias-variance/ridge-regression.html" rel="prev">이전 · Ridge Regression</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../18. imbalanced-data/class-imbalance.html" rel="next">다음 · Class Imbalance</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function head(svg) { return svg.querySelector("title").outerHTML + svg.querySelector("desc").outerHTML; }
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  var R = {"lams":[0,1,3,10,30,100,300,1000],"beta":[3,0,0,-2,0,0,1,0],"mean":5.82,"ridge":[[3.09,-0.108,-0.853,-1.4,0.538,0.398,2.41,-1.42],[2.96,-0.131,-0.803,-1.3,0.505,0.388,2.3,-1.32],[2.74,-0.162,-0.72,-1.12,0.45,0.373,2.11,-1.14],[2.18,-0.196,-0.531,-0.729,0.326,0.34,1.67,-0.756],[1.4,-0.163,-0.305,-0.309,0.182,0.278,1.08,-0.34],[0.644,-0.0771,-0.123,-0.0613,0.0705,0.163,0.508,-0.0809],[0.257,-0.0288,-0.0451,-0.00689,0.0254,0.0728,0.206,-0.0156],[0.0831,-0.00882,-0.014,0.000373,0.00785,0.0247,0.067,-0.00254]],"lasso":[[3.087,-0.108,-0.853,-1.402,0.538,0.398,2.407,-1.421],[3.064,-0.104,-0.824,-1.374,0.509,0.379,2.379,-1.388],[3.018,-0.097,-0.768,-1.319,0.452,0.34,2.322,-1.321],[2.857,-0.071,-0.569,-1.124,0.252,0.206,2.125,-1.087],[2.371,0,-0.061,-0.579,0,0,1.558,-0.462],[1.113,0,0,0,0,0,0.421,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]],"cvRidge":[23.59,21.41,18.88,16.54,17.3,19.71,21.3,22.09],"cvLasso":[23.59,22.99,21.87,19.25,16.6,20.71,22.49,22.49],"rss":[193.3,194.2,200.3,237.7,336.4,482.3,579.1,628.7],"pen":[0,18.6,46.2,91.9,107,73.6,35.3,12.3],"corr":{"lams":[0,10,20,40,60,100],"ridge":[[3.29,0.02],[1.89,1.03],[1.56,1.06],[1.22,0.95],[1.02,0.84],[0.77,0.66]],"lasso":[[3.29,0.02],[3.18,0],[3.06,0],[2.81,0],[2.56,0],[2.06,0]],"r":0.91},"Z":[[0.398,0.23,1.184,0.471,1.027,0.114,-0.74,-1.139],[1.41,0.71,-0.302,0.905,0.275,0.242,0.824,2.444],[0.261,-1.397,-0.559,0.4,0.502,0.338,-1.151,-1.325],[0.249,1.136,-0.073,0.948,-1.491,-0.275,0.727,0.054],[-0.625,-1.063,-0.394,0.484,1.321,0.083,0.122,0.724],[0.045,-0.634,0.255,-0.368,-0.553,0.02,-2.175,-0.293],[0.17,1.223,1.143,2.164,0.572,0.362,-1.124,-0.346],[-0.33,0.657,-0.414,-1.214,-1.174,-1.578,-1.052,-1.076],[-0.149,-0.666,-0.958,0.497,-0.187,2.354,0.702,-0.053],[-0.013,-2.103,-1.068,-2.09,0.011,0.355,-0.133,-1.458],[-2.471,-0.787,2.023,-1.69,-1.326,0.97,0.658,0.716],[0.868,-1.58,1.628,0.571,-0.103,0.581,0.757,-1.343],[-0.641,1.741,0.426,-1.343,2.295,-0.33,-0.686,0.692],[-0.014,-0.001,-1.018,0.727,-1.011,0.756,0.416,-0.056],[-0.185,-0.814,0.194,-0.326,0.152,-0.853,-0.077,-0.381],[0.569,0.584,1.292,-0.618,0.067,1.12,2.558,-0.258],[0.215,1.69,-0.849,-0.2,-0.409,0.825,-1.712,0.101],[0.972,0.304,1.007,1.483,0.509,-1.171,0.185,0.603],[2.232,1.058,-1.941,1.501,1.31,-0.138,0.353,0.141],[1.063,-0.512,0.992,-0.787,1.432,-0.802,1.56,1.44],[-1.311,0.356,0.148,-0.117,0.587,0.689,0.178,-0.085],[0.796,0.47,-2.305,-0.655,-1.869,0.311,0.375,1.241],[0.875,-0.161,-0.146,1.247,-1.392,0.675,0.799,2.189],[-2.464,-0.508,-1.278,-0.842,0.433,-1.808,-1.553,-0.266],[-0.2,0.866,0.695,-1.023,1.19,-1.215,0.493,0.655],[-1.319,-0.677,-0.207,-0.013,-0.482,-0.18,0.458,-0.749],[0.106,-0.29,-0.533,-0.383,0.492,-1.414,-0.739,0.365],[-0.631,-1.592,0.434,-0.238,-0.338,1.989,0.381,0.176],[-0.662,1.32,0.094,1.136,-0.343,-1.711,0.544,-1.015],[0.787,0.439,0.532,-0.627,-1.497,-0.312,-0.951,-1.698]],"y":[3.36,11.77,8.49,7.48,2.19,3.77,-3.31,4.56,9.36,10.09,-2.82,14.93,8.99,6.38,4.82,12.4,-0.77,0.38,12.23,9.23,4.52,7.48,7.33,-3.68,6.51,1.32,5.12,5.81,7.73,8.94]};
+  var TRUE = [0, 3, 6];
+
+  function bars(x0, w, cls) {
+    var s = '<line class="axis" x1="' + x0 + '" y1="160" x2="' + (x0 + 380) + '" y2="160"/>';
+    w.forEach(function (v, j) {
+      var x = x0 + 10 + j * 46, hh = Math.abs(v) * 40, y = v >= 0 ? 160 - hh : 160;
+      s += v === 0 ? '<rect class="zero" x="' + x + '" y="150" width="32" height="20"/>' : '<rect class="' + cls + '" x="' + x + '" y="' + y.toFixed(1) + '" width="32" height="' + Math.max(hh, 1).toFixed(1) + '"/>';
+      s += '<text class="small" x="' + (x + 16) + '" y="300" text-anchor="middle"' + (TRUE.indexOf(j) >= 0 ? ' font-weight="700"' : "") + ">x" + (j + 1) + "</text>";
+    });
+    return s;
+  }
+  function names(w) { return w.map(function (v, j) { return v !== 0 ? "x" + (j + 1) : null; }).filter(Boolean); }
+
+  function renderCmp() {
+    var k = Number($("lam").value), svg = $("cmp-plot"), rw = R.ridge[k], lw = R.lasso[k];
+    $("lam-out").textContent = R.lams[k];
+    var h = head(svg) + '<text class="lab" x="20" y="24">ridge regression</text><text class="lab" x="470" y="24">lasso</text>' + bars(20, rw, "bar") + bars(470, lw, "bar is-l");
+    svg.innerHTML = h;
+    var rz = rw.filter(function (v) { return v === 0; }).length, lz = lw.filter(function (v) { return v === 0; }).length, keep = names(lw);
+    svg.querySelector("desc").textContent = "λ = " + R.lams[k] + ", ridge 0인 계수 " + rz + "개, lasso 0인 계수 " + lz + "개";
+    var note;
+    if (k === 0) note = "λ = 0이면 두 방법 모두 최소제곱과 같아 계수 8개가 모두 0이 아니다.";
+    else if (lz === 0) note = "λ = " + R.lams[k] + "에서는 두 방법 모두 계수를 조금 줄였을 뿐 정확히 0인 계수가 없다.";
+    else if (lz === 8) note = "λ = " + R.lams[k] + "이면 lasso의 계수가 모두 0이라 예측은 학습 관측값의 평균뿐이다. ridge regression의 계수는 작아졌지만 여전히 0이 아니다.";
+    else if (keep.indexOf("x4") < 0) note = "λ = " + R.lams[k] + "에서 lasso는 " + keep.join(", ") + "만 남기고 나머지 " + lz + "개를 0으로 만든다. 자료를 만들 때 쓴 x4도 0이 되었으므로, 계수가 0이라는 것이 그 특성이 중요하지 않다는 뜻은 아니다.";
+    else note = "λ = " + R.lams[k] + "에서 lasso는 " + lz + "개 계수를 정확히 0으로 만들고 " + keep.join(", ") + ("013678".indexOf(keep[keep.length - 1].slice(-1)) >= 0 ? "을" : "를") + " 남긴다. ridge regression은 같은 λ에서도 0인 계수가 " + rz + "개다.";
+    show(1, [["ridge regression의 0인 계수", rz + "개"], ["lasso의 0인 계수", lz + "개"], ["lasso가 남긴 특성", keep.join(", ") || "없음"]], note);
+  }
+
+  var BH = [2.2, 0.6], H = [[1, 0.45], [0.45, 1]];
+  function Q(b) { var d0 = b[0] - BH[0], d1 = b[1] - BH[1]; return H[0][0] * d0 * d0 + 2 * H[0][1] * d0 * d1 + H[1][1] * d1 * d1; }
+  function best(kind, s) {
+    var inside = kind === "l1" ? Math.abs(BH[0]) + Math.abs(BH[1]) <= s : BH[0] * BH[0] + BH[1] * BH[1] <= s;
+    if (inside) return BH.slice();
+    var bestP = null, bq = Infinity, rr = Math.sqrt(s);
+    for (var t = 0; t < 7200; t++) {
+      var a = t / 7200 * 2 * Math.PI, c = Math.cos(a), sn = Math.sin(a), p;
+      if (kind === "l1") { var den = Math.abs(c) + Math.abs(sn); p = [s * c / den, s * sn / den]; } else p = [rr * c, rr * sn];
+      var q = Q(p); if (q < bq) { bq = q; bestP = p; }
+    }
+    return bestP.map(function (v) { return Math.abs(v) < 0.005 ? 0 : v; });
+  }
+  function ellipse(c, PX, PY) {
+    var pts = [];
+    for (var t = 0; t <= 72; t++) { var a = t / 72 * 2 * Math.PI, d = [Math.cos(a), Math.sin(a)], den = H[0][0] * d[0] * d[0] + 2 * H[0][1] * d[0] * d[1] + H[1][1] * d[1] * d[1], r = Math.sqrt(c / den); pts.push(PX(BH[0] + r * d[0]).toFixed(1) + "," + PY(BH[1] + r * d[1]).toFixed(1)); }
+    return '<polygon class="ell" points="' + pts.join(" ") + '"/>';
+  }
+  function renderGeo() {
+    var s = Number($("s").value), svg = $("geo-plot"), h = head(svg);
+    $("s-out").textContent = s.toFixed(2);
+    var sols = { l1: best("l1", s), l2: best("l2", s) };
+    [["l1", 20, "lasso"], ["l2", 470, "ridge regression"]].forEach(function (p) {
+      var x0 = p[1], PX = function (v) { return x0 + 200 + v * 55; }, PY = function (v) { return 190 - v * 55; };
+      h += '<clipPath id="gc-' + p[0] + '"><rect x="' + x0 + '" y="30" width="410" height="320"/></clipPath><g clip-path="url(#gc-' + p[0] + ')">';
+      h += '<line class="ax" x1="' + (x0 + 10) + '" y1="' + PY(0) + '" x2="' + (x0 + 400) + '" y2="' + PY(0) + '"/><line class="ax" x1="' + PX(0) + '" y1="35" x2="' + PX(0) + '" y2="345"/>';
+      if (p[0] === "l1") h += '<polygon class="region" points="' + [[s, 0], [0, s], [-s, 0], [0, -s]].map(function (q) { return PX(q[0]) + "," + PY(q[1]); }).join(" ") + '"/>';
+      else h += '<circle class="region" cx="' + PX(0) + '" cy="' + PY(0) + '" r="' + (Math.sqrt(s) * 55).toFixed(1) + '"/>';
+      var sol = sols[p[0]];
+      h += ellipse(Q(sol), PX, PY) + '<circle class="ls" cx="' + PX(BH[0]) + '" cy="' + PY(BH[1]) + '" r="5"/><circle class="sol" cx="' + PX(sol[0]).toFixed(1) + '" cy="' + PY(sol[1]).toFixed(1) + '" r="8"/></g>';
+      h += '<text class="lab" x="' + (x0 + 10) + '" y="22">' + p[2] + '</text><text class="small" x="' + (x0 + 395) + '" y="' + (PY(0) - 6) + '" text-anchor="end">β₁</text><text class="small" x="' + (PX(0) + 6) + '" y="48">β₂</text>';
+    });
+    svg.innerHTML = h;
+    var l = sols.l1, r = sols.l2;
+    svg.querySelector("desc").textContent = "s = " + s.toFixed(2) + ", lasso 해 (" + l[0].toFixed(2) + ", " + l[1].toFixed(2) + "), ridge 해 (" + r[0].toFixed(2) + ", " + r[1].toFixed(2) + ")";
+    var fmt = function (b) { return "(" + neg(b[0].toFixed(2)) + ", " + neg(b[1].toFixed(2)) + ")"; };
+    var inside = Math.abs(BH[0]) + Math.abs(BH[1]) <= s;
+    var note = inside ? "s = " + s.toFixed(2) + "이면 최소제곱 해 (2.20, 0.60)이 lasso 마름모 안에 있어 lasso 해는 최소제곱 해와 같다. 반지름 √s ≈ " + Math.sqrt(s).toFixed(2) + "인 ridge regression의 원은 이 해를 담지 못해 해가 원 위의 점 " + fmt(r) + "에 놓인다."
+      : l[1] === 0 ? "s = " + s.toFixed(2) + "에서 등고선이 lasso 마름모의 축 위 모서리 (" + l[0].toFixed(2) + ", 0)에 먼저 닿아 β₂가 정확히 0이 된다. 같은 s에서 ridge regression의 원에는 모서리가 없어 해 " + fmt(r) + "의 두 계수가 모두 0이 아니다."
+      : "s = " + s.toFixed(2) + "에서는 등고선이 lasso 마름모의 변에 닿아 해 " + fmt(l) + "의 두 계수가 모두 0이 아니다. 제약이 더 작아지면 모서리에 닿아 β₂가 0이 된다.";
+    show(2, [["lasso 해", fmt(l)], ["ridge regression 해", fmt(r)], ["lasso에서 0인 계수", l[1] === 0 ? "β₂" : l[0] === 0 ? "β₁" : "없음"]], note);
+  }
+
+  function renderCorr() {
+    var k = Number($("lc").value), svg = $("corr-plot"), C = R.corr, rw = C.ridge[k], lw = C.lasso[k], h = head(svg);
+    $("lc-out").textContent = C.lams[k];
+    [["ridge regression", rw, 80, "bar"], ["lasso", lw, 170, "bar is-l"]].forEach(function (row) {
+      h += '<text class="lab" x="20" y="' + (row[2] + 5) + '">' + row[0] + "</text>";
+      row[1].forEach(function (v, j) {
+        var y = row[2] - 18 + j * 22, x0 = 230;
+        h += v === 0 ? '<rect class="zero" x="' + x0 + '" y="' + y + '" width="18" height="16"/>' : '<rect class="' + row[3] + '" x="' + x0 + '" y="' + y + '" width="' + (v * 150).toFixed(1) + '" height="16"/>';
+        h += '<text class="small" x="' + (x0 - 8) + '" y="' + (y + 12) + '" text-anchor="end">x' + (j + 1) + '</text><text class="small" x="' + (x0 + Math.max(v * 150, 18) + 8).toFixed(1) + '" y="' + (y + 12) + '">' + v.toFixed(2) + "</text>";
+      });
+    });
+    svg.innerHTML = h;
+    svg.querySelector("desc").textContent = "λ = " + C.lams[k] + ", ridge (" + rw.join(", ") + "), lasso (" + lw.join(", ") + ")";
+    show(3, [["λ", String(C.lams[k])], ["ridge regression 계수", rw[0].toFixed(2) + ", " + rw[1].toFixed(2)], ["lasso 계수", lw[0].toFixed(2) + ", " + lw[1].toFixed(2)]],
+      k === 0 ? "λ = 0인 최소제곱에서는 x₁이 3.29, x₂가 0.02다. 두 특성이 거의 같은 정보를 담아 계수 배분이 자료에 민감하다."
+        : "λ = " + C.lams[k] + "에서 ridge regression은 두 계수를 " + rw[0].toFixed(2) + ", " + kj2(rw[1].toFixed(2)) + " 나누어 가지지만 lasso는 x₂를 0으로 두고 x₁만 " + kj2(lw[0].toFixed(2)) + " 남긴다. lasso가 남긴 x₁이 유일하게 중요하거나 원인이 되는 특성이라는 뜻은 아니며, 자료가 조금 바뀌면 다른 쪽이 남을 수도 있다.");
+  }
+  function kj2(v) { var t = String(v).replace(/[^0-9]+$/, ""), c = t.charAt(t.length - 1); return v + ("036".indexOf(c) >= 0 ? "으로" : "로"); }
+
+  $("lam").addEventListener("input", renderCmp); $("s").addEventListener("input", renderGeo); $("lc").addEventListener("input", renderCorr);
+  renderCmp(); renderGeo(); renderCorr();
+}());
+</script>
+</body>
+</html>

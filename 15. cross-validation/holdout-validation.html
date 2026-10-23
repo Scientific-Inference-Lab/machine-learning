@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Holdout Validation | Machine Learning | Pusan National University</title><meta name="description" content="A holdout validation score depends on which observations enter the validation set, which selects candidates while a separate test set evaluates the final choice."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/15.%20cross-validation/holdout-validation.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Holdout Validation | Machine Learning | Pusan National University"><meta property="og:description" content="A holdout validation score depends on which observations enter the validation set, which selects candidates while a separate test set evaluates the final choice."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/15.%20cross-validation/holdout-validation.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .fit{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .tr{fill:var(--pnu-blue-dark)}
+    .topic-plot .va{fill:var(--white);stroke:var(--pnu-green-deep);stroke-width:2.5}
+    .topic-plot .res{stroke:var(--alert-700);stroke-width:1.5;stroke-dasharray:4 3}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .ln{fill:none;stroke:var(--line-300);stroke-width:1.5}
+    .topic-plot .ln-cur{fill:none;stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .mk{fill:var(--pnu-green)}
+    .topic-plot .ref{stroke:var(--pnu-blue-dark);stroke-width:2;stroke-dasharray:7 5}
+    .topic-plot .dot{fill:var(--pnu-blue)}
+    .topic-plot .row-off .dot{fill:var(--line-300)}
+    .topic-plot .row-off text{fill:var(--ink-500)}
+    .topic-plot .mean{stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .row-off .mean{stroke:var(--line-300)}
+    .topic-plot .band{fill:var(--pnu-green-tint)}
+    .topic-holdout-validation tr.is-sel th,.topic-holdout-validation tr.is-sel td{outline:3px solid var(--pnu-green);outline-offset:-3px;font-weight:700}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-holdout-validation">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">One Split Is One Sample</span><span class="nav-tag is-current" aria-current="page">Holdout Validation</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/15.%20One%20Split%20Is%20One%20Sample.pdf">One Split Is One <span class="publication-lecture-tail">Sample<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Holdout Validation</h1><hr class="accent-rule"><p class="page-subtitle">자료를 학습 자료와 검증 자료(validation set)로 한 번 나누어 잰 검증 점수는 어떤 관측이 검증에 들어갔는지에 따라 달라진다. 검증 자료는 후보를 고르는 데 쓰고, 테스트 자료는 선택을 마친 모델을 마지막에 한 번 평가하는 데 쓴다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>학습 자료</strong><span>계수 같은 모델의 매개변수를 추정하는 데 쓴다.</span></article><article class="summary-card"><strong>검증 자료</strong><span>후보 모델과 설정을 비교해 고르는 데 쓴다.</span></article><article class="summary-card"><strong>테스트 자료</strong><span>선택에 쓰지 않고 고른 모델의 성능을 마지막에 평가한다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">같은 자료도 나누는 방식에 따라 검증 MSE가 달라진다</h2><p class="lead">관측 40개를 20개씩 학습 자료와 검증 자료로 나눈다. 분할 번호를 바꾸면 검증에 들어가는 관측과 적합한 곡선이 바뀌고, 다항 차수를 바꾸면 같은 분할에서 후보 모델이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double">
+        <div class="control-field"><label for="split">분할 번호 <output id="split-out" class="control-value" for="split">1</output></label><input id="split" type="range" min="1" max="10" step="1" value="1"></div>
+        <div class="control-field"><label for="deg">다항 차수 <output id="deg-out" class="control-value" for="deg">2</output></label><input id="deg" type="range" min="1" max="5" step="1" value="2"></div>
+      </div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="split-plot" class="topic-plot" viewBox="0 0 900 370" role="img" aria-labelledby="sp-title sp-desc"><title id="sp-title">분할 </title><desc id="sp-desc">왼쪽: 채운 점은 학습 관측, 빈 원은 검증 관측, 파란 곡선은 학습 관측으로 적합한 다항 회귀, 빨간 점선은 검증 관측의 잔차다. 오른쪽: 선 하나가 분할 하나의 차수별 검증 MSE이고, 초록 선이 고른 분할, 초록 점이 고른 차수다.</desc></svg></div><figcaption class="visual-caption">왼쪽: 채운 점은 학습 관측, 빈 원은 검증 관측, 파란 곡선은 학습 관측으로 적합한 다항 회귀, 빨간 점선은 검증 관측의 잔차다. 오른쪽: 선 하나가 분할 하나의 차수별 검증 MSE이고, 초록 선이 고른 분할, 초록 점이 고른 차수다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">검증 자료를 늘리면 학습 자료가 줄어 오차를 높게 추정할 수 있다</h2><p class="lead">2차 모델로 고정하고 검증 자료 비율을 바꾸면 학습·검증 관측 수와, 열 번 다르게 나눈 검증 MSE의 평균과 흩어짐이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="ratio">검증 자료 비율</label><select id="ratio"><option value="8">20% (검증 8개)</option><option value="20" selected>50% (검증 20개)</option><option value="32">80% (검증 32개)</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="ratio-plot" class="topic-plot" viewBox="0 0 900 300" role="img" aria-labelledby="rp-title rp-desc"><title id="rp-title">검증 자료 비율별 검증 MSE</title><desc id="rp-desc">행이 검증 자료 비율이고 점 하나가 분할 하나의 검증 MSE다. 초록 세로 막대는 열 번의 평균, 파란 점선은 관측 40개 전체로 학습한 2차 모델을 새 관측 2,000개에서 잰 MSE다(실제 분석에서는 알 수 없는 값). 흐린 행은 고르지 않은 비율이다.</desc></svg></div><figcaption class="visual-caption">행이 검증 자료 비율이고 점 하나가 분할 하나의 검증 MSE다. 초록 세로 막대는 열 번의 평균, 파란 점선은 관측 40개 전체로 학습한 2차 모델을 새 관측 2,000개에서 잰 MSE다(실제 분석에서는 알 수 없는 값). 흐린 행은 고르지 않은 비율이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">테스트 결과로 모델을 고르면 최종 평가가 낙관적으로 치우친다</h2><p class="lead">관측 40개를 학습 20개, 검증 10개, 테스트 10개로 나누고 1차부터 6차까지 비교한다. 차수를 고르는 데 쓴 자료를 바꾸면 고른 차수와 최종 성능으로 보고하는 값이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="chooser">차수를 고르는 데 쓴 자료</label><select id="chooser"><option value="va">검증 자료</option><option value="te">테스트 자료</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><table id="sel-table" class="topic-table" aria-label="차수별 학습·검증·테스트·새 자료 MSE"></table></div><figcaption class="visual-caption">행은 다항 차수다. 초록 테두리 행이 고른 차수, 초록 칸이 고를 때 비교한 열이다. 마지막 열은 같은 모델을 새 관측 2,000개에서 잰 MSE이며 실제 분석에서는 알 수 없다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../14. backpropagation/backpropagation.html" rel="prev">이전 · Backpropagation</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../15. cross-validation/cross-validation.html" rel="next">다음 · Cross-Validation</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; return String(v) + (k ? a : b); }
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+
+  var X = [3.1, 9.3, 4.2, 9.9, 5.1, 8, 5.3, 5.3, 8.5, 9.8, 5.1, 6.6, 6.5, 6.3, 5.6, 2.4, 4.4, 2.6, 6.3, 4.9, 7.2, 5.9, 4.3, 8.5, 8.1, 9, 9.5, 1.5, 7.8, 7.8, 4.2, 2.8, 5, 4, 5.2, 8, 6.3, 8.4, 1.5, 10];
+  var Y = [24.3, 24.8, 34.1, 16.8, 25.7, 23, 27.2, 28.3, 25.1, 12.1, 33.1, 29.5, 27.6, 26.3, 27.4, 22.1, 27.5, 28.2, 29.6, 33.8, 28.1, 30, 25, 19.8, 24.1, 20.5, 20, 21.9, 20.1, 23.4, 31.2, 23.7, 23.4, 22.4, 29.8, 22.8, 27.6, 25.5, 17.7, 17.4];
+  var SPLITS = [[21,12,3,24,16,31,20,10,9,22,32,2,38,33,36,13,8,35,27,6,23,30,19,34,14,1,0,7,26,18,39,28,5,29,4,25,15,37,17,11],[36,6,34,14,8,3,33,5,23,38,28,22,39,24,4,15,9,30,21,0,29,18,19,37,1,27,26,7,17,32,35,12,2,10,31,13,16,25,20,11],[32,29,2,19,21,27,5,4,26,12,36,16,8,18,23,35,10,31,9,14,34,3,20,39,33,37,38,6,7,30,15,28,0,25,22,1,17,13,24,11],[6,0,12,35,2,16,10,21,32,31,14,8,28,4,26,3,39,22,37,7,18,9,20,15,24,36,23,33,38,29,17,34,30,5,13,25,19,1,27,11],[3,6,30,24,8,7,14,34,21,0,10,26,2,23,9,32,17,38,12,1,15,16,33,28,39,25,22,5,18,35,19,29,37,36,4,13,20,27,31,11],[38,28,25,16,2,32,17,12,27,10,6,18,39,19,33,7,14,8,3,37,31,0,29,22,23,5,36,4,9,26,20,13,24,35,30,1,21,15,34,11],[12,16,28,4,6,31,20,27,5,29,17,13,18,1,8,26,33,36,14,24,35,7,34,2,9,39,19,37,0,10,32,30,22,15,21,25,23,3,38,11],[4,7,38,0,1,12,22,32,26,10,28,15,37,9,25,39,16,31,6,27,8,34,33,5,21,17,18,3,20,23,36,14,19,30,35,13,24,29,2,11],[0,10,24,14,5,18,36,15,28,3,13,19,27,34,21,12,35,8,32,31,38,20,22,9,29,23,37,2,33,7,26,30,16,39,4,1,25,17,6,11],[29,7,34,33,39,20,18,16,24,38,0,6,23,26,12,31,17,2,8,10,4,37,22,32,19,3,15,28,1,21,36,14,13,35,30,25,27,5,9,11]];
+  var S3 = [37, 26, 15, 38, 5, 35, 2, 28, 6, 27, 33, 30, 23, 13, 19, 3, 17, 29, 4, 34, 16, 7, 20, 9, 11, 10, 25, 14, 0, 18, 24, 31, 36, 12, 32, 1, 22, 21, 39, 8];
+  var NEW3 = [20.9, 9.7, 10.7, 10.8, 11.7, 11.6], NEW_FULL = 9.0;
+
+  function fit(idx, deg) {
+    var p = deg + 1, A = [], r, c, q;
+    function t(x) { return (x - 5.5) / 4.5; }
+    for (r = 0; r < p; r++) { A.push([]); for (c = 0; c <= p; c++) A[r].push(0); }
+    idx.forEach(function (i) {
+      var z = t(X[i]), pw = [];
+      for (var a = 0; a < p; a++) pw.push(Math.pow(z, a));
+      for (a = 0; a < p; a++) { for (var b = 0; b < p; b++) A[a][b] += pw[a] * pw[b]; A[a][p] += pw[a] * Y[i]; }
+    });
+    for (c = 0; c < p; c++) {
+      var m = c;
+      for (r = c + 1; r < p; r++) if (Math.abs(A[r][c]) > Math.abs(A[m][c])) m = r;
+      var tmp = A[c]; A[c] = A[m]; A[m] = tmp;
+      for (r = 0; r < p; r++) { if (r === c) continue; var k = A[r][c] / A[c][c]; for (q = c; q <= p; q++) A[r][q] -= k * A[c][q]; }
+    }
+    var w = A.map(function (row, i) { return row[p] / row[i]; });
+    return function (x) { var z = t(x), s = 0; for (var a = 0; a < p; a++) s += w[a] * Math.pow(z, a); return s; };
+  }
+  function mse(g, idx) { return idx.reduce(function (s, i) { var e = Y[i] - g(X[i]); return s + e * e; }, 0) / idx.length; }
+  var f1 = function (v) { return v.toFixed(1); };
+
+  var GRID = SPLITS.map(function (p) {
+    var tr = p.slice(0, 20), va = p.slice(20), row = [];
+    for (var d = 1; d <= 5; d++) row.push(mse(fit(tr, d), va));
+    return row;
+  });
+
+  function renderSplit() {
+    var s = Number($("split").value), d = Number($("deg").value);
+    $("split-out").textContent = s; $("deg-out").textContent = d;
+    var p = SPLITS[s - 1], tr = p.slice(0, 20), va = p.slice(20), g = fit(tr, d);
+    var PX = function (x) { return 60 + x * 36; }, PY = function (y) { return 330 - (y - 10) * 11; };
+    var h = '<title id="sp-title">분할 ' + s + '의 적합과 차수별 검증 MSE</title><desc id="sp-desc">' + d + '차 모델의 검증 MSE ' + f1(GRID[s - 1][d - 1]) + '</desc>';
+    h += '<line class="axis" x1="60" y1="330" x2="420" y2="330"/><line class="axis" x1="60" y1="330" x2="60" y2="30"/>';
+    [0, 2, 4, 6, 8, 10].forEach(function (t) { h += '<text class="small" x="' + PX(t) + '" y="350" text-anchor="middle">' + t + "</text>"; });
+    [10, 20, 30].forEach(function (t) { h += '<text class="small" x="52" y="' + (PY(t) + 4) + '" text-anchor="end">' + t + "</text>"; });
+    h += '<text x="420" y="366" text-anchor="end">x</text><text x="66" y="26">y</text>';
+    h += '<clipPath id="sp-clip"><rect x="60" y="30" width="360" height="300"/></clipPath>';
+    va.forEach(function (i) { h += '<line class="res" x1="' + PX(X[i]) + '" y1="' + PY(Y[i]) + '" x2="' + PX(X[i]) + '" y2="' + PY(g(X[i])) + '" clip-path="url(#sp-clip)"/>'; });
+    var path = "";
+    for (var k = 0; k <= 90; k++) { var xx = 1 + k * 0.1; path += (k ? "L" : "M") + PX(xx).toFixed(1) + " " + PY(Math.max(6, Math.min(40, g(xx)))).toFixed(1); }
+    h += '<path class="fit" d="' + path + '" clip-path="url(#sp-clip)"/>';
+    tr.forEach(function (i) { h += '<circle class="tr" cx="' + PX(X[i]) + '" cy="' + PY(Y[i]) + '" r="5"/>'; });
+    va.forEach(function (i) { h += '<circle class="va" cx="' + PX(X[i]) + '" cy="' + PY(Y[i]) + '" r="5.5"/>'; });
+    var QX = function (dd) { return 540 + (dd - 1) * 80; }, QY = function (v) { return 330 - Math.min(v, 40) * 7.5; };
+    h += '<line class="axis" x1="520" y1="330" x2="880" y2="330"/><line class="axis" x1="520" y1="330" x2="520" y2="30"/>';
+    for (var dd = 1; dd <= 5; dd++) h += '<text class="small" x="' + QX(dd) + '" y="350" text-anchor="middle">' + dd + "</text>";
+    [0, 10, 20, 30, 40].forEach(function (t) { h += '<text class="small" x="512" y="' + (QY(t) + 4) + '" text-anchor="end">' + t + "</text>"; });
+    h += '<text x="880" y="366" text-anchor="end">다항 차수</text><text x="526" y="26">검증 MSE</text>';
+    GRID.forEach(function (row, si) {
+      if (si === s - 1) return;
+      h += '<polyline class="ln" points="' + row.map(function (v, j) { return QX(j + 1) + "," + QY(v).toFixed(1); }).join(" ") + '"/>';
+    });
+    h += '<polyline class="ln-cur" points="' + GRID[s - 1].map(function (v, j) { return QX(j + 1) + "," + QY(v).toFixed(1); }).join(" ") + '"/>';
+    h += '<circle class="mk" cx="' + QX(d) + '" cy="' + QY(GRID[s - 1][d - 1]).toFixed(1) + '" r="8"/>';
+    $("split-plot").innerHTML = h;
+    var col = GRID.map(function (row) { return row[d - 1]; }), lo = Math.min.apply(null, col), hi = Math.max.apply(null, col);
+    var best = GRID[s - 1].indexOf(Math.min.apply(null, GRID[s - 1])) + 1;
+    var v = GRID[s - 1][d - 1], cnt = {};
+    GRID.forEach(function (row) { var bd = row.indexOf(Math.min.apply(null, row)) + 1; cnt[bd] = (cnt[bd] || 0) + 1; });
+    var bestList = Object.keys(cnt).map(function (key) { return key + "차 " + cnt[key] + "개"; }).join(", ");
+    show(1, [["학습 · 검증 관측", "20개 · 20개"], ["이 분할의 검증 MSE", f1(v)], [d + "차의 열 개 분할 범위", f1(lo) + " ~ " + f1(hi)], ["이 분할에서 가장 낮은 차수", best + "차"]],
+      "같은 " + d + "차 모델도 분할에 따라 검증 MSE가 " + f1(lo) + "에서 " + jro(f1(hi)) + " 달라진다. 분할 " + s + "에서는 " + best + "차가 가장 낮고, 열 개 분할의 가장 낮은 차수는 " + bestList + "로 갈린다. 한 번의 검증 점수만으로는 이 변동을 알 수 없다.");
+  }
+
+  var RATIOS = [8, 20, 32], RES2 = {};
+  RATIOS.forEach(function (nv) { RES2[nv] = SPLITS.map(function (p) { return mse(fit(p.slice(nv), 2), p.slice(0, nv)); }); });
+  function renderRatio() {
+    var nv = Number($("ratio").value);
+    var PX = function (v) { return 170 + Math.min(v, 45) * 15; };
+    var h = '<title id="rp-title">검증 자료 비율별 검증 MSE</title><desc id="rp-desc">검증 ' + nv + '개, 평균 ' + f1(avg(RES2[nv])) + '</desc>';
+    h += '<line class="axis" x1="170" y1="250" x2="845" y2="250"/>';
+    [0, 10, 20, 30, 40].forEach(function (t) { h += '<text class="small" x="' + PX(t) + '" y="270" text-anchor="middle">' + t + "</text>"; });
+    h += '<text x="845" y="292" text-anchor="end">검증 MSE</text>';
+    h += '<line class="ref" x1="' + PX(NEW_FULL) + '" y1="20" x2="' + PX(NEW_FULL) + '" y2="250"/><text class="small" x="' + (PX(NEW_FULL) + 6) + '" y="16">새 자료 MSE 9.0</text>';
+    RATIOS.forEach(function (r, ri) {
+      var y = 60 + ri * 70, on = r === nv;
+      h += '<g class="' + (on ? "" : "row-off") + '">';
+      if (on) h += '<rect class="band" x="10" y="' + (y - 24) + '" width="880" height="48" rx="8"/>';
+      h += '<text x="20" y="' + (y + 5) + '">검증 ' + r + "개 · 학습 " + (40 - r) + "개</text>";
+      RES2[r].forEach(function (v, k) { h += '<circle class="dot" cx="' + PX(v).toFixed(1) + '" cy="' + (y + (k % 2 ? 7 : -7)) + '" r="6"/>'; });
+      var m = avg(RES2[r]);
+      h += '<line class="mean" x1="' + PX(m).toFixed(1) + '" y1="' + (y - 20) + '" x2="' + PX(m).toFixed(1) + '" y2="' + (y + 20) + '"/></g>';
+    });
+    $("ratio-plot").innerHTML = h;
+    var arr = RES2[nv], m = avg(arr), lo = Math.min.apply(null, arr), hi = Math.max.apply(null, arr);
+    var note = nv === 8 ? "검증 관측이 8개뿐이라 분할마다 검증 MSE가 " + f1(lo) + "에서 " + jro(f1(hi)) + " 크게 흩어진다. 학습에는 32개를 써서 평균 " + kj(f1(m), "은", "는") + " 기준 9.0에 가깝지만, 한 번 나눈 점수 하나는 어느 쪽으로든 크게 빗나갈 수 있다."
+      : nv === 20 ? "절반씩 나누면 학습 관측이 20개로 줄어 평균 " + kj(f1(m), "이", "가") + " 기준 9.0보다 높다. 검증 관측이 20개라 흩어짐은 " + f1(lo) + " ~ " + jro(f1(hi)) + " 8개일 때보다 작다."
+      : "학습 관측이 8개뿐이라 계수가 불안정해 평균 " + kj(f1(m), "이", "가") + " 기준 9.0보다 크게 높고 최대 " + kj(f1(hi), "이", "가") + " 된다. 전체 자료로 학습할 최종 모델보다 적은 자료로 학습한 모델을 평가하므로 오차를 높게 추정한다.";
+    show(2, [["학습 · 검증 관측", (40 - nv) + "개 · " + nv + "개"], ["열 번의 평균 검증 MSE", f1(m)], ["열 번의 범위", f1(lo) + " ~ " + f1(hi)]], note);
+  }
+  function avg(a) { return a.reduce(function (s, v) { return s + v; }, 0) / a.length; }
+
+  var TR3 = S3.slice(0, 20), VA3 = S3.slice(20, 30), TE3 = S3.slice(30);
+  var T3 = [];
+  for (var d3 = 1; d3 <= 6; d3++) { var g3 = fit(TR3, d3); T3.push({ d: d3, tr: mse(g3, TR3), va: mse(g3, VA3), te: mse(g3, TE3), nw: NEW3[d3 - 1] }); }
+  function renderChoice() {
+    var by = $("chooser").value;
+    var best = T3.reduce(function (a, b) { return b[by] < a[by] ? b : a; });
+    var head = '<thead><tr><th scope="col">차수</th><th scope="col">학습 MSE</th><th scope="col">검증 MSE</th><th scope="col">테스트 MSE</th><th scope="col">새 자료 MSE</th></tr></thead>';
+    $("sel-table").innerHTML = head + "<tbody>" + T3.map(function (r) {
+      return '<tr class="' + (r === best ? "is-sel" : "") + '"><th scope="row">' + r.d + "</th><td>" + f1(r.tr) + '</td><td class="' + (by === "va" ? "is-y" : "") + '">' + f1(r.va) + '</td><td class="' + (by === "te" ? "is-y" : "") + '">' + f1(r.te) + '</td><td class="is-off">' + f1(r.nw) + "</td></tr>";
+    }).join("") + "</tbody>";
+    var gap = best.nw - best.te;
+    show(3, [["고른 차수", best.d + "차"], ["최종 성능으로 보고한 테스트 MSE", f1(best.te)], ["같은 모델의 새 자료 MSE", f1(best.nw)]],
+      by === "va" ? "검증 MSE가 가장 낮은 " + best.d + "차를 고르고 선택에 쓰지 않은 테스트 자료로 재면 " + kj(f1(best.te), "이", "가") + " 나와 새 자료 MSE " + kj(f1(best.nw), "과", "와") + " 가깝다. 다만 고를 때 비교한 검증 MSE " + kj(f1(best.va), "은", "는") + " 선택의 영향을 받아 새 자료 MSE보다 낮다."
+        : "테스트 MSE가 가장 낮은 " + best.d + "차를 고르면 보고하는 테스트 MSE " + kj(f1(best.te), "이", "가") + " 새 자료 MSE " + f1(best.nw) + "보다 " + f1(gap) + " 낮다. 테스트 자료 10개에 맞춰 고른 결과라 그 점수는 선택에 쓰지 않은 성능이 아니다. 테스트 자료는 선택을 마친 뒤 마지막에 한 번만 쓴다.");
+  }
+
+  on("split", renderSplit); on("deg", renderSplit); on("ratio", renderRatio); on("chooser", renderChoice);
+  renderSplit(); renderRatio(); renderChoice();
+}());
+</script>
+</body>
+</html>

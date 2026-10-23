@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Cross-Validation | Machine Learning | Pusan National University</title><meta name="description" content="Cross-validation repeats training and validation splits to summarize performance, and k-fold cross-validation averages errors from validating once on each fold."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/15.%20cross-validation/cross-validation.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Cross-Validation | Machine Learning | Pusan National University"><meta property="og:description" content="Cross-validation repeats training and validation splits to summarize performance, and k-fold cross-validation averages errors from validating once on each fold."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/15.%20cross-validation/cross-validation.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .cell-tr{fill:var(--pnu-blue-tint);stroke:var(--pnu-blue);stroke-width:1.5}
+    .topic-plot .cell-va{fill:var(--pnu-green);stroke:var(--pnu-green-deep);stroke-width:2}
+    .topic-plot .cell-va + text{fill:var(--white);font-weight:700}
+    .topic-plot .sep{stroke:var(--ink-700);stroke-width:2.5}
+    .topic-plot .bar{fill:var(--pnu-blue)}
+    .topic-plot .bar.is-cur{fill:var(--pnu-green)}
+    .topic-plot .bar.is-todo{fill:var(--surface-100);stroke:var(--line-300);stroke-dasharray:4 3}
+    .topic-plot .avg{stroke:var(--pnu-blue-dark);stroke-width:2.5;stroke-dasharray:7 5}
+    .topic-plot .dot{fill:var(--pnu-blue)}
+    .topic-plot .dot.is-cur{fill:var(--pnu-green);stroke:var(--pnu-green-deep);stroke-width:2}
+    .topic-plot .pair{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .mean{stroke:var(--pnu-blue-dark);stroke-width:2.5;stroke-dasharray:6 4}
+    .topic-plot .fit-cell{fill:var(--pnu-blue-tint);stroke:var(--pnu-blue);stroke-width:1.2}
+    .topic-plot .fit-cell.is-last{fill:var(--pnu-green)}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-cross-validation">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">One Split Is One Sample</span><span class="nav-tag is-current" aria-current="page">Cross-Validation</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/15.%20One%20Split%20Is%20One%20Sample.pdf">One Split Is One <span class="publication-lecture-tail">Sample<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Cross-Validation</h1><hr class="accent-rule"><p class="page-subtitle">교차검증(cross-validation)은 학습·검증 자료를 나누는 과정을 반복해 검증 성능을 요약하는 평가 방법이다. k-fold 교차검증은 자료를 k개 fold(교차검증에서 나눈 한 몫)로 나누고, fold 하나로 검증하며 나머지로 학습하기를 k번 반복해 검증 오차를 평균한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>CV(k) = (1/k) Σ MSEᵢ</strong><span>크기가 같은 k개 fold에서 잰 검증 MSE의 평균이다.</span></article><article class="summary-card"><strong>관측 하나의 쓰임</strong><span>k번의 학습·검증 가운데 검증에 1번, 학습에 k − 1번 쓰인다.</span></article><article class="summary-card"><strong>LOOCV</strong><span>관측 하나씩 제외해 n번 반복하는, k = n인 교차검증이다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">fold를 하나씩 검증에 쓰고 k개 검증 MSE를 평균한다</h2><p class="lead">관측 20개를 2차 다항 회귀로 적합한다. k를 바꾸면 fold의 크기와 반복 횟수가 바뀌고, 반복 번호를 옮기면 검증 fold와 그 반복의 검증 MSE, 지금까지의 평균이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double">
+        <div class="control-field"><label for="k">fold 수 k</label><select id="k"><option value="2">2</option><option value="4">4</option><option value="5" selected>5</option><option value="10">10</option><option value="20">20 (LOOCV)</option></select></div>
+        <div class="control-field"><label for="iter">반복 번호 <output id="iter-out" class="control-value" for="iter">1</output></label><input id="iter" type="range" min="1" max="5" step="1" value="1"></div>
+      </div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="fold-plot" class="topic-plot" viewBox="0 0 900 380" role="img" aria-labelledby="fp-title fp-desc"><title id="fp-title"></title><desc id="fp-desc">위 줄의 칸 하나가 관측 하나이고 숫자는 관측 번호다. 굵은 세로선이 fold 경계, 초록 칸이 이번 반복의 검증 fold, 파란 칸이 학습 관측이다. 아래 막대는 반복별 검증 MSE이며 초록 막대가 이번 반복, 점선 막대는 아직 하지 않은 반복, 파란 점선은 지금까지의 평균이다.</desc></svg></div><figcaption class="visual-caption">위 줄의 칸 하나가 관측 하나이고 숫자는 관측 번호다. 굵은 세로선이 fold 경계, 초록 칸이 이번 반복의 검증 fold, 파란 칸이 학습 관측이다. 아래 막대는 반복별 검증 MSE이며 초록 막대가 이번 반복, 점선 막대는 아직 하지 않은 반복, 파란 점선은 지금까지의 평균이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">평균이 같아도 fold별 점수의 변동은 다르다</h2><p class="lead">두 모델 A와 B를 같은 다섯 fold에서 잰 정확도다. fold 번호를 옮기면 그 fold에서 두 모델의 점수와 차이가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="fold">fold 번호 <output id="fold-out" class="control-value" for="fold">1</output></label><input id="fold" type="range" min="1" max="5" step="1" value="1"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="score-plot" class="topic-plot" viewBox="0 0 900 240" role="img" aria-labelledby="sc-title sc-desc"><title id="sc-title">모델 A와 B의 fold별 정확도</title><desc id="sc-desc">행이 모델이고 점 하나가 fold 하나의 정확도다. 점 위 숫자는 fold 번호, 초록 점과 초록 선은 고른 fold에서 두 모델의 점수, 파란 점선은 다섯 fold의 평균이다.</desc></svg></div><figcaption class="visual-caption">행이 모델이고 점 하나가 fold 하나의 정확도다. 점 위 숫자는 fold 번호, 초록 점과 초록 선은 고른 fold에서 두 모델의 점수, 파란 점선은 다섯 fold의 평균이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">k와 후보 수가 곱해져 학습 횟수가 늘어난다</h2><p class="lead">관측 200개로 후보 모델을 비교한다고 하자. k와 후보 수를 바꾸면 한 번의 학습에 쓰는 관측 수와 전체 학습 횟수가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double">
+        <div class="control-field"><label for="kc">fold 수 k</label><select id="kc"><option value="5" selected>5</option><option value="10">10</option><option value="200">200 (LOOCV)</option></select></div>
+        <div class="control-field"><label for="cand">후보 수 <output id="cand-out" class="control-value" for="cand">10</output></label><input id="cand" type="range" min="1" max="10" step="1" value="10"></div>
+      </div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="cost-plot" class="topic-plot" viewBox="0 0 900 330" role="img" aria-labelledby="cp-title cp-desc"><title id="cp-title">후보 </title><desc id="cp-desc">행 하나가 후보 하나이고 칸 하나가 학습 한 번이다. 맨 아래 초록 칸은 후보를 고른 뒤 개발 자료 전체로 한 번 더 학습하는 최종 모델이다.</desc></svg></div><figcaption class="visual-caption">행 하나가 후보 하나이고 칸 하나가 학습 한 번이다. 맨 아래 초록 칸은 후보를 고른 뒤 개발 자료 전체로 한 번 더 학습하는 최종 모델이다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../15. cross-validation/holdout-validation.html" rel="prev">이전 · Holdout Validation</a><a class="pager-link is-all" href="../index.html">전체</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; return String(v) + (k ? a : b); }
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+  var f1 = function (v) { return v.toFixed(1); };
+
+  var X = [3.2, 5.7, 3.3, 9.1, 1.7, 3.1, 3.3, 5.4, 7.4, 3.3, 8.7, 3.9, 3.8, 9.4, 5.2, 2.3, 2.3, 9.4, 3.4, 5.2];
+  var Y = [21.7, 29.4, 26.5, 15.9, 20.5, 22.6, 19.2, 29.9, 26.7, 22.5, 19.5, 30.5, 22.6, 13.2, 31.2, 17.7, 20.4, 13.4, 20.9, 25.2];
+  var P = [19, 10, 17, 15, 12, 3, 1, 6, 18, 13, 0, 16, 14, 7, 2, 11, 8, 9, 4, 5];
+  function fit(idx) {
+    var p = 3, A = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], r, c, q;
+    function t(x) { return (x - 5.5) / 4.5; }
+    idx.forEach(function (i) { var z = t(X[i]); for (var a = 0; a < p; a++) { for (var b = 0; b < p; b++) A[a][b] += Math.pow(z, a + b); A[a][p] += Math.pow(z, a) * Y[i]; } });
+    for (c = 0; c < p; c++) {
+      var m = c;
+      for (r = c + 1; r < p; r++) if (Math.abs(A[r][c]) > Math.abs(A[m][c])) m = r;
+      var tmp = A[c]; A[c] = A[m]; A[m] = tmp;
+      for (r = 0; r < p; r++) { if (r === c) continue; var kk = A[r][c] / A[c][c]; for (q = c; q <= p; q++) A[r][q] -= kk * A[c][q]; }
+    }
+    var w = A.map(function (row, i) { return row[p] / row[i]; });
+    return function (x) { var z = t(x); return w[0] + w[1] * z + w[2] * z * z; };
+  }
+  var CACHE = {};
+  function foldMse(k) {
+    if (CACHE[k]) return CACHE[k];
+    var out = [];
+    for (var f = 0; f < k; f++) {
+      var va = P.filter(function (_, j) { return Math.floor(j * k / 20) === f; }), tr = P.filter(function (_, j) { return Math.floor(j * k / 20) !== f; });
+      var g = fit(tr);
+      out.push(va.reduce(function (s, i) { var e = Y[i] - g(X[i]); return s + e * e; }, 0) / va.length);
+    }
+    return (CACHE[k] = out);
+  }
+
+  function renderFold(fromK) {
+    var k = Number($("k").value), it = $("iter");
+    it.max = k;
+    if (fromK || Number(it.value) > k) it.value = Math.min(Number(it.value), k);
+    var i = Number(it.value), ms = foldMse(k);
+    $("iter-out").textContent = i;
+    var cw = 40, x0 = 50;
+    var h = '<title id="fp-title">' + k + '-fold 교차검증의 반복 ' + i + '</title><desc id="fp-desc">검증 fold ' + i + ', 검증 MSE ' + f1(ms[i - 1]) + '</desc>';
+    h += '<text x="' + x0 + '" y="24">관측 20개의 fold 배정</text>';
+    P.forEach(function (obs, j) {
+      var f = Math.floor(j * k / 20), x = x0 + j * cw;
+      h += '<rect class="' + (f === i - 1 ? "cell-va" : "cell-tr") + '" x="' + (x + 2) + '" y="40" width="' + (cw - 4) + '" height="40" rx="5"/><text x="' + (x + cw / 2) + '" y="65" text-anchor="middle">' + (obs + 1) + "</text>";
+      if (j > 0 && Math.floor((j - 1) * k / 20) !== f) h += '<line class="sep" x1="' + x + '" y1="32" x2="' + x + '" y2="88"/>';
+    });
+    var by = 340, sc = 4.2, bw = Math.min(70, 760 / k);
+    h += '<line class="axis" x1="' + x0 + '" y1="' + by + '" x2="850" y2="' + by + '"/><line class="axis" x1="' + x0 + '" y1="' + by + '" x2="' + x0 + '" y2="100"/>';
+    [0, 20, 40].forEach(function (t) { h += '<text class="small" x="' + (x0 - 6) + '" y="' + (by - t * sc + 4) + '" text-anchor="end">' + t + "</text>"; });
+    h += '<text class="small" x="' + (x0 + 6) + '" y="114">검증 MSE</text><text class="small" x="850" y="366" text-anchor="end">반복 번호</text>';
+    var slot = 780 / k, sum = 0;
+    ms.forEach(function (v, j) {
+      var x = x0 + 10 + j * slot + (slot - bw) / 2, hh = Math.min(v, 56) * sc;
+      var cls = j + 1 === i ? "bar is-cur" : j + 1 < i ? "bar" : "bar is-todo";
+      h += '<rect class="' + cls + '" x="' + x.toFixed(1) + '" y="' + (by - hh).toFixed(1) + '" width="' + (bw - 4).toFixed(1) + '" height="' + hh.toFixed(1) + '"/>';
+      if (k <= 10 || (j + 1) % 5 === 0 || j === 0) h += '<text class="small" x="' + (x + (bw - 4) / 2).toFixed(1) + '" y="' + (by + 16) + '" text-anchor="middle">' + (j + 1) + "</text>";
+      if (j < i) sum += v;
+    });
+    var run = sum / i;
+    h += '<line class="avg" x1="' + x0 + '" y1="' + (by - run * sc).toFixed(1) + '" x2="850" y2="' + (by - run * sc).toFixed(1) + '"/>';
+    $("fold-plot").innerHTML = h;
+    var nv = 20 / k, cv = ms.reduce(function (s, v) { return s + v; }, 0) / k;
+    var rows = [["학습 · 검증 관측", (20 - nv) + "개 · " + nv + "개"], ["반복 " + i + "의 검증 MSE", f1(ms[i - 1])], ["반복 " + i + "까지의 평균", f1(run)]];
+    if (i === k) rows.push(["CV(" + k + ")", f1(cv)]);
+    var note;
+    if (i < k) note = "반복 " + i + "에서는 fold " + i + "의 " + nv + "개로 검증하고 나머지 " + (20 - nv) + "개로 모델을 새로 학습한다. 반복을 끝까지 옮기면 모든 관측이 검증에 한 번씩 쓰이고, 각 관측은 학습에 " + (k - 1) + "번 쓰인다.";
+    else if (k === 2) note = "두 반복을 평균한 CV(2) = " + kj(f1(cv), "이다", "다") + ". 매번 관측 10개로만 학습해 2차 모델의 계수가 불안정하므로, 같은 자료의 CV(5) = " + f1(foldMse(5).reduce(function (s, v) { return s + v; }, 0) / 5) + "보다 오차를 높게 추정한다.";
+    else if (k === 20) note = "k = n인 LOOCV라 관측 하나씩 20번 검증했다. 반복별 검증 MSE는 " + f1(Math.min.apply(null, ms)) + "에서 " + jro(f1(Math.max.apply(null, ms))) + " 크게 흩어지지만 평균 CV(20)은 " + kj(f1(cv), "이다", "다") + ". 학습 자료가 거의 같은 모델들을 평균하므로 추정의 분산이 반드시 작아지지는 않는다.";
+    else note = k + "번의 검증 MSE를 평균한 CV(" + k + ") = " + kj(f1(cv), "이다", "다") + ". 반복별 값은 " + f1(Math.min.apply(null, ms)) + "에서 " + jro(f1(Math.max.apply(null, ms))) + " 달라지므로 평균과 함께 fold별 변동을 본다.";
+    show(1, rows, note);
+  }
+
+  var A = [0.79, 0.80, 0.80, 0.80, 0.81], B = [0.60, 0.70, 0.80, 0.90, 1.00];
+  function sd(a) { var m = a.reduce(function (s, v) { return s + v; }, 0) / a.length; return Math.sqrt(a.reduce(function (s, v) { return s + (v - m) * (v - m); }, 0) / a.length); }
+  function renderScore() {
+    var f = Number($("fold").value);
+    $("fold-out").textContent = f;
+    var PX = function (v) { return 150 + (v - 0.55) * 1400; };
+    var h = '<title id="sc-title">모델 A와 B의 fold별 정확도</title><desc id="sc-desc">fold ' + f + ': A ' + A[f - 1].toFixed(2) + ', B ' + B[f - 1].toFixed(2) + '</desc>';
+    h += '<line class="axis" x1="150" y1="200" x2="850" y2="200"/>';
+    [0.6, 0.7, 0.8, 0.9, 1.0].forEach(function (t) { h += '<text class="small" x="' + PX(t) + '" y="220" text-anchor="middle">' + t.toFixed(1) + "</text>"; });
+    h += '<text x="850" y="236" text-anchor="end">정확도</text>';
+    h += '<line class="mean" x1="' + PX(0.8) + '" y1="30" x2="' + PX(0.8) + '" y2="195"/>';
+    [["A", A, 70], ["B", B, 150]].forEach(function (m) {
+      h += '<text x="40" y="' + (m[2] + 5) + '">모델 ' + m[0] + "</text>";
+      m[1].forEach(function (v, j) {
+        var dy = m[0] === "A" ? (j - 2) * 11 : 0;
+        h += '<circle class="dot' + (j + 1 === f ? " is-cur" : "") + '" cx="' + PX(v).toFixed(1) + '" cy="' + (m[2] + dy) + '" r="' + (j + 1 === f ? 9 : 6) + '"/>';
+        if (m[0] === "B") h += '<text class="small" x="' + PX(v).toFixed(1) + '" y="' + (m[2] - 14) + '" text-anchor="middle">' + (j + 1) + "</text>";
+      });
+    });
+    h += '<line class="pair" x1="' + PX(A[f - 1]).toFixed(1) + '" y1="' + (70 + (f - 3) * 11) + '" x2="' + PX(B[f - 1]).toFixed(1) + '" y2="150"/>';
+    $("score-plot").innerHTML = h;
+    var diff = B[f - 1] - A[f - 1];
+    show(2, [["fold " + f + "의 A · B", A[f - 1].toFixed(2) + " · " + B[f - 1].toFixed(2)], ["B − A", (diff > 0 ? "+" : diff < 0 ? "−" : "") + Math.abs(diff).toFixed(2)], ["평균 A · B", "0.80 · 0.80"], ["표준편차 A · B", sd(A).toFixed(3) + " · " + sd(B).toFixed(3)]],
+      (diff === 0 ? "fold " + f + "에서는 두 모델의 점수가 같다. " : "fold " + f + "에서는 " + (diff > 0 ? "B가 A보다" : "A가 B보다") + " " + Math.abs(diff).toFixed(2) + " 높다. ") + "fold에 따라 앞서는 모델이 바뀌므로 평균 0.80이 같다는 사실만으로는 일관되게 나은 후보를 말할 수 없다. B의 표준편차가 더 커 분할에 따른 변동이 크지만, 이 값이 평균의 신뢰구간은 아니다.");
+  }
+
+  function renderCost() {
+    var k = Number($("kc").value), c = Number($("cand").value), n = 200;
+    $("cand-out").textContent = c;
+    var trainN = k === n ? n - 1 : n - n / k, fits = c * k;
+    var x0 = 110, W = 740, rh = Math.min(24, 250 / (c + 1)), cw = W / k;
+    var h = '<title id="cp-title">후보 ' + c + '개, k = ' + k + '의 학습 횟수</title><desc id="cp-desc">교차검증 학습 ' + fits + '번과 최종 학습 1번</desc>';
+    for (var r = 0; r < c; r++) {
+      var y = 20 + r * rh;
+      h += '<text class="small" x="' + (x0 - 10) + '" y="' + (y + rh * 0.7).toFixed(1) + '" text-anchor="end">후보 ' + (r + 1) + "</text>";
+      if (k <= 20) { for (var j = 0; j < k; j++) h += '<rect class="fit-cell" x="' + (x0 + j * cw).toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + (rh - 3).toFixed(1) + '"/>'; }
+      else h += '<rect class="fit-cell" x="' + x0 + '" y="' + y.toFixed(1) + '" width="' + W + '" height="' + (rh - 3).toFixed(1) + '"/><text class="small" x="' + (x0 + W / 2) + '" y="' + (y + rh * 0.65).toFixed(1) + '" text-anchor="middle">200칸</text>';
+    }
+    var yl = 30 + c * rh;
+    h += '<text class="small" x="' + (x0 - 10) + '" y="' + (yl + 17) + '" text-anchor="end">최종</text><rect class="fit-cell is-last" x="' + x0 + '" y="' + yl + '" width="' + Math.max(cw, 8).toFixed(1) + '" height="22"/>';
+    $("cost-plot").setAttribute("viewBox", "0 0 900 " + Math.round(yl + 40));
+    $("cost-plot").innerHTML = h;
+    show(3, [["한 번의 학습 관측 · 검증 관측", trainN + "개 · " + (n - trainN) + "개"], ["교차검증 학습 횟수", c + " × " + k + " = " + fits.toLocaleString("ko-KR")], ["최종 학습까지", (fits + 1).toLocaleString("ko-KR") + "번"]],
+      k === 200 ? "LOOCV는 매번 199개로 학습해 거의 모든 관측을 쓰지만, 후보 " + c + "개에 " + fits.toLocaleString("ko-KR") + "번 학습해야 한다. 학습 자료가 거의 같은 모델들의 예측은 서로 강하게 상관될 수 있어, 평균한 추정치의 분산이 5-fold나 10-fold보다 작다고 단정할 수 없다."
+        : "k = " + k + "이면 매번 관측의 약 " + Math.round(100 * (k - 1) / k) + "%인 " + trainN + "개로 학습하고, " + (c === 1 ? "후보 하나의 성능을 추정하는 데 " + fits + "번 학습한다. 비교할 후보가 하나뿐이어도 최종 모델은" : "후보 " + c + "개를 비교하는 데 " + fits + "번 학습한다. 후보를 고른 뒤에는") + " 개발 자료 전체로 한 번 더 학습하고, 테스트 자료는 그 뒤 마지막 평가에만 쓴다.");
+  }
+
+  on("k", function () { renderFold(true); }); on("iter", function () { renderFold(false); }); on("fold", renderScore); on("kc", renderCost); on("cand", renderCost);
+  renderFold(true); renderScore(); renderCost();
+}());
+</script>
+</body>
+</html>

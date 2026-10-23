@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Imbalance Handling | Machine Learning | Pusan National University</title><meta name="description" content="Resampling and class weights change training, so apply them only to training data and compare metrics on validation data that retains the original class proportions."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/18.%20imbalanced-data/imbalance-handling.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Imbalance Handling | Machine Learning | Pusan National University"><meta property="og:description" content="Resampling and class weights change training, so apply them only to training data and compare metrics on validation data that retains the original class proportions."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/18.%20imbalanced-data/imbalance-handling.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .lab{font-size:14px;fill:var(--ink-900)}
+    .topic-plot .mi{fill:var(--pnu-green)}
+    .topic-plot .ma{fill:var(--surface-100);stroke:var(--line-300);stroke-width:1}
+    .topic-plot .dup{fill:var(--pnu-green-tint);stroke:var(--pnu-green);stroke-width:1.5;stroke-dasharray:4 3}
+    .topic-plot .warn{fill:var(--alert-700);font-size:13px;font-weight:700}
+    .topic-plot .wbar{fill:var(--pnu-blue)}
+    .topic-plot .wbar.is-mi{fill:var(--pnu-green)}
+    .topic-plot .base{fill:var(--line-300)}
+    .topic-plot .bal{fill:var(--pnu-green)}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-imbalance-handling">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">When Accuracy Lies</span><span class="nav-tag is-current" aria-current="page">Imbalance Handling</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/18.%20When%20Accuracy%20Lies.pdf">When Accuracy <span class="publication-lecture-tail">Lies<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Imbalance Handling</h1><hr class="accent-rule"><p class="page-subtitle">평가지표와 임계값을 바꾸는 것과 달리, 표본 수 조정(resampling)과 범주 가중치(class weight)는 모델을 학습하는 과정을 바꾼다. 두 방법 모두 학습 자료에만 적용하고, 원래 범주 비율을 유지한 검증 자료에서 전후 지표를 비교한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>undersampling · oversampling</strong><span>다수 범주 표본을 줄이거나 소수 범주 표본을 복제해 범주별 관측 수를 맞춘다.</span></article><article class="summary-card"><strong>균형 가중치 w_c = n / (C n_c)</strong><span>드문 범주의 모든 관측 손실에 더 큰 가중치를 곱해 범주별 가중치 합을 같게 한다.</span></article><article class="summary-card"><strong>새 정보는 생기지 않는다</strong><span>복제나 가중치는 새로운 관측을 만들지 않으며, 재현율과 정밀도가 함께 바뀐다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">표본 수 조정은 분할한 뒤 학습 자료에만 적용한다</h2><p class="lead">가상 관측 1,000개(소수 범주 60개)를 학습 80%, 검증 20%로 범주 비율을 지켜 나눈다. 조정 방법과 적용 시점을 바꾸면 학습 자료와 검증 자료의 범주별 관측 수가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double">
+        <div class="control-field"><label for="method">조정 방법</label><select id="method"><option value="none">원래 자료</option><option value="under">다수 표본 줄이기</option><option value="over">소수 표본 복제하기</option></select></div>
+        <div class="control-field"><label for="when">적용 시점</label><select id="when"><option value="after">분할 뒤 학습 자료에만</option><option value="before">분할 전 전체 자료에</option></select></div>
+      </div>
+      <p id="reason-1" class="control-reason" hidden></p>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="count-plot" class="topic-plot" viewBox="0 0 900 250" role="img" aria-labelledby="ct-title ct-desc"><title id="ct-title">범주별 관측 수</title><desc id="ct-desc">학습 자료와 검증 자료의 소수·다수 범주 관측 수</desc></svg></div><figcaption class="visual-caption">막대 가로 길이는 관측 수이며 모든 막대에 같은 척도를 썼다. 초록은 소수 범주, 회색은 다수 범주, 초록 점선은 복제로 늘린 소수 범주 관측이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">균형 가중치는 범주별 가중치 합을 같게 만든다</h2><p class="lead">학습 관측 1,000개, 범주 C = 2개에서 소수 범주 관측 수 n_c를 바꾸면 두 범주의 관측당 가중치와 가중치 합이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="nmin">소수 범주 관측 수 <output id="nmin-out" class="control-value" for="nmin">60</output></label><input id="nmin" type="range" min="20" max="500" step="20" value="60"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="w-plot" class="topic-plot" viewBox="0 0 900 230" role="img" aria-labelledby="w-title w-desc"><title id="w-title">관측당 가중치와 가중치 합</title><desc id="w-desc">소수·다수 범주의 가중치</desc></svg></div><figcaption class="visual-caption">왼쪽 막대는 관측당 가중치, 오른쪽 막대는 관측 수 × 가중치로 구한 범주별 가중치 합이다. 초록이 소수 범주, 파랑이 다수 범주다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">균형 가중치로 재현율이 올라도 정밀도는 크게 떨어질 수 있다</h2><p class="lead">사기 거래 자료에서 로지스틱 회귀를 5-fold 교차검증으로 평가한 평균이다. 지표를 고르면 기본 설정과 class_weight="balanced" 설정의 값과 변화가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="metric">강조할 지표</label><select id="metric"><option value="acc">정확도</option><option value="rec" selected>재현율</option><option value="prec">정밀도</option><option value="f1">F₁</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="m-plot" class="topic-plot" viewBox="0 0 900 260" role="img" aria-labelledby="m-title m-desc"><title id="m-title">가중치 설정 전후의 지표</title><desc id="m-desc">기본 설정과 균형 가중치의 네 지표</desc></svg></div><figcaption class="visual-caption">지표마다 왼쪽 회색 막대가 기본 설정, 오른쪽 초록 막대가 균형 가중치다. 굵은 이름이 강조한 지표다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../18. imbalanced-data/threshold-selection.html" rel="prev">이전 · Threshold Selection</a><a class="pager-link is-all" href="../index.html">전체</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; return String(v) + (k ? a : b); }
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function head(svg) { return svg.querySelector("title").outerHTML + svg.querySelector("desc").outerHTML; }
+  var num = function (v) { return v.toLocaleString("ko-KR"); };
+
+  function renderCount() {
+    var m = $("method").value, when = $("when").value;
+    $("when").disabled = m === "none";
+    $("reason-1").hidden = m !== "none";
+    $("reason-1").textContent = "원래 자료는 표본 수를 바꾸지 않으므로 적용 시점을 고를 필요가 없다.";
+    var tr, va, whole = null;
+    if (m === "none") { tr = [48, 752, 0]; va = [12, 188, 0]; }
+    else if (when === "after") { tr = m === "under" ? [48, 48, 0] : [48, 752, 704]; va = [12, 188, 0]; }
+    else { whole = m === "under" ? [60, 60, 0] : [60, 940, 880]; tr = m === "under" ? [48, 48, 0] : [48, 752, 704]; va = m === "under" ? [12, 12, 0] : [12, 188, 176]; }
+    var sc = 700 / 1880, svg = $("count-plot"), h = head(svg);
+    function bar(y, lab, c) {
+      var mi = c[0] + c[2], ma = c[1], s = '<text class="lab" x="10" y="' + (y + 22) + '">' + lab + "</text>";
+      s += '<rect class="mi" x="160" y="' + y + '" width="' + (c[0] * sc).toFixed(1) + '" height="32"/>';
+      if (c[2]) s += '<rect class="dup" x="' + (160 + c[0] * sc).toFixed(1) + '" y="' + y + '" width="' + (c[2] * sc).toFixed(1) + '" height="32"/>';
+      s += '<rect class="ma" x="' + (160 + mi * sc).toFixed(1) + '" y="' + y + '" width="' + (ma * sc).toFixed(1) + '" height="32"/>';
+      s += '<text class="small" x="' + (170 + (mi + ma) * sc).toFixed(1) + '" y="' + (y + 21) + '">소수 ' + num(mi) + " · 다수 " + num(ma) + "</text>";
+      return s;
+    }
+    var y = 20;
+    if (whole) { h += bar(y, "조정한 전체 자료", whole); y += 70; }
+    h += bar(y, "학습 자료", tr) + bar(y + 70, "검증 자료", va);
+    if (when === "before" && m === "over") h += '<text class="warn" x="160" y="' + (y + 132) + '">검증 자료의 소수 범주 188개 대부분이 학습 자료에도 있는 원본의 복제본</text>';
+    if (when === "before" && m === "under") h += '<text class="warn" x="160" y="' + (y + 132) + '">검증 자료의 소수 범주 비율이 실제 6%가 아니라 50%</text>';
+    svg.setAttribute("viewBox", "0 0 900 " + (y + 150));
+    svg.innerHTML = h;
+    var vr = (va[0] + va[2]) / (va[0] + va[1] + va[2]);
+    svg.querySelector("desc").textContent = "학습 소수 " + (tr[0] + tr[2]) + ", 다수 " + tr[1] + ", 검증 소수 비율 " + (vr * 100).toFixed(0) + "%";
+    var note = m === "none" ? "원래 자료를 비율대로 나누면 학습 자료는 소수 48 · 다수 752, 검증 자료는 소수 12 · 다수 188이다. 두 자료 모두 소수 범주가 6%다."
+      : when === "after" ? (m === "under" ? "분할한 뒤 학습 자료의 다수 범주를 48개로 줄였다. 학습 관측이 96개로 줄어 제외한 다수 범주 704개의 정보를 잃을 수 있지만, 검증 자료는 실제 비율 6%를 그대로 유지한다." : "분할한 뒤 학습 자료의 소수 범주 48개를 752개가 되도록 복제했다. 같은 관측을 반복했을 뿐 새로운 정보는 생기지 않으며, 검증 자료는 실제 비율 6%를 유지해 실제로 마주할 상황을 잰다.")
+      : m === "under" ? "분할 전에 전체를 60 · 60으로 맞추고 나누면 검증 자료도 소수 범주가 50%가 된다. 실제 비율 6%와 다른 자료에서 성능을 재게 되어 정밀도 같은 지표를 과대평가할 수 있다."
+      : "분할 전에 소수 범주 60개를 940개로 복제하고 나누면 같은 원본의 복제본이 학습 자료와 검증 자료 양쪽에 들어간다. 모델이 학습 때 본 관측을 검증에서 다시 만나 성능이 부풀려진다.";
+    show(1, [["학습 자료 소수 · 다수", num(tr[0] + tr[2]) + " · " + num(tr[1])], ["검증 자료 소수 · 다수", num(va[0] + va[2]) + " · " + num(va[1])], ["검증 자료의 소수 범주 비율", (vr * 100).toFixed(0) + "%"]], note);
+  }
+
+  function renderWeight() {
+    var nc = Number($("nmin").value), n = 1000, nm = n - nc, wmi = n / (2 * nc), wma = n / (2 * nm), svg = $("w-plot"), h = head(svg);
+    $("nmin-out").textContent = nc;
+    var sw = 300 / 25, ss = 300 / 500;
+    h += '<text class="lab" x="20" y="24">관측당 가중치</text><text class="lab" x="470" y="24">가중치 합</text>';
+    [["소수", wmi, 60, "wbar is-mi"], ["다수", wma, 130, "wbar"]].forEach(function (b) {
+      h += '<text class="small" x="20" y="' + (b[2] + 22) + '">' + b[0] + '</text><rect class="' + b[3] + '" x="70" y="' + b[2] + '" width="' + Math.min(b[1] * sw, 330).toFixed(1) + '" height="34"/><text class="small" x="' + (80 + Math.min(b[1] * sw, 330)).toFixed(1) + '" y="' + (b[2] + 22) + '">' + b[1].toFixed(3) + "</text>";
+    });
+    [["소수", nc * wmi, 60, "wbar is-mi"], ["다수", nm * wma, 130, "wbar"]].forEach(function (b) {
+      h += '<text class="small" x="470" y="' + (b[2] + 22) + '">' + b[0] + '</text><rect class="' + b[3] + '" x="520" y="' + b[2] + '" width="' + (b[1] * ss).toFixed(1) + '" height="34"/><text class="small" x="' + (530 + b[1] * ss).toFixed(1) + '" y="' + (b[2] + 22) + '">' + b[1].toFixed(0) + "</text>";
+    });
+    svg.innerHTML = h;
+    svg.querySelector("desc").textContent = "소수 " + nc + "개 가중치 " + wmi.toFixed(3) + ", 다수 " + nm + "개 가중치 " + wma.toFixed(3);
+    show(2, [["소수 범주 가중치", "1,000 / (2 × " + nc + ") = " + wmi.toFixed(3)], ["다수 범주 가중치", "1,000 / (2 × " + nm + ") = " + wma.toFixed(3)], ["범주별 가중치 합", "500 · 500"]],
+      "소수 범주 " + nc + "개에는 관측당 " + wmi.toFixed(2) + ", 다수 범주 " + nm + "개에는 " + kj(wma.toFixed(3), "을", "를") + " 곱해 두 범주의 가중치 합이 모두 500이 된다. 가중치는 틀린 예측만이 아니라 그 범주의 모든 관측 손실에 곱하며, 이 값이 실제 업무의 오류 비용을 뜻하지는 않는다." + (nc === 500 ? " 두 범주가 같은 수이면 가중치가 모두 1이다." : ""));
+  }
+
+  var MET = { acc: ["정확도", 0.999, 0.973], rec: ["재현율", 0.602, 0.891], prec: ["정밀도", 0.889, 0.054], f1: ["F₁", 0.717, 0.102] };
+  function renderMetric() {
+    var key = $("metric").value, svg = $("m-plot"), h = head(svg), keys = ["acc", "rec", "prec", "f1"];
+    h += '<line class="axis" x1="60" y1="210" x2="860" y2="210"/>';
+    keys.forEach(function (k, i) {
+      var x = 90 + i * 200, a = MET[k][1], b = MET[k][2];
+      h += '<rect class="base" x="' + x + '" y="' + (210 - a * 180).toFixed(1) + '" width="60" height="' + (a * 180).toFixed(1) + '"/><rect class="bal" x="' + (x + 70) + '" y="' + (210 - b * 180).toFixed(1) + '" width="60" height="' + (b * 180).toFixed(1) + '"/>';
+      h += '<text class="small" x="' + (x + 30) + '" y="' + (204 - a * 180).toFixed(1) + '" text-anchor="middle">' + a.toFixed(3) + '</text><text class="small" x="' + (x + 100) + '" y="' + (204 - b * 180).toFixed(1) + '" text-anchor="middle">' + b.toFixed(3) + "</text>";
+      h += '<text x="' + (x + 65) + '" y="234" text-anchor="middle"' + (k === key ? ' font-weight="700"' : "") + ">" + MET[k][0] + "</text>";
+    });
+    svg.innerHTML = h;
+    var m = MET[key], d = m[2] - m[1];
+    svg.querySelector("desc").textContent = m[0] + " 기본 " + m[1] + ", 균형 가중치 " + m[2];
+    show(3, [["지표", m[0]], ["기본 설정", m[1].toFixed(3)], ["균형 가중치", m[2].toFixed(3)], ["변화", (d > 0 ? "+" : "−") + Math.abs(d).toFixed(3)]],
+      key === "rec" ? "균형 가중치를 쓰면 재현율이 0.602에서 0.891로 올라 사기를 더 많이 찾는다. 드문 범주의 손실이 커져 모델이 사기 쪽으로 더 쉽게 기울기 때문이다."
+        : key === "prec" ? "정밀도는 0.889에서 0.054로 떨어진다. 사기로 예측한 거래 가운데 실제 사기가 5% 남짓이 되어, 찾아낸 사기보다 잘못된 경보가 훨씬 많아졌다."
+        : key === "acc" ? "정확도는 0.999에서 0.973으로 조금만 내려간다. 정상 거래가 대부분이라 잘못된 경보가 늘어난 변화가 정확도에는 작게 반영된다."
+        : "F₁은 0.717에서 0.102로 크게 낮아진다. 재현율은 올랐지만 정밀도가 크게 떨어져, 가중치 변경이 어떤 지표를 좋게 하고 어떤 지표를 나쁘게 했는지 혼동행렬과 함께 확인해야 한다.");
+  }
+
+  $("method").addEventListener("change", renderCount); $("when").addEventListener("change", renderCount); $("nmin").addEventListener("input", renderWeight); $("metric").addEventListener("change", renderMetric);
+  renderCount(); renderWeight(); renderMetric();
+}());
+</script>
+</body>
+</html>

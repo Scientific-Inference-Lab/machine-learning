@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
-  <title>Pipelines | Machine Learning | Pusan National University</title><meta name="description" content="A pipeline chains preprocessing steps and a model in order, so that fit and predict run as one unit."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/06.%20data-leakage/pipelines.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Pipelines | Machine Learning | Pusan National University"><meta property="og:description" content="A pipeline chains preprocessing steps and a model in order, so that fit and predict run as one unit."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/06.%20data-leakage/pipelines.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png"><link rel="stylesheet" href="../assets/pnu-theme.css">
+  <title>Pipelines | Machine Learning | Pusan National University</title><meta name="description" content="A pipeline chains preprocessing steps and a model in order, so that fit and predict run as one unit."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/06.%20data-leakage/pipelines.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Pipelines | Machine Learning | Pusan National University"><meta property="og:description" content="A pipeline chains preprocessing steps and a model in order, so that fit and predict run as one unit."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/06.%20data-leakage/pipelines.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css">
   <link rel="stylesheet" href="../assets/topic-visual-shell.css">
   <style>
 .topic-pipelines .pipe-svg text {fill:var(--ink-600);font-family:var(--font-sans);font-size:14px}
@@ -63,7 +64,7 @@
           <g id="fit-node-2" class="muted"><rect class="box" x="445" y="95" width="135" height="90" rx="11"></rect><text class="strong" x="512" y="128" text-anchor="middle">변환된 자료</text><text x="512" y="154" text-anchor="middle">같은 열 구조</text></g>
           <path class="green-arrow" d="M585 140 H620"></path>
           <g id="fit-node-3" class="muted"><rect class="reference" x="625" y="95" width="110" height="90" rx="11"></rect><text class="strong" x="680" y="128" text-anchor="middle">모델 fit</text><text x="680" y="154" text-anchor="middle">매개변수</text></g>
-
+          
         </svg>
       </div><figcaption class="visual-caption">초록 점선 상자는 전처리가 fit에서 저장하는 상태, 초록 실선 상자는 모델이 저장하는 상태다. 흐린 상자는 아직 지나지 않은 단계다.</figcaption></figure>
       <div id="read-1" class="visual-readouts" aria-live="polite"></div>
@@ -83,7 +84,7 @@
           <g id="predict-node-1" class="muted"><rect class="state" x="265" y="65" width="220" height="150" rx="11"></rect><text class="strong" x="375" y="96" text-anchor="middle">저장된 전처리</text><text x="375" y="125" text-anchor="middle">μ_train · σ_train</text><text x="375" y="151" text-anchor="middle">학습 범주 목록</text><text class="small" x="375" y="188" text-anchor="middle">transform만 적용 · 상태를 다시 계산하지 않음</text></g>
           <path class="green-arrow" d="M490 140 H560"></path>
           <g id="predict-node-2" class="muted"><rect class="reference" x="565" y="95" width="160" height="90" rx="11"></rect><text class="strong" x="645" y="128" text-anchor="middle">저장된 모델</text><text x="645" y="154" text-anchor="middle">예측값 출력</text></g>
-
+          
         </svg>
       </div><figcaption class="visual-caption">초록 점선의 전처리 상태는 predict 동안 다시 계산되지 않는다.</figcaption></figure>
       <div id="read-2" class="visual-readouts" aria-live="polite"></div>
@@ -104,7 +105,7 @@
           <g id="categorical-branch" class="muted"><rect class="box" x="270" y="225" width="245" height="110" rx="11"></rect><text class="strong" x="392" y="257" text-anchor="middle">범주형 경로</text><text x="392" y="286" text-anchor="middle">결측값 대체</text><text x="392" y="312" text-anchor="middle">부호화</text></g>
           <path id="numeric-merge-arrow" class="arrow muted" d="M520 100 C565 100 555 185 600 185"></path><path id="categorical-merge-arrow" class="arrow muted" d="M520 280 C565 280 555 185 600 185"></path>
           <g id="merged-matrix" class="muted"><rect class="reference" x="605" y="125" width="130" height="120" rx="11"></rect><text class="strong" x="670" y="160" text-anchor="middle">병합</text><text x="670" y="190" text-anchor="middle">하나의</text><text x="670" y="216" text-anchor="middle">특성 행렬</text></g>
-
+          
         </svg>
       </div><figcaption class="visual-caption">위는 수치형 경로, 아래는 범주형 경로다. 흐리지 않은 경로가 연결된 변환이고, 오른쪽 초록 상자가 병합한 특성 행렬이다.</figcaption></figure>
       <div id="read-3" class="visual-readouts" aria-live="polite"></div>
