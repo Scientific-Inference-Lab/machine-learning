@@ -2,7 +2,7 @@
 
 > Korean-language course materials from Pusan National University: lecture slides (PDF), interactive topic pages, and concept-check problem sets.
 
-Instructor: [YongKyung Oh](https://scientific-inference-lab.github.io/people/)
+Instructor: [YongKyung Oh](https://scientific-inference-lab.github.io/people/yongkyung-oh/)
 
 ## Lectures
 
