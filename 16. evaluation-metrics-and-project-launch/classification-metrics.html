@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Classification Metrics | Machine Learning | Pusan National University</title><meta name="description" content="A confusion matrix counts binary-classification outcomes as TP, FP, FN, and TN, from which accuracy, precision, recall, and F1 use different numerators and denominators."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/16.%20evaluation-metrics-and-project-launch/classification-metrics.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Classification Metrics | Machine Learning | Pusan National University"><meta property="og:description" content="A confusion matrix counts binary-classification outcomes as TP, FP, FN, and TN, from which accuracy, precision, recall, and F1 use different numerators and denominators."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/16.%20evaluation-metrics-and-project-launch/classification-metrics.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .cm-wrap{display:grid;grid-template-columns:minmax(260px,1fr) minmax(260px,1fr);gap:18px;align-items:start;min-width:560px;padding:8px}
+    .cm{border-collapse:separate;border-spacing:6px;width:100%;font-variant-numeric:tabular-nums}
+    .cm th{font-size:14px;color:var(--ink-600);font-weight:700;padding:4px}
+    .cm td{border-radius:8px;padding:14px 8px;text-align:center;border:2px solid var(--line-200);background:var(--surface-050)}
+    .cm td strong{display:block;font-size:22px}
+    .cm td span{font-size:13px;color:var(--ink-600)}
+    .cm td.is-hit{background:var(--pnu-green-tint);border-color:var(--pnu-green)}
+    .cm td.is-miss{background:var(--alert-050);border-color:var(--alert-200)}
+    .cm td.is-num{outline:3px solid var(--pnu-green);outline-offset:-1px}
+    .rate-list{display:grid;gap:8px}
+    .rate{display:grid;grid-template-columns:92px 1fr 64px;gap:8px;align-items:center;font-size:14px}
+    .rate .track{height:18px;border-radius:9px;background:var(--surface-100);overflow:hidden}
+    .rate .fill{display:block;height:100%;width:var(--w);background:var(--pnu-blue)}
+    .rate.is-f1 .fill{background:var(--pnu-green)}
+    .rate b{text-align:right;font-variant-numeric:tabular-nums}
+    .rate small{grid-column:2/4;color:var(--ink-600);font-size:12px;margin-top:-4px}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .bp{fill:var(--pnu-blue)}
+    .topic-plot .br{fill:var(--pnu-blue-dark)}
+    .topic-plot .bf{fill:var(--pnu-green)}
+    .topic-plot .am{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:6 4}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-classification-metrics">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Counting the Mistakes</span><span class="nav-tag is-current" aria-current="page">Classification Metrics</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/16.%20Counting%20the%20Mistakes.pdf">Counting the <span class="publication-lecture-tail">Mistakes<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Classification Metrics</h1><hr class="accent-rule"><p class="page-subtitle">혼동행렬(confusion matrix)은 이진분류의 결과를 TP, FP, FN, TN 네 칸의 관측 수로 적은 표다. 정확도, 정밀도(precision), 재현율(recall), F₁은 이 네 칸에서 서로 다른 분자와 분모를 골라 계산한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>거짓 양성(FP)과 거짓 음성(FN)</strong><span>FP는 실제 음성을 양성으로, FN은 실제 양성을 음성으로 예측한 경우다.</span></article><article class="summary-card"><strong>정밀도 TP / (TP + FP)</strong><span>양성으로 예측한 관측 가운데 실제 양성의 비율이다.</span></article><article class="summary-card"><strong>재현율 TP / (TP + FN)</strong><span>실제 양성 가운데 양성으로 예측한 비율이며 민감도, TPR과 같다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">같은 혼동행렬에서 지표마다 세는 칸이 다르다</h2><p class="lead">관측 1,000개 중 실제 양성은 20개, 음성은 980개다. 찾아낸 양성 수 TP와 양성으로 잘못 예측한 음성 수 FP를 바꾸면 네 칸과 네 지표가 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--triple">
+        <div class="control-field"><label for="tp">찾아낸 양성 TP <output id="tp-out" class="control-value" for="tp">12</output></label><input id="tp" type="range" min="0" max="20" step="1" value="12"></div>
+        <div class="control-field"><label for="fp">잘못 양성 예측 FP <output id="fp-out" class="control-value" for="fp">3</output></label><input id="fp" type="range" min="0" max="60" step="1" value="3"></div>
+        <div class="control-field"><label for="focus">강조할 지표</label><select id="focus"><option value="acc">정확도</option><option value="prec" selected>정밀도</option><option value="rec">재현율</option></select></div>
+      </div>
+      <p id="reason-1" class="control-reason" hidden></p>
+      <figure class="visual-figure"><div class="visual-frame"><div class="cm-wrap"><table id="cm" class="cm" aria-label="혼동행렬"></table><div id="rates" class="rate-list" role="img" aria-label="지표 막대"></div></div></div><figcaption class="visual-caption">왼쪽 표의 행은 예측, 열은 실제 범주다. 초록 칸은 맞힌 관측, 빨간 칸은 오류이며, 초록 테두리 칸이 강조한 지표의 분모에 들어가는 칸이다. 오른쪽 막대는 네 지표의 값이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">양성을 어느 쪽으로 두느냐에 따라 정밀도와 재현율이 달라진다</h2><p class="lead">질환 검사 결과 TP = 12, FP = 3, FN = 8, TN = 977을 그대로 두고 양성으로 부를 범주를 바꾸면 네 칸의 이름과 정밀도·재현율이 바뀌고 정확도는 그대로다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="posclass">양성으로 두는 범주</label><select id="posclass"><option value="sick">질환 있음</option><option value="healthy">질환 없음</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><table id="cm2" class="topic-table" aria-label="양성 범주에 따른 혼동행렬"></table></div><figcaption class="visual-caption">행은 예측, 열은 실제 범주다. 칸마다 관측 수와 현재 양성 기준의 이름을 적었다. 초록 칸이 맞힌 관측이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">한쪽 지표가 1이어도 F₁은 다른 쪽 오류를 드러낸다</h2><p class="lead">같은 관측 1,000개, 양성 20개에서 예측 방식을 바꾸면 정밀도, 재현율, 두 값의 산술평균과 조화평균 F₁ = 2PR / (P + R)이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="policy">예측 방식</label><select id="policy"><option value="all">모두 양성으로 예측</option><option value="one">실제 양성 1개만 찾아 양성 예측</option><option value="cm" selected>TP 12, FP 3인 모델</option><option value="even">정밀도·재현율 모두 0.80인 모델</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="f1-plot" class="topic-plot" viewBox="0 0 900 250" role="img" aria-labelledby="f1-title f1-desc"><title id="f1-title">정밀도, 재현율, F₁</title><desc id="f1-desc">막대는 왼쪽부터 정밀도, 재현율, F₁이다. 빨간 점선은 정밀도와 재현율의 산술평균이다.</desc></svg></div><figcaption class="visual-caption">막대는 왼쪽부터 정밀도, 재현율, F₁이다. 빨간 점선은 정밀도와 재현율의 산술평균이다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../16. evaluation-metrics-and-project-launch/regression-metrics.html" rel="prev">이전 · Regression Metrics</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../16. evaluation-metrics-and-project-launch/roc-curves.html" rel="next">다음 · ROC Curves</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; return String(v) + (k ? a : b); }
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+  function ratio(a, b) { return b > 0 ? a / b : null; }
+  function fmt(v, d) { return v === null ? "정의되지 않음" : v.toFixed(d || 3); }
+  function f1(p, r) { return p === null || r === null ? null : p + r === 0 ? 0 : 2 * p * r / (p + r); }
+
+  function renderCm() {
+    var tp = Number($("tp").value), fp = Number($("fp").value), focus = $("focus").value;
+    $("tp-out").textContent = tp; $("fp-out").textContent = fp;
+    var fn = 20 - tp, tn = 980 - fp;
+    var acc = (tp + tn) / 1000, prec = ratio(tp, tp + fp), rec = tp / 20, F = f1(prec, rec);
+    var num = { acc: ["tp", "fp", "fn", "tn"], prec: ["tp", "fp"], rec: ["tp", "fn"] }[focus];
+    function cell(key, v, label, hit) { return '<td class="' + (hit ? "is-hit" : "is-miss") + (num.indexOf(key) >= 0 ? " is-num" : "") + '"><strong>' + v + "</strong><span>" + label + "</span></td>"; }
+    $("cm").innerHTML = '<thead><tr><th scope="col">예측 \\ 실제</th><th scope="col">양성</th><th scope="col">음성</th></tr></thead><tbody><tr><th scope="row">양성</th>' + cell("tp", tp, "TP", true) + cell("fp", fp, "FP", false) + '</tr><tr><th scope="row">음성</th>' + cell("fn", fn, "FN", false) + cell("tn", tn, "TN", true) + "</tr></tbody>";
+    function bar(name, v, sub, cls) { return '<div class="rate ' + (cls || "") + '"><span>' + name + '</span><span class="track"><span class="fill" style="--w:' + (v === null ? 0 : v * 100).toFixed(1) + '%"></span></span><b>' + (v === null ? "없음" : v.toFixed(2)) + "</b><small>" + sub + "</small></div>"; }
+    $("rates").innerHTML = bar("정확도", acc, "(TP + TN) / 1,000") + bar("정밀도", prec, "TP / (TP + FP)") + bar("재현율", rec, "TP / (TP + FN)") + bar("F₁", F, "2PR / (P + R)", "is-f1");
+    $("rates").setAttribute("aria-label", "정확도 " + acc.toFixed(3) + ", 정밀도 " + fmt(prec) + ", 재현율 " + rec.toFixed(3) + ", F₁ " + fmt(F));
+    $("reason-1").hidden = tp + fp > 0;
+    $("reason-1").textContent = "양성으로 예측한 관측이 하나도 없어 정밀도의 분모 TP + FP가 0이다. 이때는 별도의 처리 규칙이 필요하다.";
+    var note;
+    if (tp + fp === 0) note = "양성을 하나도 예측하지 않으면 정확도는 980/1,000 = 0.980으로 높지만 재현율은 0이다. 정확도는 FP와 FN의 비용 차이를 반영하지 않는다.";
+    else if (tp === 0) note = "TP = 0이면 양성으로 예측한 " + fp + "개가 모두 실제 음성이라 정밀도와 재현율이 모두 0이고, F₁ = 2TP / (2TP + FP + FN)도 0이다. 그래도 정확도는 " + kj(acc.toFixed(3), "이라", "라") + " 높아 보일 수 있다.";
+    else if (focus === "acc") note = "정확도는 대각선 TP + TN = " + kj(tp + tn, "을", "를") + " 전체 1,000으로 나눈 " + acc.toFixed(3) + "이다. 실제 양성이 20개뿐이라 양성을 모두 놓쳐도 FN이 정확도를 낮추는 몫은 0.020을 넘지 않는다. 정확도만으로는 FP와 FN 가운데 어느 실수를 했는지 알 수 없다.";
+    else if (focus === "prec") note = "정밀도는 양성 예측 행 TP + FP = " + (tp + fp) + "개 가운데 실제 양성 " + tp + "개의 비율 " + prec.toFixed(3) + "이다. FP를 늘리면 정밀도는 내려가지만 재현율 " + kj(rec.toFixed(2), "은", "는") + " 바뀌지 않는다.";
+    else note = "재현율은 실제 양성 열 TP + FN = 20개 가운데 찾아낸 " + tp + "개의 비율 " + rec.toFixed(3) + "이다. FN " + fn + "개가 놓친 양성이며, FP를 바꿔도 재현율은 그대로다.";
+    show(1, [["정확도", acc.toFixed(3)], ["정밀도", fmt(prec)], ["재현율", rec.toFixed(3)], ["F₁", fmt(F)]], note);
+  }
+
+  function renderPos() {
+    var sick = $("posclass").value === "sick";
+    var TP = sick ? 12 : 977, FP = sick ? 3 : 8, FN = sick ? 8 : 3, TN = sick ? 977 : 12;
+    var head = '<thead><tr><th scope="col">예측 \\ 실제</th><th scope="col">' + (sick ? "질환 있음 (양성)" : "질환 있음 (음성)") + '</th><th scope="col">' + (sick ? "질환 없음 (음성)" : "질환 없음 (양성)") + "</th></tr></thead>";
+    var r1 = '<tr><th scope="row">질환 있음</th><td class="is-y">12 · ' + (sick ? "TP" : "TN") + "</td><td>3 · " + (sick ? "FP" : "FN") + "</td></tr>";
+    var r2 = '<tr><th scope="row">질환 없음</th><td>8 · ' + (sick ? "FN" : "FP") + '</td><td class="is-y">977 · ' + (sick ? "TN" : "TP") + "</td></tr>";
+    $("cm2").innerHTML = head + "<tbody>" + r1 + r2 + "</tbody>";
+    var prec = TP / (TP + FP), rec = TP / (TP + FN);
+    show(2, [["TP · FP · FN", TP + " · " + FP + " · " + FN], ["정밀도", prec.toFixed(3)], ["재현율", rec.toFixed(3)], ["정확도", "0.989"]],
+      sick ? "찾아내려는 질환 있음을 양성으로 두면 정밀도 12/15 = 0.800, 재현율 12/20 = 0.600이다. 재현율은 실제 환자 20명 가운데 찾아낸 비율이다."
+        : "질환 없음을 양성으로 두면 TP가 977, FP가 8이 되어 정밀도 977/985 = 0.992, 재현율 977/980 = 0.997로 모두 높아 보인다. 정확도 989/1,000은 그대로다. 환자를 놓친 8명은 이제 FP로 세어져 두 비율에 거의 드러나지 않으므로, 양성을 먼저 정해야 지표의 뜻이 정해진다.");
+  }
+
+  var POL = { all: { tp: 20, fp: 980 }, one: { tp: 1, fp: 0 }, cm: { tp: 12, fp: 3 }, even: { tp: 16, fp: 4 } };
+  function renderF1() {
+    var k = $("policy").value, q = POL[k], P = q.tp / (q.tp + q.fp), R = q.tp / 20, F = 2 * P * R / (P + R), A = (P + R) / 2;
+    var BX = [220, 420, 620], H = 180, by = 210;
+    var h = '<title id="f1-title">정밀도, 재현율, F₁</title><desc id="f1-desc">정밀도 ' + P.toFixed(2) + ', 재현율 ' + R.toFixed(2) + ', F₁ ' + F.toFixed(2) + '</desc>';
+    h += '<line class="axis" x1="120" y1="' + by + '" x2="760" y2="' + by + '"/><line class="axis" x1="120" y1="' + by + '" x2="120" y2="20"/>';
+    [0, 0.5, 1].forEach(function (t) { h += '<text class="small" x="112" y="' + (by - t * H + 4) + '" text-anchor="end">' + t.toFixed(1) + "</text>"; });
+    [["정밀도", P, "bp"], ["재현율", R, "br"], ["F₁", F, "bf"]].forEach(function (b, i) {
+      h += '<rect class="' + b[2] + '" x="' + BX[i] + '" y="' + (by - b[1] * H).toFixed(1) + '" width="90" height="' + (b[1] * H).toFixed(1) + '"/><text x="' + (BX[i] + 45) + '" y="' + (by + 22) + '" text-anchor="middle">' + b[0] + '</text><text class="small" x="' + (BX[i] + 45) + '" y="' + (by - b[1] * H - 8).toFixed(1) + '" text-anchor="middle">' + b[1].toFixed(2) + "</text>";
+    });
+    h += '<line class="am" x1="200" y1="' + (by - A * H).toFixed(1) + '" x2="740" y2="' + (by - A * H).toFixed(1) + '"/><text class="small" x="750" y="' + (by - A * H + 4).toFixed(1) + '">산술평균 ' + A.toFixed(2) + "</text>";
+    $("f1-plot").innerHTML = h;
+    var note = k === "all" ? "모두 양성으로 예측하면 재현율은 1.00이지만 양성 예측 1,000개 가운데 실제 양성이 20개라 정밀도는 0.02다. 산술평균은 0.51이지만 F₁은 0.04로 낮아 FP 980개를 드러낸다."
+      : k === "one" ? "확실한 양성 1개만 양성으로 예측하면 정밀도는 1.00이지만 재현율은 1/20 = 0.05다. F₁은 0.10으로, 한쪽이 1이어도 놓친 양성 19개를 드러낸다."
+      : k === "cm" ? "정밀도 0.80, 재현율 0.60이면 F₁ = 2 × 0.80 × 0.60 / 1.40 = 24/35 ≈ 0.69로 산술평균 0.70보다 조금 작다. 두 값이 불균형할수록 F₁은 산술평균보다 작아진다."
+      : "TP 16, FP 4, FN 4이면 정밀도와 재현율이 모두 0.80이라 F₁도 0.80으로 산술평균과 같다. 두 값이 같을 때만 조화평균과 산술평균이 일치한다.";
+    show(3, [["TP · FP · FN", q.tp + " · " + q.fp + " · " + (20 - q.tp)], ["정밀도 · 재현율", P.toFixed(2) + " · " + R.toFixed(2)], ["산술평균", A.toFixed(2)], ["F₁", F.toFixed(2)]], note);
+  }
+
+  on("tp", renderCm); on("fp", renderCm); on("focus", renderCm); on("posclass", renderPos); on("policy", renderF1);
+  renderCm(); renderPos(); renderF1();
+}());
+</script>
+</body>
+</html>

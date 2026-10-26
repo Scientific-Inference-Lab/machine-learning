@@ -38,6 +38,9 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/14.%20backpropagation/computational-graphs.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/15.%20cross-validation/cross-validation.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/15.%20cross-validation/holdout-validation.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/16.%20evaluation-metrics-and-project-launch/classification-metrics.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/16.%20evaluation-metrics-and-project-launch/regression-metrics.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/16.%20evaluation-metrics-and-project-launch/roc-curves.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/17.%20regularization-and-bias-variance/lasso-regression.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/17.%20regularization-and-bias-variance/regularization-tradeoff.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/17.%20regularization-and-bias-variance/ridge-regression.html</loc></url>
@@ -60,6 +63,7 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/13.%20Stacking%20the%20Layers.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/14.%20Working%20Backwards.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/15.%20One%20Split%20Is%20One%20Sample.pdf</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/16.%20Counting%20the%20Mistakes.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/17.%20Paying%20to%20Fit%20Less.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/18.%20When%20Accuracy%20Lies.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/backpropagation.html</loc></url>
@@ -67,6 +71,7 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/data-and-learning-types.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/data-leakage.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/derivatives-and-probability.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/evaluation-metrics.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/gradient-descent.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/imbalanced-data.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/labels-structure-and-rewards.html</loc></url>

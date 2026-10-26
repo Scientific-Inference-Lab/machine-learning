@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Regression Metrics | Machine Learning | Pusan National University</title><meta name="description" content="Evaluation metrics summarize per-observation errors, and MSE, RMSE, MAE, and R-squared summarize the same predictions differently, so first decide which errors matter most."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/16.%20evaluation-metrics-and-project-launch/regression-metrics.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Regression Metrics | Machine Learning | Pusan National University"><meta property="og:description" content="Evaluation metrics summarize per-observation errors, and MSE, RMSE, MAE, and R-squared summarize the same predictions differently, so first decide which errors matter most."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/16.%20evaluation-metrics-and-project-launch/regression-metrics.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .obs{fill:var(--pnu-blue-dark)}
+    .topic-plot .pred{fill:var(--white);stroke:var(--pnu-green-deep);stroke-width:3}
+    .topic-plot .pred.is-cur{fill:var(--pnu-green)}
+    .topic-plot .res{stroke:var(--alert-700);stroke-width:2.5;stroke-dasharray:5 3}
+    .topic-plot .mean{stroke:var(--pnu-blue-dark);stroke-width:2;stroke-dasharray:7 5}
+    .topic-plot .abs{fill:var(--pnu-blue)}
+    .topic-plot .sq{fill:var(--pnu-green)}
+    .topic-plot .sse{fill:var(--alert-700)}
+    .topic-plot .sst{fill:var(--pnu-blue)}
+    .topic-plot .zero{fill:var(--line-300)}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-regression-metrics">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Counting the Mistakes</span><span class="nav-tag is-current" aria-current="page">Regression Metrics</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/16.%20Counting%20the%20Mistakes.pdf">Counting the <span class="publication-lecture-tail">Mistakes<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Regression Metrics</h1><hr class="accent-rule"><p class="page-subtitle">평가지표(evaluation metric)는 관측마다 계산한 오차를 하나의 수로 요약하는 규칙이다. MSE, RMSE, MAE, R²는 같은 예측을 서로 다른 방식으로 요약하므로 무엇을 큰 오류로 볼지 먼저 정한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>MSE와 RMSE</strong><span>MSE는 오차 제곱의 평균이고 RMSE는 그 제곱근이라 관측값과 단위가 같다.</span></article><article class="summary-card"><strong>MAE</strong><span>절대 오차의 평균이며 오차 크기에 비례해 벌점을 준다.</span></article><article class="summary-card"><strong>R²</strong><span>1 − Σ(yᵢ − ŷᵢ)² / Σ(yᵢ − ȳ)²이며 평가 자료의 평균을 기준선으로 삼는다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">한 관측이 크게 빗나가면 MSE는 MAE보다 빠르게 커진다</h2><p class="lead">관측값 y = (2, 4, 6, 8)에 대한 예측 (2, 5, 5, ŷ₄)에서 네 번째 예측값 ŷ₄를 바꾸면 그 관측의 오차와 네 지표가 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="p4">네 번째 예측값 ŷ₄ <output id="p4-out" class="control-value" for="p4">10</output></label><input id="p4" type="range" min="2" max="16" step="1" value="10"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="res-plot" class="topic-plot" viewBox="0 0 900 330" role="img" aria-labelledby="rs-title rs-desc"><title id="rs-title">관측값과 예측값의 오차</title><desc id="rs-desc">왼쪽: 짙은 점은 관측값, 빈 초록 원은 예측값, 빨간 점선은 오차다. 초록으로 채운 원이 조절하는 ŷ₄다. 오른쪽: 관측마다 파란 막대는 절대 오차, 초록 막대는 제곱 오차이며 두 막대는 같은 척도다.</desc></svg></div><figcaption class="visual-caption">왼쪽: 짙은 점은 관측값, 빈 초록 원은 예측값, 빨간 점선은 오차다. 초록으로 채운 원이 조절하는 ŷ₄다. 오른쪽: 관측마다 파란 막대는 절대 오차, 초록 막대는 제곱 오차이며 두 막대는 같은 척도다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">절대 오차의 합이 같아도 오차가 몰리면 MSE가 커진다</h2><p class="lead">관측 10개의 절대 오차 합을 10으로 고정하고, 그 오차를 몇 개 관측에 나누어 싣는지 바꾸면 MAE는 그대로이고 MSE와 RMSE만 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="spread">오차를 싣는 방식</label><select id="spread"><option value="1">한 관측에 10</option><option value="2">두 관측에 5씩</option><option value="5">다섯 관측에 2씩</option><option value="10">열 관측에 1씩</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="spread-plot" class="topic-plot" viewBox="0 0 900 300" role="img" aria-labelledby="sp-title sp-desc"><title id="sp-title">절대 오차 합 10의 배치</title><desc id="sp-desc">칸 하나가 관측 하나다. 위 파란 막대는 절대 오차, 아래 초록 막대는 제곱 오차이며 막대 위 수가 그 값이다. 회색 칸은 오차가 0인 관측이다.</desc></svg></div><figcaption class="visual-caption">칸 하나가 관측 하나다. 위 파란 막대는 절대 오차, 아래 초록 막대는 제곱 오차이며 막대 위 수가 그 값이다. 회색 칸은 오차가 0인 관측이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">R²는 평가 자료의 평균을 늘 예측하는 기준선과 비교한다</h2><p class="lead">같은 관측값 y = (2, 4, 6, 8)에서 예측 방식을 바꾸면 모델의 제곱 오차 합과 평균 기준선의 제곱 오차 합의 비, 곧 R²가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="model">예측 방식</label><select id="model"><option value="fit">예측 (2, 5, 5, 10)</option><option value="mean">평균 5를 늘 예측</option><option value="shift">예측 (5, 8, 8, 13)</option><option value="perfect">관측값과 같은 예측</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="r2-plot" class="topic-plot" viewBox="0 0 900 250" role="img" aria-labelledby="r2-title r2-desc"><title id="r2-title">모델과 평균 기준선의 제곱 오차 합</title><desc id="r2-desc">위 빨간 막대는 모델의 제곱 오차 합 Σ(yᵢ − ŷᵢ)², 아래 파란 막대는 평균 ȳ = 5를 늘 예측한 기준선의 제곱 오차 합 Σ(yᵢ − ȳ)² = 20이다. 두 막대의 길이 비는 1 − R²다.</desc></svg></div><figcaption class="visual-caption">위 빨간 막대는 모델의 제곱 오차 합 Σ(yᵢ − ŷᵢ)², 아래 파란 막대는 평균 ȳ = 5를 늘 예측한 기준선의 제곱 오차 합 Σ(yᵢ − ȳ)² = 20이다. 두 막대의 길이 비는 1 − R²다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../15. cross-validation/cross-validation.html" rel="prev">이전 · Cross-Validation</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../16. evaluation-metrics-and-project-launch/classification-metrics.html" rel="next">다음 · Classification Metrics</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; return String(v) + (k ? a : b); }
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function on(id, fn) { var el = $(id); el.addEventListener(el.tagName === "SELECT" ? "change" : "input", fn); }
+  var f2 = function (v) { return neg(v.toFixed(2)); };
+  var Yv = [2, 4, 6, 8], MEAN = 5, SST = 20;
+  function metrics(p) {
+    var sse = 0, sae = 0;
+    Yv.forEach(function (y, i) { var e = y - p[i]; sse += e * e; sae += Math.abs(e); });
+    return { mse: sse / 4, rmse: Math.sqrt(sse / 4), mae: sae / 4, r2: 1 - sse / SST, sse: sse };
+  }
+
+  function renderRes() {
+    var p4 = Number($("p4").value), P = [2, 5, 5, p4], m = metrics(P);
+    $("p4-out").textContent = p4;
+    var PX = function (i) { return 90 + i * 100; }, PY = function (v) { return 290 - v * 16; };
+    var h = '<title id="rs-title">관측값과 예측값의 오차</title><desc id="rs-desc">ŷ₄ = ' + p4 + ', MSE ' + f2(m.mse) + ', MAE ' + f2(m.mae) + '</desc>';
+    h += '<line class="axis" x1="50" y1="290" x2="420" y2="290"/><line class="axis" x1="50" y1="290" x2="50" y2="20"/>';
+    [0, 4, 8, 12, 16].forEach(function (t) { h += '<text class="small" x="42" y="' + (PY(t) + 4) + '" text-anchor="end">' + t + "</text>"; });
+    Yv.forEach(function (y, i) {
+      h += '<text class="small" x="' + PX(i) + '" y="310" text-anchor="middle">관측 ' + (i + 1) + "</text>";
+      if (y !== P[i]) h += '<line class="res" x1="' + PX(i) + '" y1="' + PY(y) + '" x2="' + PX(i) + '" y2="' + PY(P[i]) + '"/>';
+      h += '<circle class="obs" cx="' + PX(i) + '" cy="' + PY(y) + '" r="7"/><circle class="pred' + (i === 3 ? " is-cur" : "") + '" cx="' + (PX(i) + 14) + '" cy="' + PY(P[i]) + '" r="7"/>';
+    });
+    var BX = function (i) { return 520 + i * 90; }, BY = 290, sc = 3.4;
+    h += '<line class="axis" x1="480" y1="290" x2="880" y2="290"/>';
+    h += '<text class="small" x="480" y="18">절대 오차 · 제곱 오차</text>';
+    Yv.forEach(function (y, i) {
+      var a = Math.abs(y - P[i]), s = a * a, ha = a * sc, hs = Math.min(s * sc, 250);
+      h += '<rect class="abs" x="' + BX(i) + '" y="' + (BY - ha) + '" width="26" height="' + ha + '"/><rect class="sq" x="' + (BX(i) + 30) + '" y="' + (BY - hs) + '" width="26" height="' + hs + '"/>';
+      h += '<text class="small" x="' + (BX(i) + 13) + '" y="' + (BY - ha - 6) + '" text-anchor="middle">' + a + '</text><text class="small" x="' + (BX(i) + 43) + '" y="' + (BY - hs - 6) + '" text-anchor="middle">' + s + "</text>";
+      h += '<text class="small" x="' + (BX(i) + 28) + '" y="310" text-anchor="middle">관측 ' + (i + 1) + "</text>";
+    });
+    $("res-plot").innerHTML = h;
+    var e4 = Math.abs(8 - p4);
+    var note = e4 === 0 ? "ŷ₄가 관측값 8과 같으면 오차는 0, 1, 1, 0이라 MSE와 MAE가 모두 0.50이다. 오차가 모두 1 이하이면 제곱해도 커지지 않는다."
+      : "관측 4의 오차가 " + e4 + "이면 절대 오차는 " + e4 + "이고" + " 제곱 오차는 " + (e4 * e4) + "이다" + ". MAE는 " + f2(m.mae) + ", MSE는 " + f2(m.mse) + "이며" + (m.r2 < 0 ? " R²가 음수라 평균 5를 늘 예측한 것보다 제곱 오차가 크다." : " R²는 " + f2(m.r2) + "이다" + ".") + " RMSE가 MAE보다 크다는 사실만으로 이상치를 단정할 수는 없다.";
+    show(1, [["MSE", f2(m.mse)], ["RMSE", f2(m.rmse)], ["MAE", f2(m.mae)], ["R²", f2(m.r2)]], note);
+  }
+
+  function renderSpread() {
+    var k = Number($("spread").value), each = 10 / k, errs = [];
+    for (var i = 0; i < 10; i++) errs.push(i < k ? each : 0);
+    var sse = errs.reduce(function (s, e) { return s + e * e; }, 0), mse = sse / 10, mae = 1;
+    var h = '<title id="sp-title">절대 오차 합 10의 배치</title><desc id="sp-desc">' + k + '개 관측에 ' + each + '씩, MSE ' + mse + '</desc>';
+    h += '<line class="axis" x1="40" y1="140" x2="880" y2="140"/><line class="axis" x1="40" y1="280" x2="880" y2="280"/>';
+    h += '<text class="small" x="880" y="16" text-anchor="end">절대 오차</text><text class="small" x="880" y="160" text-anchor="end">제곱 오차 (별도 높이 척도)</text>';
+    errs.forEach(function (e, j) {
+      var x = 60 + j * 78, ha = e * 10, hs = Math.min(e * e, 100) * 0.9;
+      if (e === 0) { h += '<rect class="zero" x="' + x + '" y="134" width="56" height="6"/><rect class="zero" x="' + x + '" y="274" width="56" height="6"/>'; }
+      else { h += '<rect class="abs" x="' + x + '" y="' + (140 - ha) + '" width="56" height="' + ha + '"/><text class="small" x="' + (x + 28) + '" y="' + (134 - ha) + '" text-anchor="middle">' + e + "</text>"; h += '<rect class="sq" x="' + x + '" y="' + (280 - hs) + '" width="56" height="' + hs + '"/><text class="small" x="' + (x + 28) + '" y="' + (274 - hs) + '" text-anchor="middle">' + e * e + "</text>"; }
+      h += '<text class="small" x="' + (x + 28) + '" y="296" text-anchor="middle">' + (j + 1) + "</text>";
+    });
+    $("spread-plot").innerHTML = h;
+    show(2, [["절대 오차 합", "10"], ["MAE", "10 / 10 = " + mae.toFixed(2)], ["MSE", sse + " / 10 = " + mse.toFixed(2)], ["RMSE", Math.sqrt(mse).toFixed(2)]],
+      k === 1 ? "오차 10이 한 관측에 몰리면 제곱해 100이 되어 MSE가 10.00이다. MAE는 1.00으로 같으므로 MSE는 일부 관측에 몰린 큰 오차를 더 무겁게 센다."
+        : k === 10 ? "열 관측에 1씩 나누면 제곱해도 1씩이라 MSE와 MAE가 모두 1.00이다. 오차가 고르게 퍼질수록 두 지표가 가까워진다."
+        : "오차를 " + k + "개 관측에 " + each + "씩 나누면 제곱 오차 합이 " + kj(sse, "이", "가") + " 되어 MSE는 " + mse.toFixed(2) + "이다" + ". MAE는 1.00 그대로라, 같은 절대 오차 합에서도 몰린 정도가 MSE를 바꾼다.");
+  }
+
+  var MODELS = { fit: [2, 5, 5, 10], mean: [5, 5, 5, 5], shift: [5, 8, 8, 13], perfect: [2, 4, 6, 8] };
+  function renderR2() {
+    var key = $("model").value, P = MODELS[key], m = metrics(P);
+    var sc = 700 / 60;
+    var h = '<title id="r2-title">모델과 평균 기준선의 제곱 오차 합</title><desc id="r2-desc">SSE ' + m.sse + ', SST 20, R² ' + f2(m.r2) + '</desc>';
+    h += '<text x="20" y="72">모델</text><text x="20" y="162">평균 기준선</text>';
+    h += '<rect class="sse" x="150" y="50" width="' + Math.max(m.sse * sc, 2) + '" height="36"/><text x="' + (160 + m.sse * sc) + '" y="74">' + m.sse + "</text>";
+    h += '<rect class="sst" x="150" y="140" width="' + SST * sc + '" height="36"/><text x="' + (160 + SST * sc) + '" y="164">20</text>';
+    h += '<line class="mean" x1="' + (150 + SST * sc) + '" y1="30" x2="' + (150 + SST * sc) + '" y2="200"/>';
+    h += '<text class="small" x="150" y="228">0</text><text class="small" x="' + (150 + SST * sc) + '" y="228" text-anchor="middle">20</text><text class="small" x="850" y="228" text-anchor="end">60</text>';
+    $("r2-plot").innerHTML = h;
+    var ratio = m.sse / SST;
+    var note = key === "mean" ? "평가 자료의 평균 5를 늘 예측하면 모델의 제곱 오차 합이 기준선과 같은 20이라 R² = 0이다."
+      : key === "perfect" ? "예측이 관측값과 같으면 제곱 오차 합이 0이라 R² = 1이다."
+      : key === "shift" ? "예측을 모두 3씩 높이면 제곱 오차 합이 54로 기준선 20보다 커져 R² = 1 − 54/20 = −1.70이다. R²가 음수이면 평가 자료의 평균을 늘 예측한 것보다 제곱 오차가 크다는 뜻이다."
+      : "제곱 오차 합 6이 기준선 20의 " + (ratio * 100).toFixed(0) + "%라 R² = 1 − 6/20 = 0.70이다. 관측값의 분포가 다른 자료끼리는 기준선이 달라 R²를 그대로 비교하지 않는다.";
+    show(3, [["모델의 제곱 오차 합", String(m.sse)], ["평균 기준선의 제곱 오차 합", "20"], ["R²", "1 − " + m.sse + "/20 = " + f2(m.r2)]], note);
+  }
+
+  on("p4", renderRes); on("spread", renderSpread); on("model", renderR2);
+  renderRes(); renderSpread(); renderR2();
+}());
+</script>
+</body>
+</html>
