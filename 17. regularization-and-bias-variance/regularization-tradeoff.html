@@ -35,7 +35,7 @@
 <body class="visual-topic topic-regularization-tradeoff">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Paying to Fit Less</span><span class="nav-tag is-current" aria-current="page">Regularization Tradeoff</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/17.%20Paying%20to%20Fit%20Less.pdf">Paying to Fit <span class="publication-lecture-tail">Less<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Regularization Tradeoff</h1><hr class="accent-rule"><p class="page-subtitle">편향-분산 분해(bias-variance decomposition)는 기대 제곱 예측 오차를 편향의 제곱, 분산, 잡음 분산으로 나눈다. 정규화(regularization)로 계수를 누르면 분산은 줄고 편향의 제곱은 커질 수 있어, 두 변화의 크기가 예측 오차를 정한다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/17.%20Paying%20to%20Fit%20Less.pdf">Paying to Fit <span class="publication-lecture-tail">Less<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Regularization Tradeoff</h1><hr class="accent-rule"><p class="page-subtitle">편향-분산 분해(bias-variance decomposition)는 기대 제곱 예측 오차를 편향의 제곱, 분산, 잡음 분산으로 나눈다. 정규화(regularization)로 계수 크기에 벌점을 주면 분산은 줄고 편향의 제곱은 커질 수 있어, 두 변화의 크기가 예측 오차를 정한다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>E[(y₀ − f̂(x₀))²]</strong><span>= (E[f̂(x₀)] − f(x₀))² + Var(f̂(x₀)) + σ²이다.</span></article><article class="summary-card"><strong>편향(bias)과 분산(variance)</strong><span>편향은 평균 예측이 참함수값에서 벗어난 정도, 분산은 학습 자료를 바꿀 때 예측이 흔들리는 정도다.</span></article><article class="summary-card"><strong>λ 선택</strong><span>계수는 고정한 λ에서 목적함수로, λ는 교차검증의 평균 검증 오차로 정한다.</span></article></div></section>
 
@@ -118,7 +118,7 @@
     svg.innerHTML = h;
     svg.querySelector("desc").textContent = "λ = " + lamText(BV.lams[i]) + ", 편향의 제곱 " + f3(b2) + ", 분산 " + f3(v);
     var note = i === 0 ? "λ = 0이면 벌점이 없어 9차 곡선이 학습 자료의 잡음까지 따라가 곡선들이 크게 흔들린다. 평균 곡선은 참함수에 거의 붙어 편향의 제곱은 " + f3(b2) + "로 작지만 분산이 " + kj(f3(v), "이다", "다") + "."
-      : BV.lams[i] >= 1 ? "λ = " + lamText(BV.lams[i]) + "처럼 크면 계수가 강하게 눌려 곡선들이 거의 겹치지만(분산 " + f3(v) + ") 평균 곡선이 참함수의 굴곡을 따라가지 못해 편향의 제곱이 " + f3(b2) + "까지 커진다."
+      : BV.lams[i] >= 1 ? "λ = " + lamText(BV.lams[i]) + "처럼 크면 계수가 크게 축소되어 곡선들이 거의 겹치지만(분산 " + f3(v) + ") 평균 곡선이 참함수의 굴곡을 따라가지 못해 편향의 제곱이 " + f3(b2) + "까지 커진다."
       : "λ = " + lamText(BV.lams[i]) + "에서 편향의 제곱 " + f3(b2) + ", 분산 " + f3(v) + ", 잡음 분산 0.250을 더한 기대 제곱 예측 오차는 " + kj(f3(BV.mse[i]), "이다", "다") + ". 잡음 분산은 어떤 λ에서도 줄지 않는다.";
     show(1, [["편향의 제곱", f3(b2)], ["분산", f3(v)], ["잡음 분산", "0.250"], ["기대 제곱 예측 오차", f3(BV.mse[i])]], note);
   }

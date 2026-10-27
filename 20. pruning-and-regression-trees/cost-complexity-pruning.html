@@ -45,7 +45,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>두 항</strong><span>RSS(T)는 학습 자료에 대한 적합 오차, α|T|는 잎 수에 비례하는 복잡도 벌점이다.</span></article><article class="summary-card"><strong>α = 0과 아주 큰 α</strong><span>α = 0이면 가장 큰 나무가, α가 아주 크면 뿌리 하나만 남은 나무가 선택된다.</span></article><article class="summary-card"><strong>선택 순서</strong><span>후보 α마다 교차검증 오차를 구해 가장 작은 값을 고르고, 그 α로 개발 자료 전체에 다시 학습한다. 테스트 자료는 마지막 평가에만 쓴다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">α가 커지면 RSS가 조금 커지더라도 잎이 적은 부분나무가 선택된다</h2><p class="lead">잎 4개(RSS 2), 잎 2개(RSS 6), 잎 1개(RSS 14)인 세 부분나무가 후보다. α를 바꾸면 세 목적함수 값과 그 가운데 가장 작은 나무가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">α가 커지면 RSS가 조금 커지더라도 잎이 적은 부분나무가 선택된다</h2><p class="lead">잎 4개(RSS 2), 잎 2개(RSS 6), 잎 1개(RSS 14)인 세 부분나무가 후보다. α를 바꾸면 세 목적함수 값과 그 값이 가장 작은 나무가 바뀐다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="a1">α <output id="a1-out" class="control-value" for="a1">3.0</output></label><input id="a1" type="range" min="0" max="12" step="0.5" value="3"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="c-plot" class="topic-plot" viewBox="0 0 900 360" role="img" aria-labelledby="c-title c-desc"><title id="c-title">α에 따른 세 부분나무의 목적함수</title><desc id="c-desc">잎 4개, 2개, 1개 나무의 C_α 직선</desc></svg></div><figcaption class="visual-caption">가로축은 α, 세로축은 C_α다. 파란 실선이 잎 4개(2 + 4α), 진한 파란 긴 점선이 잎 2개(6 + 2α), 회색 짧은 점선이 잎 1개(14 + α)이고 기울기가 잎 수다. 두꺼운 초록 띠는 각 α에서 가장 작은 값을 이은 선이며 초록 점이 현재 α에서 선택된 나무다.</figcaption></figure>

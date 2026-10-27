@@ -145,7 +145,7 @@
     show(3, [["λ", String(R.lams[k])], ["예측값 범위", neg(lo.toFixed(2)) + " ~ " + neg(hi.toFixed(2))], ["학습 관측값의 평균", R.mean.toFixed(2)], ["RSS", R.rss[k].toFixed(1)]],
       k === 0 ? "λ = 0이면 최소제곱 예측값이 실제값을 따라 " + neg(lo.toFixed(2)) + "에서 " + neg(hi.toFixed(2)) + "까지 퍼진다."
         : k === R.lams.length - 1 ? "λ = " + R.lams[k] + "이면 계수가 거의 0이라 예측값이 " + lo.toFixed(2) + " ~ " + jro(hi.toFixed(2)) + " 평균 " + R.mean.toFixed(2) + " 근처에 모인다. 절편에는 벌점이 없으므로 λ → ∞에서 예측은 평균으로 수렴하지만, 유한한 λ에서 계수가 모두 정확히 0이 되지는 않는다."
-        : "λ = " + R.lams[k] + "에서 예측값 범위가 " + neg(lo.toFixed(2)) + " ~ " + jro(neg(hi.toFixed(2))) + " 좁아져 점들이 평균선 쪽으로 눕는다. 학습 자료에 덜 맞추는 대신 자료 변화에 덜 민감한 예측이 된다.");
+        : "λ = " + R.lams[k] + "에서 예측값 범위가 " + neg(lo.toFixed(2)) + " ~ " + jro(neg(hi.toFixed(2))) + " 좁아져 점들이 평균선에 가까워진다. 학습 자료에 덜 맞추는 대신 자료 변화에 덜 민감한 예측이 된다.");
   }
 
   $("lam").addEventListener("input", renderPath); $("unit").addEventListener("change", renderUnit); $("lam3").addEventListener("input", renderPred);
