@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Recursive Partitioning | Machine Learning | Pusan National University</title><meta name="description" content="A decision tree greedily repeats feature-threshold splits within existing regions, dividing feature space into axis-aligned rectangular regions."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/19.%20decision-trees/recursive-partitioning.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Recursive Partitioning | Machine Learning | Pusan National University"><meta property="og:description" content="A decision tree greedily repeats feature-threshold splits within existing regions, dividing feature space into axis-aligned rectangular regions."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/19.%20decision-trees/recursive-partitioning.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .lab{font-size:14px;fill:var(--ink-700)}
+    .topic-plot .frame{fill:none;stroke:var(--ink-600);stroke-width:1.2}
+    .topic-plot .r1{fill:color-mix(in srgb,var(--pnu-green) 16%,var(--white))}
+    .topic-plot .r0{fill:var(--pnu-blue-tint)}
+    .topic-plot .cut{stroke:var(--ink-900);stroke-width:2}
+    .topic-plot .cut.is-new{stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .c1{fill:var(--pnu-green);stroke:var(--white);stroke-width:1.2}
+    .topic-plot .c0{fill:var(--pnu-blue);stroke:var(--white);stroke-width:1.2}
+    .topic-plot .tn rect{fill:var(--white);stroke:var(--pnu-blue);stroke-width:1.8}
+    .topic-plot .tn.is-leaf rect{fill:var(--surface-050);stroke:var(--ink-600)}
+    .topic-plot .tn.is-new rect{stroke:var(--pnu-green);stroke-width:3.5}
+    .topic-plot .tn text{font-size:13px;text-anchor:middle;dominant-baseline:central;fill:var(--ink-900)}
+    .topic-plot .tedge{stroke:var(--ink-600);stroke-width:1.5}
+    .topic-plot .yes{font-size:11px;fill:var(--ink-600);text-anchor:middle}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:2.5}
+    .topic-plot .pick{fill:var(--pnu-green);stroke:var(--pnu-green-deep);stroke-width:2}
+    .topic-plot .best{fill:none;stroke:var(--ink-900);stroke-width:2;stroke-dasharray:3 2}
+    .topic-plot .grid{stroke:var(--line-200);stroke-width:1}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-recursive-partitioning">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Splitting the Space</span><span class="nav-tag is-current" aria-current="page">Recursive Partitioning</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/19.%20Splitting%20the%20Space.pdf">Splitting the <span class="publication-lecture-tail">Space<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Recursive Partitioning</h1><hr class="accent-rule"><p class="page-subtitle">의사결정나무(decision tree)는 특성 하나와 기준값 하나로 관측을 둘로 나누는 분할(split)을 위에서부터 되풀이한다. 새 분할은 앞서 나뉜 한 구역 안에서만 이어지므로 특성 공간은 축에 나란한 직사각형 구역으로 쪼개지고, 각 분할은 그 순간 불순도를 가장 많이 줄이는 것을 고르는 탐욕적 선택이다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>분기점과 끝점</strong><span>분기점(internal node)은 구역을 나누는 조건이고, 끝점(terminal node)은 더 나누지 않는 구역과 그 예측값이다.</span></article><article class="summary-card"><strong>축에 나란한 경계</strong><span>한 분할은 특성 하나만 보므로 경계선이 그 축에 수직이다.</span></article><article class="summary-card"><strong>기준값 후보</strong><span>수치 특성은 서로 다른 관측값 사이의 중간값을 후보로 두고 가중 불순도가 가장 작은 후보를 고른다.</span></article><article class="summary-card"><strong>탐욕적 선택</strong><span>미래의 분할 조합을 모두 비교하지 않으므로 전체 최적 나무를 보장하지 않는다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">분할을 되풀이하면 축에 나란한 직사각형 구역이 생긴다</h2><p class="lead">두 특성 x₁, x₂를 가진 학습 관측 40개에 분류 트리를 키운다. 최대 깊이를 옮기면 특성 공간의 구역과 오른쪽 나무 구조가 한 단계씩 함께 자란다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="d1">최대 깊이 <output id="d1-out" class="control-value" for="d1">1</output></label><input id="d1" type="range" min="0" max="3" step="1" value="1"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="grow-plot" class="topic-plot" viewBox="0 0 900 430" role="img" aria-labelledby="gr-title gr-desc"><title id="gr-title">구역 분할과 나무 구조</title><desc id="gr-desc">왼쪽은 특성 공간의 구역, 오른쪽은 같은 나무</desc></svg></div><figcaption class="visual-caption">왼쪽 산점도의 초록 원은 범주 1, 파란 사각형은 범주 0 관측이다. 옅은 초록 구역은 범주 1로, 옅은 파란 구역은 범주 0으로 예측하는 끝점이고 검은 선이 분할 경계, 굵은 초록 선이 이번 깊이에서 새로 생긴 경계다. 오른쪽 나무의 흰 상자는 분기점 조건, 회색 상자는 끝점이며 두 수는 범주 0과 범주 1의 학습 관측 수다. 조건이 참이면 왼쪽으로 내려간다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">한 번 자를 때는 특성 하나와 기준값 하나를 고르고 가중 지니 지수로 비교한다</h2><p class="lead">같은 40개 관측 전체에서 첫 분할 후보를 살핀다. 특성과 기준값 후보를 바꾸면 경계선, 양쪽 구성, 가중 지니 지수, 아래 곡선의 현재 점이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="f2">특성</label><select id="f2"><option value="0">x₁</option><option value="1">x₂</option></select></div><div class="control-field"><label for="i2">기준값 후보 번호 <output id="i2-out" class="control-value" for="i2">1</output></label><input id="i2" type="range" min="1" max="39" step="1" value="10"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="cand-plot" class="topic-plot" viewBox="0 0 900 420" role="img" aria-labelledby="ca-title ca-desc"><title id="ca-title">첫 분할의 기준값 후보</title><desc id="ca-desc">경계선과 기준값별 가중 지니 지수</desc></svg></div><figcaption class="visual-caption">왼쪽은 후보 경계 하나로 나눈 산점도이고, 오른쪽 곡선은 고른 특성의 기준값 후보마다 계산한 나눈 뒤 가중 지니 지수다. 초록 점이 현재 후보, 점선 원이 가장 작은 후보다. 기준값 후보는 서로 다른 관측값 사이의 중간값이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">지금 가장 많이 줄이는 분할이 깊이 2의 가장 좋은 나무로 이어지지는 않는다</h2><p class="lead">네 모서리에 두 범주가 엇갈려 놓인 관측 28개에서 첫 분할만 바꾸고, 나뉜 두 구역 안에서는 가장 좋은 분할을 하나씩 더 고른다. 첫 분할에 따라 그 순간의 지니 감소와 깊이 2 나무의 오분류 수가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="r3">첫 분할</label><select id="r3"><option value="g">x₁ ≤ 8.65 (탐욕적 선택)</option><option value="a">x₂ ≤ 4.5</option><option value="b">x₁ ≤ 4.3</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="xor-plot" class="topic-plot" viewBox="0 0 900 420" role="img" aria-labelledby="xo-title xo-desc"><title id="xo-title">첫 분할과 깊이 2 나무</title><desc id="xo-desc">첫 분할과 그 아래 분할이 만든 구역</desc></svg></div><figcaption class="visual-caption">초록 원은 범주 1, 파란 사각형은 범주 0이다. 굵은 초록 선이 첫 분할, 검은 선이 두 구역 안에서 이어서 고른 분할이며, 구역 색은 끝점의 예측 범주다. 테두리가 빨간 표시는 예측이 틀린 학습 관측이다. 오른쪽 막대는 세 첫 분할의 오분류 수다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../18. imbalanced-data/imbalance-handling.html" rel="prev">이전 · Imbalance Handling</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../19. decision-trees/split-criteria.html" rel="next">다음 · Split Criteria</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] ? a : b); }
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function head(svg) { return svg.querySelector("title").outerHTML + svg.querySelector("desc").outerHTML; }
+  var FN = ["x₁", "x₂"];
+  function r2(v) { return String(Math.round(v * 100) / 100); }
+  function f3(v) { return v.toFixed(3); }
+
+  function rng(seed) { var s = seed >>> 0; return function () { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }; }
+  function gini(c) { var n = c[0] + c[1]; if (!n) return 0; var p = c[1] / n; return 2 * p * (1 - p); }
+  function counts(P) { var c = [0, 0]; P.forEach(function (p) { c[p[2]]++; }); return c; }
+  function cands(P, f) { var v = P.map(function (p) { return p[f]; }).filter(function (x, i, a) { return a.indexOf(x) === i; }).sort(function (a, b) { return a - b; }), out = []; for (var i = 0; i < v.length - 1; i++) out.push((v[i] + v[i + 1]) / 2); return out; }
+  function splitAt(P, f, t) { var L = [0, 0], R = [0, 0]; P.forEach(function (p) { (p[f] <= t ? L : R)[p[2]]++; }); var nl = L[0] + L[1], nr = R[0] + R[1]; return { f: f, t: t, L: L, R: R, w: (nl * gini(L) + nr * gini(R)) / P.length }; }
+  function bestSplit(P) { var best = null; [0, 1].forEach(function (f) { cands(P, f).forEach(function (t) { var s = splitAt(P, f, t); if (!best || s.w < best.w - 1e-12) best = s; }); }); return best; }
+  function grow(P, maxD, d, force) {
+    d = d || 0; var c = counts(P), node = { c: c, n: P.length, pred: c[1] > c[0] ? 1 : 0, d: d };
+    if (d >= maxD || !c[0] || !c[1]) return node;
+    var s = d === 0 && force ? splitAt(P, force[0], force[1]) : bestSplit(P);
+    if (!s || gini(c) - s.w <= 1e-12) return node;
+    node.f = s.f; node.t = s.t;
+    node.left = grow(P.filter(function (p) { return p[s.f] <= s.t; }), maxD, d + 1);
+    node.right = grow(P.filter(function (p) { return p[s.f] > s.t; }), maxD, d + 1);
+    return node;
+  }
+  function predict(node, x) { while (node.left) node = x[node.f] <= node.t ? node.left : node.right; return node.pred; }
+  function regions(node, b, out) { out = out || []; if (!node.left) { out.push({ b: b, node: node }); return out; } var bl = b.slice(), br = b.slice(); if (node.f === 0) { bl[1] = node.t; br[0] = node.t; } else { bl[3] = node.t; br[2] = node.t; } regions(node.left, bl, out); regions(node.right, br, out); return out; }
+  function cuts(node, b, out) { out = out || []; if (!node.left) return out; out.push({ f: node.f, t: node.t, b: b, d: node.d }); var bl = b.slice(), br = b.slice(); if (node.f === 0) { bl[1] = node.t; br[0] = node.t; } else { bl[3] = node.t; br[2] = node.t; } cuts(node.left, bl, out); cuts(node.right, br, out); return out; }
+  function leafCount(node) { return node.left ? leafCount(node.left) + leafCount(node.right) : 1; }
+
+  // data: 40 observations, rule (x1 > 4 and x2 < 6) or x1 > 7.5, a few labels flipped
+  var DA = (function () { var r = rng(13), P = []; for (var i = 0; i < 40; i++) { var x = Math.round(r() * 95 + 2) / 10, y = Math.round(r() * 95 + 2) / 10, c = (x > 4 && y < 6) || x > 7.5 ? 1 : 0; if (r() < 0.06) c = 1 - c; P.push([x, y, c]); } return P; }());
+  var DX = (function () { var r = rng(4), P = [], q = [[2, 2, 1], [7, 7, 1], [2, 7, 0], [7, 2, 0]]; q.forEach(function (Q) { var m = 4 + Math.floor(r() * 8); for (var i = 0; i < m; i++) { var x = Math.round((Q[0] + (r() * 4 - 2)) * 10) / 10, y = Math.round((Q[1] + (r() * 4 - 2)) * 10) / 10; P.push([x, y, Q[2]]); } }); return P; }());
+
+  function scatter(P, ox, oy, sz, opt) {
+    opt = opt || {}; var h = "", S = sz / 10, X = function (v) { return ox + v * S; }, Y = function (v) { return oy + sz - v * S; };
+    (opt.regions || []).forEach(function (g) { h += '<rect class="r' + g.node.pred + '" x="' + X(g.b[0]).toFixed(1) + '" y="' + Y(g.b[3]).toFixed(1) + '" width="' + ((g.b[1] - g.b[0]) * S).toFixed(1) + '" height="' + ((g.b[3] - g.b[2]) * S).toFixed(1) + '"/>'; });
+    (opt.cuts || []).forEach(function (c) { var cls = c.cls || ""; h += c.f === 0 ? '<line class="cut ' + cls + '" x1="' + X(c.t) + '" y1="' + Y(c.b[2]) + '" x2="' + X(c.t) + '" y2="' + Y(c.b[3]) + '"/>' : '<line class="cut ' + cls + '" x1="' + X(c.b[0]) + '" y1="' + Y(c.t) + '" x2="' + X(c.b[1]) + '" y2="' + Y(c.t) + '"/>'; });
+    h += '<rect class="frame" x="' + ox + '" y="' + oy + '" width="' + sz + '" height="' + sz + '"/>';
+    [0, 5, 10].forEach(function (v) { h += '<text class="small" x="' + X(v) + '" y="' + (oy + sz + 16) + '" text-anchor="middle">' + v + '</text><text class="small" x="' + (ox - 8) + '" y="' + (Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
+    h += '<text class="lab" x="' + (ox + sz / 2) + '" y="' + (oy + sz + 34) + '" text-anchor="middle">x₁</text><text class="lab" x="' + (ox - 30) + '" y="' + (oy + sz / 2) + '">x₂</text>';
+    P.forEach(function (p) {
+      var wrong = opt.model && predict(opt.model, p) !== p[2], stroke = wrong ? ' style="stroke:var(--alert-700);stroke-width:2.5"' : "";
+      h += p[2] ? '<circle class="c1" cx="' + X(p[0]).toFixed(1) + '" cy="' + Y(p[1]).toFixed(1) + '" r="5.5"' + stroke + "/>" : '<rect class="c0" x="' + (X(p[0]) - 5).toFixed(1) + '" y="' + (Y(p[1]) - 5).toFixed(1) + '" width="10" height="10"' + stroke + "/>";
+    });
+    return h;
+  }
+
+  function renderGrow() {
+    var d = Number($("d1").value), T = grow(DA, d), svg = $("grow-plot"), h = head(svg);
+    $("d1-out").textContent = d;
+    var cs = cuts(T, [0, 10, 0, 10]).map(function (c) { c.cls = c.d === d - 1 ? "is-new" : ""; return c; });
+    h += scatter(DA, 60, 20, 360, { regions: regions(T, [0, 10, 0, 10]), cuts: cs });
+    // tree
+    var slots = [], leafI = 0;
+    (function place(n) { if (!n.left) { n.x = leafI++; return; } place(n.left); place(n.right); n.x = (n.left.x + n.right.x) / 2; }(T));
+    var L = Math.max(leafCount(T), 1), X = function (i) { return 520 + (L === 1 ? 160 : i * (320 / (L - 1))); }, Y = function (dd) { return 50 + dd * 105; };
+    (function edges(n) { if (!n.left) return; [n.left, n.right].forEach(function (c, k) { h += '<line class="tedge" x1="' + X(n.x) + '" y1="' + (Y(n.d) + 20) + '" x2="' + X(c.x) + '" y2="' + (Y(c.d) - 22) + '"/><text class="yes" x="' + ((X(n.x) + X(c.x)) / 2 + (k ? 16 : -16)) + '" y="' + (Y(n.d) + 58) + '">' + (k ? "아니요" : "예") + "</text>"; edges(c); }); }(T));
+    (function boxes(n) {
+      var x = X(n.x), y = Y(n.d), isNew = n.d === d && d > 0;
+      if (n.left) { h += '<g class="tn"><rect x="' + (x - 56) + '" y="' + (y - 20) + '" width="112" height="40" rx="6"/><text x="' + x + '" y="' + y + '">' + FN[n.f] + " ≤ " + r2(n.t) + "</text></g>"; boxes(n.left); boxes(n.right); }
+      else { h += '<g class="tn is-leaf' + (isNew ? " is-new" : "") + '"><rect x="' + (x - 46) + '" y="' + (y - 22) + '" width="92" height="44" rx="6"/><text x="' + x + '" y="' + (y - 8) + '">' + n.c[0] + " : " + n.c[1] + '</text><text x="' + x + '" y="' + (y + 10) + '">예측 ' + n.pred + "</text></g>"; }
+    }(T));
+    svg.innerHTML = h;
+    var leaves = regions(T, [0, 10, 0, 10]), wrong = DA.filter(function (p) { return predict(T, p) !== p[2]; }).length;
+    var wg = leaves.reduce(function (s, g) { return s + g.node.n * gini(g.node.c); }, 0) / DA.length;
+    var newCuts = cs.filter(function (c) { return c.cls; }).map(function (c) { return FN[c.f] + " ≤ " + r2(c.t); });
+    svg.querySelector("desc").textContent = "최대 깊이 " + d + ", 끝점 " + leaves.length + "개, 오분류 " + wrong + "개";
+    var notes = [
+      "아직 나누지 않아 뿌리(root) 하나가 전체를 덮는다. 범주 0이 23개, 범주 1이 17개라 모든 관측을 범주 0으로 예측하고 17개를 틀린다.",
+      "첫 분할 x₁ ≤ 7.5가 공간을 세로선 하나로 나눴다. 오른쪽 구역의 12개는 모두 범주 1이 되었고, 왼쪽 28개 안에 범주 1이 5개 섞여 있어 5개를 틀린다.",
+      "두 번째 분할 x₁ ≤ 4.05는 왼쪽 구역 안에서만 이어진다. 오른쪽 구역은 이미 한 범주뿐이라 더 나누지 않았다. 새 가운데 구역은 6 : 5로 여전히 범주 0 예측이어서 오분류 수는 5개 그대로지만 가중 지니 지수는 줄었다.",
+      "세 번째 분할 x₂ ≤ 4.45는 가운데 구역 안에서만 가로선으로 이어져 끝점 4개가 모두 한 범주만 갖는다. 경계는 모두 축에 수직이고, 구역은 직사각형이다."
+    ];
+    show(1, [["끝점 수", leaves.length + "개"], ["새로 생긴 분할", newCuts.join(", ") || "없음"], ["학습 오분류", wrong + "개"], ["끝점의 가중 지니 지수", f3(wg)]], notes[d]);
+  }
+
+  function renderCand() {
+    var f = Number($("f2").value), cs = cands(DA, f), el = $("i2");
+    el.max = String(cs.length);
+    if (Number(el.value) > cs.length) el.value = String(cs.length);
+    var i = Number(el.value), t = cs[i - 1], s = splitAt(DA, f, t), svg = $("cand-plot"), h = head(svg);
+    $("i2-out").textContent = i;
+    var b = [0, 10, 0, 10];
+    h += scatter(DA, 60, 20, 360, { cuts: [{ f: f, t: t, b: b, cls: "is-new" }] });
+    var all = cs.map(function (tt) { return splitAt(DA, f, tt).w; }), bi = 0;
+    all.forEach(function (w, k) { if (w < all[bi] - 1e-12) bi = k; });
+    var gx = function (v) { return 510 + v * 36; }, gy = function (w) { return 360 - (w / 0.5) * 320; }, path = "";
+    [0, 0.1, 0.2, 0.3, 0.4, 0.5].forEach(function (w) { h += '<line class="grid" x1="510" y1="' + gy(w) + '" x2="870" y2="' + gy(w) + '"/><text class="small" x="502" y="' + (gy(w) + 4) + '" text-anchor="end">' + w.toFixed(1) + "</text>"; });
+    [0, 5, 10].forEach(function (v) { h += '<text class="small" x="' + gx(v) + '" y="378" text-anchor="middle">' + v + "</text>"; });
+    h += '<text class="lab" x="690" y="400" text-anchor="middle">' + FN[f] + ' 기준값</text><text class="small" x="510" y="28">나눈 뒤 가중 지니 지수</text>';
+    cs.forEach(function (tt, k) { path += (k ? "L" : "M") + gx(tt).toFixed(1) + " " + gy(all[k]).toFixed(1); });
+    h += '<path class="curve" d="' + path + '"/><circle class="best" cx="' + gx(cs[bi]) + '" cy="' + gy(all[bi]) + '" r="10"/><circle class="pick" cx="' + gx(t) + '" cy="' + gy(s.w) + '" r="6"/>';
+    svg.innerHTML = h;
+    var g0 = gini(counts(DA)), best = bestSplit(DA);
+    svg.querySelector("desc").textContent = FN[f] + " ≤ " + r2(t) + ", 가중 지니 " + f3(s.w);
+    var isBest = Math.abs(s.w - all[bi]) < 1e-12 && i - 1 === bi, overall = best.f === f && Math.abs(best.t - t) < 1e-9;
+    var note;
+    note = jro(FN[f] + " ≤ " + r2(t)) + " 나누면 왼쪽 구역은 범주 0과 1이 " + s.L[0] + "개와 " + s.L[1] + "개, 오른쪽 구역은 " + s.R[0] + "개와 " + s.R[1] + "개다. 나누기 전 " + f3(g0) + "였던 지니 지수가 가중평균 " + jro(f3(s.w)) + " 바뀐다. " +
+      (overall ? "두 특성의 모든 후보 가운데 가장 작아 첫 분할로 선택된다." : isBest ? FN[f] + "에서는 가장 작지만 " + FN[best.f] + " ≤ " + r2(best.t) + "의 " + f3(best.w) + "보다 커서 첫 분할이 되지 않는다." : FN[f] + "의 후보 가운데 가장 작은 값은 " + FN[f] + " ≤ " + r2(cs[bi]) + "의 " + f3(all[bi]) + "이고, 첫 분할은 두 특성을 모두 비교해 " + FN[best.f] + " ≤ " + r2(best.t) + "로 정해진다.");
+    show(2, [["기준값", FN[f] + " ≤ " + r2(t)], ["왼쪽 / 오른쪽 구성", s.L[0] + " : " + s.L[1] + " / " + s.R[0] + " : " + s.R[1]], ["가중 지니 지수", f3(s.w)], [FN[f] + " 후보 수", cs.length + "개"]], note);
+  }
+
+  var FIRST = { g: [0, 8.65], a: [1, 4.5], b: [0, 4.3] };
+  function renderXor() {
+    var key = $("r3").value, fs = FIRST[key], T = grow(DX, 2, 0, fs), svg = $("xor-plot"), h = head(svg);
+    var cs = cuts(T, [0, 10, 0, 10]).map(function (c) { c.cls = c.d === 0 ? "is-new" : ""; return c; });
+    h += scatter(DX, 60, 20, 360, { regions: regions(T, [0, 10, 0, 10]), cuts: cs, model: T });
+    var g0 = gini(counts(DX)), res = {};
+    Object.keys(FIRST).forEach(function (k) { var tt = grow(DX, 2, 0, FIRST[k]); res[k] = { err: DX.filter(function (p) { return predict(tt, p) !== p[2]; }).length, gain: g0 - splitAt(DX, FIRST[k][0], FIRST[k][1]).w }; });
+    var names = { g: "x₁ ≤ 8.65", a: "x₂ ≤ 4.5", b: "x₁ ≤ 4.3" };
+    ["g", "a", "b"].forEach(function (k, j) {
+      var y = 90 + j * 100, w = res[k].err * 24;
+      h += '<text class="lab" x="520" y="' + (y - 12) + '">' + names[k] + " (지니 감소 " + res[k].gain.toFixed(4) + ")</text>";
+      h += '<rect x="520" y="' + y + '" width="' + Math.max(w, 2) + '" height="26" rx="3" style="fill:' + (k === key ? "var(--pnu-green)" : "var(--pnu-blue-tint)") + ';stroke:var(--pnu-blue)"/><text class="lab" x="' + (528 + Math.max(w, 2)) + '" y="' + (y + 18) + '">오분류 ' + res[k].err + "개</text>";
+    });
+    svg.innerHTML = h;
+    var r = res[key];
+    svg.querySelector("desc").textContent = "첫 분할 " + names[key] + ", 깊이 2 나무의 오분류 " + r.err + "개";
+    var note = key === "g"
+      ? "x₁ ≤ 8.65는 오른쪽 끝의 범주 1 관측 하나만 떼어 내 지니 감소가 " + r.gain.toFixed(4) + "로 두 특성의 모든 기준값 후보 가운데 가장 크다. x₂ ≤ 8.0도 위쪽 끝의 범주 1 관측 하나를 떼어 내 감소가 똑같은 동률이며, 여기서는 x₁ 분할을 골랐다. 그러나 남은 27개 구역은 네 모서리가 엇갈린 모양 그대로여서 분할 하나를 더 해도 " + r.err + "개를 틀린다."
+      : kj(names[key], "은", "는") + " 그 순간 지니 감소가 " + r.gain.toFixed(4) + "로 탐욕적 선택의 " + res.g.gain.toFixed(4) + "보다 작다. 하지만 나뉜 두 구역이 각각 한 번의 분할로 깔끔히 갈려 깊이 2 나무의 오분류가 " + r.err + "개다. 바로 다음 단계를 보지 않는 탐욕적 선택은 전체 최적 나무를 보장하지 않는다.";
+    show(3, [["첫 분할", names[key]], ["첫 분할의 지니 감소", r.gain.toFixed(4)], ["깊이 2 나무의 끝점 수", leafCount(T) + "개"], ["학습 오분류", r.err + "개"]], note);
+  }
+
+  $("d1").addEventListener("input", renderGrow);
+  $("f2").addEventListener("change", renderCand); $("i2").addEventListener("input", renderCand);
+  $("r3").addEventListener("change", renderXor);
+  renderGrow(); renderCand(); renderXor();
+}());
+</script>
+</body>
+</html>

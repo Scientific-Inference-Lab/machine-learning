@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Regression Trees | Machine Learning | Pusan National University</title><meta name="description" content="A regression tree predicts each leaf's training-response mean and chooses splits that minimize the sum of the child regions' residual sums of squares."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/20.%20pruning-and-regression-trees/regression-trees.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Regression Trees | Machine Learning | Pusan National University"><meta property="og:description" content="A regression tree predicts each leaf's training-response mean and chooses splits that minimize the sum of the child regions' residual sums of squares."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/20.%20pruning-and-regression-trees/regression-trees.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .lab{font-size:14px;fill:var(--ink-700)}
+    .topic-plot .frame{fill:none;stroke:var(--ink-600);stroke-width:1.2}
+    .topic-plot .grid{stroke:var(--line-200);stroke-width:1}
+    .topic-plot .pt{fill:var(--pnu-blue);stroke:var(--white);stroke-width:1.2}
+    .topic-plot .cutv{stroke:var(--ink-900);stroke-width:2;stroke-dasharray:6 4}
+    .topic-plot .mean{stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .res{stroke:var(--alert-700);stroke-width:1.5;stroke-dasharray:3 3}
+    .topic-plot .bar{fill:var(--pnu-blue-tint);stroke:var(--pnu-blue);stroke-width:1.5}
+    .topic-plot .bar.is-on{fill:var(--pnu-green);stroke:var(--pnu-green)}
+    .topic-plot .reg{stroke:var(--white);stroke-width:2}
+    .topic-plot .reg.g0{fill:var(--pnu-blue-tint)}
+    .topic-plot .reg.g1{fill:color-mix(in srgb,var(--pnu-blue) 22%,var(--white))}
+    .topic-plot .reg.g2{fill:color-mix(in srgb,var(--pnu-blue) 40%,var(--white))}
+    .topic-plot .reg-on{fill:none;stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .val{font-size:18px;font-weight:700;fill:var(--ink-900);text-anchor:middle}
+    .topic-plot .newpt{fill:var(--ink-900);stroke:var(--white);stroke-width:2}
+    .topic-plot .tn rect{fill:var(--white);stroke:var(--pnu-blue);stroke-width:1.8}
+    .topic-plot .tn.is-leaf rect{fill:var(--surface-050);stroke:var(--ink-600)}
+    .topic-plot .tn.is-on rect{stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .tn text{font-size:13px;text-anchor:middle;dominant-baseline:central;fill:var(--ink-900)}
+    .topic-plot .tedge{stroke:var(--ink-600);stroke-width:1.5}
+    .topic-plot .tedge.is-on{stroke:var(--pnu-green);stroke-width:4}
+    .topic-plot .step{fill:none;stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .truth{fill:none;stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:5 4}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-regression-trees">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Knowing When to Stop</span><span class="nav-tag is-current" aria-current="page">Regression Trees</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/20.%20Knowing%20When%20to%20Stop.pdf">Knowing When to <span class="publication-lecture-tail">Stop<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Regression Trees</h1><hr class="accent-rule"><p class="page-subtitle">회귀 트리(regression tree)는 분류 트리와 같은 방식으로 특성 공간을 구역으로 나누되, 각 끝점에서 그 구역 학습 관측값의 평균을 수치 예측으로 내놓는다. 분할은 두 자식 구역의 잔차제곱합(RSS)을 더한 값이 가장 작은 특성과 기준값으로 고른다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>ŷ_Rm = (1/n_m) Σ yᵢ</strong><span>구역 R_m에 도달한 학습 관측값의 평균이 그 끝점의 예측값이며, 제곱오차를 가장 작게 만든다.</span></article><article class="summary-card"><strong>분할 후 RSS</strong><span>후보마다 두 자식 구역에서 각자의 평균으로 잰 잔차제곱합을 더하고 가장 작은 후보를 고른다.</span></article><article class="summary-card"><strong>같은 끝점, 같은 예측</strong><span>한 구역 안의 새 관측은 특성값이 달라도 모두 같은 평균값을 받으므로 예측이 계단 모양이 된다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">기준값 후보마다 두 구역의 RSS를 더해 가장 작은 곳에서 자른다</h2><p class="lead">x = (2, 5, 9, 14), y = (1, 2, 8, 9)인 관측 네 개를 한 번 나눈다. 기준값을 바꾸면 두 구역의 평균선, 잔차, 분할 후 RSS가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="t1">기준값</label><select id="t1"><option value="none">나누지 않음</option><option value="3.5">3.5</option><option value="7" selected>7</option><option value="11.5">11.5</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="rss-plot" class="topic-plot" viewBox="0 0 900 340" role="img" aria-labelledby="rs-title rs-desc"><title id="rs-title">기준값과 분할 후 RSS</title><desc id="rs-desc">네 관측, 구역 평균, 잔차</desc></svg></div><figcaption class="visual-caption">왼쪽에서 파란 점이 관측, 검은 점선이 기준값, 초록 가로선이 각 구역의 평균 예측, 빨간 점선이 잔차다. 오른쪽 막대는 네 경우의 RSS이며 초록 막대가 현재 선택이다. 기준값 후보는 서로 다른 x값 사이의 중간값이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">경로의 조건을 따라가면 끝점의 평균이 예측값이 된다</h2><p class="lead">야구 선수의 경력(년)과 지난해 안타 수로 로그 연봉을 예측하는 잎 세 개짜리 나무다. 두 값을 바꾸면 선수가 놓인 구역, 따라가는 경로, 예측값이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="yr">경력(년) <output id="yr-out" class="control-value" for="yr">6</output></label><input id="yr" type="range" min="1" max="24" step="1" value="6"></div><div class="control-field"><label for="hit">안타 수 <output id="hit-out" class="control-value" for="hit">150</output></label><input id="hit" type="range" min="0" max="240" step="5" value="150"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="hit-plot" class="topic-plot" viewBox="0 0 900 380" role="img" aria-labelledby="hi-title hi-desc"><title id="hi-title">잎 세 개의 회귀 트리</title><desc id="hi-desc">경력과 안타 수 구역, 나무의 경로</desc></svg></div><figcaption class="visual-caption">왼쪽은 경력과 안타 수 평면을 두 번의 분할로 나눈 세 구역이고 구역 안의 수가 예측하는 로그 연봉이다. 색이 진할수록 예측값이 크다. 검은 마름모가 입력한 선수이고 초록 테두리가 그 구역이다. 오른쪽 나무의 굵은 초록 선이 따라간 경로다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">분할을 되풀이할수록 계단 모양 예측이 학습 관측에 가까워진다</h2><p class="lead">특성 하나짜리 학습 관측 80개에 회귀 트리를 키운다. 최대 깊이를 바꾸면 끝점 수, 계단 모양 예측, 학습 RSS가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="d3">최대 깊이 <output id="d3-out" class="control-value" for="d3">2</output></label><input id="d3" type="range" min="0" max="6" step="1" value="2"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="step-plot" class="topic-plot" viewBox="0 0 900 340" role="img" aria-labelledby="st-title st-desc"><title id="st-title">깊이와 계단 모양 예측</title><desc id="st-desc">학습 관측과 끝점 평균</desc></svg></div><figcaption class="visual-caption">파란 점이 학습 관측, 초록 계단이 끝점마다의 평균 예측, 회색 점선이 자료를 만든 함수다. 계단의 가로 조각 하나가 끝점 하나다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../19. decision-trees/tree-prediction.html" rel="prev">이전 · Tree Prediction</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../20. pruning-and-regression-trees/cost-complexity-pruning.html" rel="next">다음 · Cost Complexity Pruning</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] ? a : b); }
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function head(svg) { return svg.querySelector("title").outerHTML + svg.querySelector("desc").outerHTML; }
+  function mean(a) { return a.reduce(function (s, v) { return s + v; }, 0) / a.length; }
+  function rss(a) { if (!a.length) return 0; var m = mean(a); return a.reduce(function (s, v) { return s + (v - m) * (v - m); }, 0); }
+  function fr(v) { var t = Math.round(v * 3); return Math.abs(v * 3 - t) < 1e-9 && t % 3 !== 0 ? t + "/3" : String(Math.round(v * 100) / 100); }
+
+  var XS = [2, 5, 9, 14], YS = [1, 2, 8, 9];
+  function renderRss() {
+    var tv = $("t1").value, svg = $("rss-plot"), h = head(svg), X = function (v) { return 60 + v * 26; }, Y = function (v) { return 300 - v * 26; };
+    [0, 5, 10].forEach(function (v) { h += '<line class="grid" x1="60" y1="' + Y(v) + '" x2="476" y2="' + Y(v) + '"/><text class="small" x="50" y="' + (Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
+    [0, 5, 10, 15].forEach(function (v) { h += '<text class="small" x="' + X(v) + '" y="318" text-anchor="middle">' + v + "</text>"; });
+    h += '<text class="lab" x="268" y="336" text-anchor="middle">x</text><text class="lab" x="20" y="160">y</text>';
+    function parts(t) { if (t === null) return [[0, 1, 2, 3]]; var L = [], R = []; XS.forEach(function (x, i) { (x <= t ? L : R).push(i); }); return [L, R]; }
+    var t = tv === "none" ? null : Number(tv), groups = parts(t), total = 0, means = [];
+    groups.forEach(function (g, k) {
+      var ys = g.map(function (i) { return YS[i]; }), m = mean(ys), lo = k === 0 ? 0 : t, hi = t === null || k === 1 ? 16 : t;
+      means.push(m); total += rss(ys);
+      h += '<line class="mean" x1="' + X(lo) + '" y1="' + Y(m) + '" x2="' + X(hi) + '" y2="' + Y(m) + '"/>';
+      g.forEach(function (i) { h += '<line class="res" x1="' + X(XS[i]) + '" y1="' + Y(YS[i]) + '" x2="' + X(XS[i]) + '" y2="' + Y(m) + '"/>'; });
+    });
+    if (t !== null) h += '<line class="cutv" x1="' + X(t) + '" y1="' + Y(10.5) + '" x2="' + X(t) + '" y2="' + Y(0) + '"/>';
+    XS.forEach(function (x, i) { h += '<circle class="pt" cx="' + X(x) + '" cy="' + Y(YS[i]) + '" r="7"/>'; });
+    var opts = [["none", "나누지 않음"], ["3.5", "3.5"], ["7", "7"], ["11.5", "11.5"]];
+    opts.forEach(function (o, j) {
+      var gg = parts(o[0] === "none" ? null : Number(o[0])), r = gg.reduce(function (s, g) { return s + rss(g.map(function (i) { return YS[i]; })); }, 0), y = 40 + j * 70, w = r / 50 * 220;
+      h += '<text class="lab" x="540" y="' + (y + 20) + '">' + o[1] + '</text><rect class="bar' + (o[0] === tv ? " is-on" : "") + '" x="640" y="' + y + '" width="' + Math.max(w, 2) + '" height="30"/><text class="lab" x="' + (648 + Math.max(w, 2)) + '" y="' + (y + 20) + '">' + fr(r) + "</text>";
+    });
+    svg.innerHTML = h;
+    svg.querySelector("desc").textContent = (t === null ? "나누지 않음" : "기준값 " + t) + ", RSS " + fr(total);
+    var note = t === null ? "나누지 않으면 네 관측 모두 평균 5를 예측하고 RSS는 16 + 9 + 9 + 16 = 50이다."
+      : t === 7 ? "x ≤ 7이면 1과 2의 평균 1.5, 아니면 8과 9의 평균 8.5를 예측한다. 두 구역의 RSS가 0.5씩이라 분할 후 RSS는 1로 세 후보 가운데 가장 작고, 이 분할이 선택된다."
+      : "x ≤ " + t + "에서 나누면 한쪽에는 관측 하나만 남고, 다른 쪽의 y " + (t === 3.5 ? "2, 8, 9는" : "1, 2, 8은") + " 평균 " + fr(t === 3.5 ? means[1] : means[0]) + "에서 멀리 흩어진다. 분할 후 RSS는 86/3 ≈ 28.67로, 기준값 7의 1보다 훨씬 크다.";
+    show(1, [["왼쪽 평균", t === null ? "없음" : fr(means[0])], ["오른쪽 평균", t === null ? "없음" : fr(means[1])], ["분할 후 RSS", fr(total)], ["나누기 전 RSS", "50"]], note);
+  }
+
+  var LEAF = [{ id: "a", pred: 5.11, cond: "경력 < 4.5" }, { id: "b", pred: 6.0, cond: "경력 ≥ 4.5, 안타 수 < 117.5" }, { id: "c", pred: 6.74, cond: "경력 ≥ 4.5, 안타 수 ≥ 117.5" }];
+  function renderHit() {
+    var yr = Number($("yr").value), hit = Number($("hit").value), svg = $("hit-plot"), h = head(svg);
+    $("yr-out").textContent = yr; $("hit-out").textContent = hit;
+    var X = function (v) { return 70 + (v - 1) * 14; }, Y = function (v) { return 330 - v * 1.25; }, leaf = yr < 4.5 ? LEAF[0] : hit < 117.5 ? LEAF[1] : LEAF[2];
+    var rects = [[1, 4.5, 0, 240, LEAF[0], "g0"], [4.5, 24, 0, 117.5, LEAF[1], "g1"], [4.5, 24, 117.5, 240, LEAF[2], "g2"]];
+    rects.forEach(function (r) { h += '<rect class="reg ' + r[5] + '" x="' + X(r[0]) + '" y="' + Y(r[3]) + '" width="' + (X(r[1]) - X(r[0])) + '" height="' + (Y(r[2]) - Y(r[3])) + '"/><text class="val" x="' + (X(r[0]) + X(r[1])) / 2 + '" y="' + ((Y(r[2]) + Y(r[3])) / 2 + 6) + '">' + r[4].pred.toFixed(2) + "</text>"; });
+    var on = rects.filter(function (r) { return r[4] === leaf; })[0];
+    h += '<rect class="reg-on" x="' + X(on[0]) + '" y="' + Y(on[3]) + '" width="' + (X(on[1]) - X(on[0])) + '" height="' + (Y(on[2]) - Y(on[3])) + '"/>';
+    [1, 4.5, 10, 20, 24].forEach(function (v) { h += '<text class="small" x="' + X(v) + '" y="348" text-anchor="middle">' + v + "</text>"; });
+    [0, 117.5, 240].forEach(function (v) { h += '<text class="small" x="62" y="' + (Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
+    h += '<text class="lab" x="231" y="372" text-anchor="middle">경력(년)</text><text class="lab" x="8" y="24">안타 수</text>';
+    h += '<path class="newpt" d="M' + X(yr) + " " + (Y(hit) - 10) + ' l10 10 l-10 10 l-10 -10 z"/>';
+    var onRoot = true, onRight = yr >= 4.5;
+    h += '<line class="tedge' + (!onRight ? " is-on" : "") + '" x1="680" y1="80" x2="560" y2="178"/><line class="tedge' + (onRight ? " is-on" : "") + '" x1="680" y1="80" x2="800" y2="178"/>';
+    h += '<line class="tedge' + (onRight && hit < 117.5 ? " is-on" : "") + '" x1="800" y1="218" x2="700" y2="298"/><line class="tedge' + (onRight && hit >= 117.5 ? " is-on" : "") + '" x1="800" y1="218" x2="860" y2="298"/>';
+    h += '<g class="tn' + (onRoot ? " is-on" : "") + '"><rect x="610" y="40" width="140" height="40" rx="6"/><text x="680" y="60">경력 &lt; 4.5</text></g>';
+    h += '<g class="tn is-leaf' + (leaf === LEAF[0] ? " is-on" : "") + '"><rect x="515" y="178" width="90" height="40" rx="6"/><text x="560" y="198">5.11</text></g>';
+    h += '<g class="tn' + (onRight ? " is-on" : "") + '"><rect x="730" y="178" width="140" height="40" rx="6"/><text x="800" y="198">안타 수 &lt; 117.5</text></g>';
+    h += '<g class="tn is-leaf' + (leaf === LEAF[1] ? " is-on" : "") + '"><rect x="655" y="298" width="90" height="40" rx="6"/><text x="700" y="318">6.00</text></g>';
+    h += '<g class="tn is-leaf' + (leaf === LEAF[2] ? " is-on" : "") + '"><rect x="815" y="298" width="80" height="40" rx="6"/><text x="855" y="318">6.74</text></g>';
+    h += '<text class="small" x="600" y="130">예</text><text class="small" x="752" y="130">아니요</text><text class="small" x="722" y="262">예</text><text class="small" x="840" y="262">아니요</text>';
+    svg.innerHTML = h;
+    var sal = Math.exp(leaf.pred);
+    svg.querySelector("desc").textContent = "경력 " + yr + "년, 안타 수 " + hit + ", 경로 " + leaf.cond + ", 예측 " + leaf.pred.toFixed(2);
+    var note = "경력 " + yr + "년, 안타 수 " + hit + "개인 선수는 " + leaf.cond + " 구역에 들어가 로그 연봉 " + jro(leaf.pred.toFixed(2)) + " 예측된다. 천 달러 단위 연봉으로 되돌리면 약 " + Math.round(sal) + "이다. " + (leaf === LEAF[0] ? "경력이 4.5년보다 짧으면 안타 수와 상관없이 같은 값을 받는다." : "같은 구역 안이면 경력이나 안타 수가 조금 달라도 예측이 바뀌지 않는다.");
+    show(2, [["경로의 조건", leaf.cond], ["예측 로그 연봉", leaf.pred.toFixed(2)], ["천 달러 단위 연봉", "약 " + Math.round(sal)], ["끝점 수", "3개"]], note);
+  }
+
+  var D1 = [[2.39,2.58],[9.64,5.21],[7.92,2.31],[0.41,1.37],[4.29,1.02],[2.44,3.18],[7.73,2.76],[0.44,1.48],[9.52,5.89],[7.49,1.72],[0.44,2.61],[2.28,5.47],[4.62,0.2],[7.37,1.73],[0.72,3.24],[1.57,2.24],[6.77,-0.9],[0.38,0.56],[3.81,1.71],[9.98,5.24],[3.39,3.2],[6.98,-2.09],[0.98,1.6],[4.99,1.1],[1.38,2.27],[4.51,0.6],[9.58,6.91],[1.31,1.73],[1.5,3.01],[4.93,2.05],[9.26,7.05],[10,4.93],[5.7,-1.64],[3.1,3.77],[8.77,4.61],[3.89,2.24],[8.08,2.91],[5.24,-1.59],[9.86,7.15],[0.41,-0.48],[2.29,2.16],[0.12,-0.67],[7.71,2.12],[5.35,0.61],[0.86,1.39],[7.61,0.75],[9.33,5.28],[3.78,0.23],[4.57,-0.14],[2.15,3.5],[4.5,0.63],[6.56,-1.78],[2.12,4.44],[0.82,1.71],[5.65,-0.77],[3.71,1.98],[3.18,4.62],[8.39,3.38],[6.1,-0.13],[8.03,2.79],[0.35,2.21],[4.28,0.54],[8.25,2.35],[5.3,0.24],[7.85,1.54],[8.68,6.11],[6.07,0.39],[9.42,6.44],[7.51,1.18],[7.7,0.9],[8.45,3.67],[3.74,1.38],[5.02,-1.17],[9.85,6.31],[2.85,2.98],[2.16,3.97],[1.86,3.39],[8.86,6.9],[0.65,1.67],[5.99,0.41]];
+  function f0(x) { return 3 * Math.sin(0.8 * x) + 0.3 * x; }
+  function grow1(P, maxD, d) {
+    d = d || 0; var ys = P.map(function (p) { return p[1]; }), node = { n: P.length, mean: mean(ys), rss: rss(ys), d: d, lo: null, hi: null };
+    if (d >= maxD || P.length < 2) return node;
+    var S = P.slice().sort(function (a, b) { return a[0] - b[0]; }), best = null;
+    for (var i = 1; i < S.length; i++) { if (S[i - 1][0] === S[i][0]) continue; var t = (S[i - 1][0] + S[i][0]) / 2, r = rss(S.slice(0, i).map(function (p) { return p[1]; })) + rss(S.slice(i).map(function (p) { return p[1]; })); if (!best || r < best.r - 1e-9) best = { t: t, r: r }; }
+    if (!best || node.rss - best.r <= 1e-9) return node;
+    node.t = best.t; node.left = grow1(P.filter(function (p) { return p[0] <= best.t; }), maxD, d + 1); node.right = grow1(P.filter(function (p) { return p[0] > best.t; }), maxD, d + 1);
+    return node;
+  }
+  function leaves1(n, lo, hi, out) { out = out || []; if (!n.left) { out.push({ lo: lo, hi: hi, m: n.mean, n: n.n, rss: n.rss }); return out; } leaves1(n.left, lo, n.t, out); leaves1(n.right, n.t, hi, out); return out; }
+  function renderStep() {
+    var d = Number($("d3").value), T = grow1(D1, d), L = leaves1(T, 0, 10), svg = $("step-plot"), h = head(svg);
+    $("d3-out").textContent = d;
+    var X = function (v) { return 60 + v * 80; }, Y = function (v) { return 290 - (v + 3) * 26; };
+    [-2, 0, 2, 4, 6, 8].forEach(function (v) { h += '<line class="grid" x1="60" y1="' + Y(v) + '" x2="860" y2="' + Y(v) + '"/><text class="small" x="50" y="' + (Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
+    [0, 5, 10].forEach(function (v) { h += '<text class="small" x="' + X(v) + '" y="' + 312 + '" text-anchor="middle">' + v + "</text>"; });
+    var tp = ""; for (var i = 0; i <= 100; i++) { var x = i / 10; tp += (i ? "L" : "M") + X(x).toFixed(1) + " " + Y(f0(x)).toFixed(1); }
+    h += '<path class="truth" d="' + tp + '"/>';
+    D1.forEach(function (p) { h += '<circle class="pt" cx="' + X(p[0]).toFixed(1) + '" cy="' + Y(p[1]).toFixed(1) + '" r="4"/>'; });
+    var sp = ""; L.forEach(function (g, k) { sp += (k ? "L" : "M") + X(g.lo).toFixed(1) + " " + Y(g.m).toFixed(1) + "L" + X(g.hi).toFixed(1) + " " + Y(g.m).toFixed(1); });
+    h += '<path class="step" d="' + sp + '"/>';
+    svg.innerHTML = h;
+    var total = L.reduce(function (s, g) { return s + g.rss; }, 0), small = L.reduce(function (m, g) { return Math.min(m, g.n); }, 99);
+    svg.querySelector("desc").textContent = "최대 깊이 " + d + ", 끝점 " + L.length + "개, 학습 RSS " + total.toFixed(1);
+    var note = d === 0 ? "나누지 않으면 80개 모두 평균 " + kj(L[0].m.toFixed(2), "을", "를") + " 예측하는 수평선 하나이고 학습 RSS는 " + total.toFixed(1) + "이다."
+      : "깊이 " + d + "에서 끝점 " + L.length + "개가 각자 구역의 평균을 예측해 학습 RSS가 " + total.toFixed(1) + "까지 줄었다. 가장 작은 끝점의 학습 관측은 " + small + "개다." + (d >= 5 ? " 계단이 잡음까지 따라 오르내리기 시작하므로, 학습 RSS가 줄어드는 것만으로 새 자료의 오차도 준다고 볼 수 없다." : " 계단이 늘수록 곡선의 오르내림을 더 촘촘히 따라간다.");
+    show(3, [["끝점 수", L.length + "개"], ["학습 RSS", total.toFixed(1)], ["가장 작은 끝점의 관측 수", small + "개"], ["첫 분할", T.left ? "x ≤ " + (Math.round(T.t * 100) / 100) : "없음"]], note);
+  }
+
+  $("t1").addEventListener("change", renderRss);
+  $("yr").addEventListener("input", renderHit); $("hit").addEventListener("input", renderHit);
+  $("d3").addEventListener("input", renderStep);
+  renderRss(); renderHit(); renderStep();
+}());
+</script>
+</body>
+</html>

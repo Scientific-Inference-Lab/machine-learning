@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Cost Complexity Pruning | Machine Learning | Pusan National University</title><meta name="description" content="Cost complexity pruning penalizes the number of leaves as well as residual sum of squares, selecting the complexity parameter by cross-validation rather than training fit."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/20.%20pruning-and-regression-trees/cost-complexity-pruning.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Cost Complexity Pruning | Machine Learning | Pusan National University"><meta property="og:description" content="Cost complexity pruning penalizes the number of leaves as well as residual sum of squares, selecting the complexity parameter by cross-validation rather than training fit."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/20.%20pruning-and-regression-trees/cost-complexity-pruning.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .lab{font-size:14px;fill:var(--ink-700);paint-order:stroke;stroke:var(--white);stroke-width:4px}
+    .topic-plot .grid{stroke:var(--line-200);stroke-width:1}
+    .topic-plot .axis{stroke:var(--ink-600);stroke-width:1.2}
+    .topic-plot .l4{fill:none;stroke:var(--pnu-blue);stroke-width:2.5}
+    .topic-plot .l2{fill:none;stroke:var(--pnu-blue-dark);stroke-width:2.5;stroke-dasharray:9 5}
+    .topic-plot .l1{fill:none;stroke:var(--ink-600);stroke-width:2.5;stroke-dasharray:3 3}
+    .topic-plot .env{fill:none;stroke:var(--pnu-green);stroke-width:6;opacity:.45}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1;stroke-dasharray:3 3}
+    .topic-plot .dot{fill:var(--pnu-green);stroke:var(--white);stroke-width:2}
+    .topic-plot .pt{fill:var(--pnu-blue);stroke:var(--white);stroke-width:1}
+    .topic-plot .step{fill:none;stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .c-tr{fill:none;stroke:var(--pnu-blue);stroke-width:3}
+    .topic-plot .c-cv{fill:none;stroke:var(--pnu-green);stroke-width:3;stroke-dasharray:9 5}
+    .topic-plot .d-tr{fill:var(--pnu-blue)}
+    .topic-plot .d-cv{fill:var(--pnu-green)}
+    .topic-plot .best{fill:none;stroke:var(--ink-900);stroke-width:2;stroke-dasharray:3 2}
+    .topic-plot .eb{stroke:var(--ink-900);stroke-width:2}
+    .topic-plot .mk{fill:var(--pnu-blue)}
+    .topic-plot .mk.is-on{fill:var(--pnu-green)}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-cost-complexity-pruning">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Knowing When to Stop</span><span class="nav-tag is-current" aria-current="page">Cost Complexity Pruning</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/20.%20Knowing%20When%20to%20Stop.pdf">Knowing When to <span class="publication-lecture-tail">Stop<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Cost Complexity Pruning</h1><hr class="accent-rule"><p class="page-subtitle">가지치기(pruning)는 크게 키운 나무에서 부분나무를 고르는 절차다. cost complexity pruning은 C_α(T) = RSS(T) + α|T|처럼 잔차제곱합에 끝점 수 |T|의 벌점을 더하고, 복잡도 매개변수(complexity parameter, α)가 커질수록 잎이 적은 부분나무를 고른다. α는 학습 자료로 추정하지 않고 교차검증 오차를 비교해 선택한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>두 항</strong><span>RSS(T)는 학습 자료에 대한 적합 오차, α|T|는 잎 수에 비례하는 복잡도 벌점이다.</span></article><article class="summary-card"><strong>α = 0과 아주 큰 α</strong><span>α = 0이면 가장 큰 나무가, α가 아주 크면 뿌리 하나만 남은 나무가 선택된다.</span></article><article class="summary-card"><strong>선택 순서</strong><span>후보 α마다 교차검증 오차를 구해 가장 작은 값을 고르고, 그 α로 개발 자료 전체에 다시 학습한다. 테스트 자료는 마지막 평가에만 쓴다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">α가 커지면 RSS가 조금 커지더라도 잎이 적은 부분나무가 선택된다</h2><p class="lead">잎 4개(RSS 2), 잎 2개(RSS 6), 잎 1개(RSS 14)인 세 부분나무가 후보다. α를 바꾸면 세 목적함수 값과 그 가운데 가장 작은 나무가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="a1">α <output id="a1-out" class="control-value" for="a1">3.0</output></label><input id="a1" type="range" min="0" max="12" step="0.5" value="3"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="c-plot" class="topic-plot" viewBox="0 0 900 360" role="img" aria-labelledby="c-title c-desc"><title id="c-title">α에 따른 세 부분나무의 목적함수</title><desc id="c-desc">잎 4개, 2개, 1개 나무의 C_α 직선</desc></svg></div><figcaption class="visual-caption">가로축은 α, 세로축은 C_α다. 파란 실선이 잎 4개(2 + 4α), 진한 파란 긴 점선이 잎 2개(6 + 2α), 회색 짧은 점선이 잎 1개(14 + α)이고 기울기가 잎 수다. 두꺼운 초록 띠는 각 α에서 가장 작은 값을 이은 선이며 초록 점이 현재 α에서 선택된 나무다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">학습 오차는 α가 작을수록 작지만 교차검증 오차는 중간 크기의 나무에서 가장 작다</h2><p class="lead">특성 하나짜리 학습 관측 80개로 끝까지 키운 회귀 트리를 α로 가지치기한다. α 후보를 바꾸면 남는 잎 수, 계단 모양 예측, 학습 MSE와 5겹 교차검증 MSE가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="k2">α 후보 <output id="k2-out" class="control-value" for="k2">3</output></label><input id="k2" type="range" min="0" max="15" step="1" value="6"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="cv-plot" class="topic-plot" viewBox="0 0 900 380" role="img" aria-labelledby="cv-title cv-desc"><title id="cv-title">α와 교차검증 오차</title><desc id="cv-desc">가지치기한 나무의 예측과 α별 오차</desc></svg></div><figcaption class="visual-caption">왼쪽은 학습 관측과 현재 α로 가지치기한 나무의 계단 예측이다. 오른쪽 가로축은 α 후보를 작은 값부터 늘어놓은 것이고, 파란 실선이 학습 MSE, 초록 점선이 5겹 교차검증 MSE다. 세로 점선이 현재 α, 점선 원이 교차검증 MSE가 가장 작은 α다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">평균 오차가 비슷하면 표준오차와 나무의 크기도 함께 본다</h2><p class="lead">설명용 예제로 잎 3개, 6개, 10개 나무의 평균 검증 MSE와 표준오차를 비교한다. 살펴볼 나무를 바꾸면 그 나무와 평균이 가장 작은 나무의 차이가 표시된다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="s3">살펴볼 나무</label><select id="s3"><option value="0">잎 3개</option><option value="1" selected>잎 6개</option><option value="2">잎 10개</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="se-plot" class="topic-plot" viewBox="0 0 900 300" role="img" aria-labelledby="se-title se-desc"><title id="se-title">잎 수별 평균 검증 MSE와 표준오차</title><desc id="se-desc">세 나무의 평균과 표준오차 막대</desc></svg></div><figcaption class="visual-caption">점이 평균 검증 MSE, 세로 막대가 평균 ± 표준오차 범위다. 초록 점이 살펴보는 나무다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../20. pruning-and-regression-trees/regression-trees.html" rel="prev">이전 · Regression Trees</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../20. pruning-and-regression-trees/feature-importance.html" rel="next">다음 · Feature Importance</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] ? a : b); }
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function head(svg) { return svg.querySelector("title").outerHTML + svg.querySelector("desc").outerHTML; }
+  function mean(a) { return a.reduce(function (s, v) { return s + v; }, 0) / a.length; }
+  function rss(a) { if (!a.length) return 0; var m = mean(a); return a.reduce(function (s, v) { return s + (v - m) * (v - m); }, 0); }
+
+  var TREES = [{ leaves: 4, rss: 2, cls: "l4" }, { leaves: 2, rss: 6, cls: "l2" }, { leaves: 1, rss: 14, cls: "l1" }];
+  function renderC() {
+    var a = Number($("a1").value), svg = $("c-plot"), h = head(svg);
+    $("a1-out").textContent = a.toFixed(1);
+    var X = function (v) { return 80 + v * 60; }, Y = function (v) { return 320 - v * 5.5; };
+    [0, 10, 20, 30, 40, 50].forEach(function (v) { h += '<line class="grid" x1="80" y1="' + Y(v) + '" x2="800" y2="' + Y(v) + '"/><text class="small" x="70" y="' + (Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
+    [0, 2, 4, 6, 8, 10, 12].forEach(function (v) { h += '<text class="small" x="' + X(v) + '" y="338" text-anchor="middle">' + v + "</text>"; });
+    h += '<text class="lab" x="440" y="358" text-anchor="middle">α</text><text class="small" x="84" y="24">C_α = RSS + α × 잎 수</text>';
+    TREES.forEach(function (t) { h += '<path class="' + t.cls + '" d="M' + X(0) + " " + Y(t.rss) + "L" + X(12) + " " + Y(t.rss + 12 * t.leaves) + '"/>'; });
+    var env = ""; for (var i = 0; i <= 120; i++) { var q = i / 10, m = Math.min.apply(null, TREES.map(function (t) { return t.rss + q * t.leaves; })); env += (i ? "L" : "M") + X(q).toFixed(1) + " " + Y(m).toFixed(1); }
+    h += '<path class="env" d="' + env + '"/>';
+    TREES.forEach(function (t) { var yy = t.rss + 12 * t.leaves; h += '<text class="lab" x="' + (X(12) + 8) + '" y="' + (Y(yy) + 5) + '">잎 ' + t.leaves + "개</text>"; });
+    var vals = TREES.map(function (t) { return t.rss + a * t.leaves; }), mn = Math.min.apply(null, vals), winners = TREES.filter(function (t, j) { return Math.abs(vals[j] - mn) < 1e-9; });
+    h += '<line class="guide" x1="' + X(a) + '" y1="20" x2="' + X(a) + '" y2="320"/><circle class="dot" cx="' + X(a) + '" cy="' + Y(mn) + '" r="8"/>';
+    svg.innerHTML = h;
+    svg.querySelector("desc").textContent = "α = " + a + ", C 값 " + vals.join(", ") + ", 선택 잎 " + winners.map(function (t) { return t.leaves; }).join("·") + "개";
+    var note;
+    if (winners.length > 1) note = "α = " + a + "에서는 잎 " + winners[0].leaves + "개와 잎 " + winners[1].leaves + "개 나무의 목적함수가 " + jro(mn) + " 같다. 경계를 조금만 넘어도 선택이 바뀌며, 잎 수는 한 번에 여러 개 줄 수 있다.";
+    else if (winners[0].leaves === 4) note = "α = " + a + "이면 벌점이 작아 RSS가 가장 작은 잎 4개 나무가 C = " + jro(mn) + " 선택된다. 0 ≤ α < 2 구간에서는 이 나무가 계속 선택된다.";
+    else if (winners[0].leaves === 2) note = "α = " + a + "이면 잎 4개 나무는 벌점 " + kj(4 * a, "이", "가") + " 붙어 " + kj(vals[0], "이", "가") + " 되고, RSS가 4 더 큰 잎 2개 나무가 C = " + jro(mn) + " 선택된다. 잎 2개를 줄여 벌점을 " + 2 * a + " 아끼는 것이 RSS 증가 4보다 크기 때문이다.";
+    else note = "α = " + a + "이면 벌점이 커서 뿌리 하나만 남은 나무가 C = " + jro(mn) + " 선택된다. α > 8에서는 RSS가 14로 가장 커도 잎 수가 가장 적은 이 나무가 이긴다.";
+    show(1, [["잎 4개 C", String(vals[0])], ["잎 2개 C", String(vals[1])], ["잎 1개 C", String(vals[2])], ["선택된 잎 수", winners.map(function (t) { return t.leaves; }).join("개 또는 ") + "개"]], note);
+  }
+
+  var D1 = [[2.39,2.58],[9.64,5.21],[7.92,2.31],[0.41,1.37],[4.29,1.02],[2.44,3.18],[7.73,2.76],[0.44,1.48],[9.52,5.89],[7.49,1.72],[0.44,2.61],[2.28,5.47],[4.62,0.2],[7.37,1.73],[0.72,3.24],[1.57,2.24],[6.77,-0.9],[0.38,0.56],[3.81,1.71],[9.98,5.24],[3.39,3.2],[6.98,-2.09],[0.98,1.6],[4.99,1.1],[1.38,2.27],[4.51,0.6],[9.58,6.91],[1.31,1.73],[1.5,3.01],[4.93,2.05],[9.26,7.05],[10,4.93],[5.7,-1.64],[3.1,3.77],[8.77,4.61],[3.89,2.24],[8.08,2.91],[5.24,-1.59],[9.86,7.15],[0.41,-0.48],[2.29,2.16],[0.12,-0.67],[7.71,2.12],[5.35,0.61],[0.86,1.39],[7.61,0.75],[9.33,5.28],[3.78,0.23],[4.57,-0.14],[2.15,3.5],[4.5,0.63],[6.56,-1.78],[2.12,4.44],[0.82,1.71],[5.65,-0.77],[3.71,1.98],[3.18,4.62],[8.39,3.38],[6.1,-0.13],[8.03,2.79],[0.35,2.21],[4.28,0.54],[8.25,2.35],[5.3,0.24],[7.85,1.54],[8.68,6.11],[6.07,0.39],[9.42,6.44],[7.51,1.18],[7.7,0.9],[8.45,3.67],[3.74,1.38],[5.02,-1.17],[9.85,6.31],[2.85,2.98],[2.16,3.97],[1.86,3.39],[8.86,6.9],[0.65,1.67],[5.99,0.41]];
+  var ALPHAS = [0, 0.1, 0.2, 0.5, 1, 2, 3, 5, 8, 12, 20, 30, 50, 80, 120, 200];
+  function grow1(P) {
+    var ys = P.map(function (p) { return p[1]; }), node = { n: P.length, mean: mean(ys), rss: rss(ys) };
+    if (P.length < 2) return node;
+    var S = P.slice().sort(function (a, b) { return a[0] - b[0]; }), best = null;
+    for (var i = 1; i < S.length; i++) { if (S[i - 1][0] === S[i][0]) continue; var t = (S[i - 1][0] + S[i][0]) / 2, r = rss(S.slice(0, i).map(function (p) { return p[1]; })) + rss(S.slice(i).map(function (p) { return p[1]; })); if (!best || r < best.r - 1e-9) best = { t: t, r: r }; }
+    if (!best || node.rss - best.r <= 1e-9) return node;
+    node.t = best.t; node.left = grow1(P.filter(function (p) { return p[0] <= best.t; })); node.right = grow1(P.filter(function (p) { return p[0] > best.t; }));
+    return node;
+  }
+  function prune(node, a) {
+    if (!node.left) return { tree: node, cost: node.rss + a, leaves: 1 };
+    var L = prune(node.left, a), R = prune(node.right, a), sub = L.cost + R.cost, leafCost = node.rss + a;
+    if (leafCost <= sub + 1e-9) return { tree: { n: node.n, mean: node.mean, rss: node.rss }, cost: leafCost, leaves: 1 };
+    return { tree: { n: node.n, mean: node.mean, rss: node.rss, t: node.t, left: L.tree, right: R.tree }, cost: sub, leaves: L.leaves + R.leaves };
+  }
+  function pred(n, x) { while (n.left) n = x <= n.t ? n.left : n.right; return n.mean; }
+  function mse(n, P) { return P.reduce(function (s, p) { var e = p[1] - pred(n, p[0]); return s + e * e; }, 0) / P.length; }
+  function segs(n, lo, hi, out) { out = out || []; if (!n.left) { out.push([lo, hi, n.mean]); return out; } segs(n.left, lo, n.t, out); segs(n.right, n.t, hi, out); return out; }
+  var FULL = grow1(D1), FOLDS = [0, 1, 2, 3, 4].map(function (k) { var tr = D1.filter(function (p, i) { return i % 5 !== k; }), te = D1.filter(function (p, i) { return i % 5 === k; }); return { tree: grow1(tr), te: te }; });
+  var PATH = ALPHAS.map(function (a) { var p = prune(FULL, a), cv = 0; FOLDS.forEach(function (f) { cv += mse(prune(f.tree, a).tree, f.te) * f.te.length; }); return { a: a, tree: p.tree, leaves: p.leaves, tr: mse(p.tree, D1), cv: cv / D1.length }; });
+  var BEST = PATH.reduce(function (b, c) { return c.cv < b.cv - 1e-12 ? c : b; }, PATH[0]);
+  function renderCV() {
+    var k = Number($("k2").value), cur = PATH[k], svg = $("cv-plot"), h = head(svg);
+    $("k2-out").textContent = cur.a;
+    var X = function (v) { return 50 + v * 38; }, Y = function (v) { return 300 - (v + 3) * 24; };
+    [0, 4, 8].forEach(function (v) { h += '<line class="grid" x1="50" y1="' + Y(v) + '" x2="430" y2="' + Y(v) + '"/><text class="small" x="42" y="' + (Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
+    D1.forEach(function (p) { h += '<circle class="pt" cx="' + X(p[0]).toFixed(1) + '" cy="' + Y(p[1]).toFixed(1) + '" r="3.5"/>'; });
+    var sp = ""; segs(cur.tree, 0, 10).forEach(function (s, i) { sp += (i ? "L" : "M") + X(s[0]).toFixed(1) + " " + Y(s[2]).toFixed(1) + "L" + X(s[1]).toFixed(1) + " " + Y(s[2]).toFixed(1); });
+    h += '<path class="step" d="' + sp + '"/><text class="small" x="240" y="330" text-anchor="middle">x</text>';
+    var gx = function (i) { return 500 + i * 24; }, gy = function (v) { return 320 - v / 6 * 290; };
+    [0, 1, 2, 3, 4, 5, 6].forEach(function (v) { h += '<line class="grid" x1="500" y1="' + gy(v) + '" x2="860" y2="' + gy(v) + '"/><text class="small" x="492" y="' + (gy(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
+    PATH.forEach(function (p, i) { if (i % 3 === 0 || i === 15) h += '<text class="small" x="' + gx(i) + '" y="338" text-anchor="middle">' + p.a + "</text>"; });
+    h += '<text class="small" x="680" y="358" text-anchor="middle">α 후보</text><text class="small" x="500" y="22">MSE</text>';
+    var ptr = "", pcv = "";
+    PATH.forEach(function (p, i) { ptr += (i ? "L" : "M") + gx(i) + " " + gy(p.tr).toFixed(1); pcv += (i ? "L" : "M") + gx(i) + " " + gy(p.cv).toFixed(1); });
+    var bi = PATH.indexOf(BEST);
+    h += '<path class="c-tr" d="' + ptr + '"/><path class="c-cv" d="' + pcv + '"/><circle class="best" cx="' + gx(bi) + '" cy="' + gy(BEST.cv) + '" r="11"/><line class="guide" x1="' + gx(k) + '" y1="28" x2="' + gx(k) + '" y2="320"/>';
+    h += '<circle class="d-tr" cx="' + gx(k) + '" cy="' + gy(cur.tr) + '" r="6"/><circle class="d-cv" cx="' + gx(k) + '" cy="' + gy(cur.cv) + '" r="6"/>';
+    h += '<text class="lab" x="' + gx(0) + '" y="' + (gy(PATH[0].tr) - 10) + '">학습</text><text class="lab" x="' + gx(0) + '" y="' + (gy(PATH[0].cv) - 10) + '">교차검증</text>';
+    svg.innerHTML = h;
+    svg.querySelector("desc").textContent = "α = " + cur.a + ", 잎 " + cur.leaves + "개, 학습 MSE " + cur.tr.toFixed(2) + ", 교차검증 MSE " + cur.cv.toFixed(2);
+    var note;
+    if (cur === BEST) note = "α = " + cur.a + "에서 교차검증 MSE가 " + jro(cur.cv.toFixed(2)) + " 후보 가운데 가장 작고, 이때 잎은 " + cur.leaves + "개다. 이 α로 개발 자료 전체에 다시 학습한 나무를 테스트 자료에 한 번 평가한다.";
+    else if (cur.a < BEST.a) note = "α = " + cur.a + "이면 잎 " + cur.leaves + "개가 남아 학습 MSE는 " + jro(cur.tr.toFixed(2)) + " 작지만 교차검증 MSE는 " + jro(cur.cv.toFixed(2)) + " α = " + BEST.a + "의 " + BEST.cv.toFixed(2) + "보다 크다. 끝점이 잡음까지 따라가, 교차검증 추정으로는 새 자료에서 더 틀릴 것으로 보인다.";
+    else note = "α = " + cur.a + "이면 잎이 " + cur.leaves + "개로 줄어 학습 MSE가 " + cur.tr.toFixed(2) + ", 교차검증 MSE가 " + cur.cv.toFixed(2) + "다. " + (cur.cv - BEST.cv < 0.15 ? "잎을 더 줄이자 교차검증 MSE가 α = " + BEST.a + "의 " + BEST.cv.toFixed(2) + "보다 조금 커졌다." : "나무가 너무 작아 곡선의 오르내림을 놓치므로 α = " + BEST.a + "의 " + BEST.cv.toFixed(2) + "보다 크다.");
+    show(2, [["α", String(cur.a)], ["잎 수", cur.leaves + "개"], ["학습 MSE", cur.tr.toFixed(2)], ["5겹 교차검증 MSE", cur.cv.toFixed(2)]], note);
+  }
+
+  var SE = [{ leaves: 3, m: 0.42, se: 0.06 }, { leaves: 6, m: 0.41, se: 0.07 }, { leaves: 10, m: 0.5, se: 0.08 }];
+  function renderSE() {
+    var j = Number($("s3").value), cur = SE[j], svg = $("se-plot"), h = head(svg), best = SE[1];
+    var X = function (i) { return 200 + i * 220; }, Y = function (v) { return 260 - (v - 0.3) / 0.3 * 230; };
+    [0.3, 0.4, 0.5, 0.6].forEach(function (v) { h += '<line class="grid" x1="120" y1="' + Y(v) + '" x2="760" y2="' + Y(v) + '"/><text class="small" x="110" y="' + (Y(v) + 4) + '" text-anchor="end">' + v.toFixed(2) + "</text>"; });
+    SE.forEach(function (s, i) {
+      h += '<line class="eb" x1="' + X(i) + '" y1="' + Y(s.m - s.se) + '" x2="' + X(i) + '" y2="' + Y(s.m + s.se) + '"/><line class="eb" x1="' + (X(i) - 12) + '" y1="' + Y(s.m - s.se) + '" x2="' + (X(i) + 12) + '" y2="' + Y(s.m - s.se) + '"/><line class="eb" x1="' + (X(i) - 12) + '" y1="' + Y(s.m + s.se) + '" x2="' + (X(i) + 12) + '" y2="' + Y(s.m + s.se) + '"/>';
+      h += '<circle class="mk' + (i === j ? " is-on" : "") + '" cx="' + X(i) + '" cy="' + Y(s.m) + '" r="' + (i === j ? 10 : 7) + '"/><text class="lab" x="' + (X(i) + 18) + '" y="' + (Y(s.m) + 5) + '">' + s.m.toFixed(2) + '</text><text class="small" x="' + X(i) + '" y="290" text-anchor="middle">잎 ' + s.leaves + "개</text>";
+    });
+    svg.innerHTML = h;
+    var diff = cur.m - best.m;
+    svg.querySelector("desc").textContent = "잎 " + cur.leaves + "개, 평균 " + cur.m + ", 표준오차 " + cur.se;
+    var note = j === 1 ? "잎 6개 나무의 평균 검증 MSE 0.41이 가장 작지만 잎 3개와의 차이는 0.01로 두 표준오차(0.06, 0.07)보다 훨씬 작다. 차이가 표준오차보다 작다는 사실만으로 두 모델의 성능이 같다고 입증되지는 않으므로, 해석과 안정성을 위해 작은 나무를 함께 검토한다."
+      : j === 0 ? "잎 3개 나무는 평균 0.42로 가장 작은 평균보다 0.01 크다. 표준오차 범위가 잎 6개 나무와 크게 겹치고 잎이 절반이라 규칙을 읽기 쉽다. 다만 겹친다는 것만으로 성능이 같다고 단정하지 않는다."
+      : "잎 10개 나무는 평균 0.50으로 가장 작은 평균보다 0.09 크다. 잎을 더 늘린 복잡도가 이 자료에서는 검증 오차를 줄이지 못했다.";
+    show(3, [["잎 수", cur.leaves + "개"], ["평균 검증 MSE", cur.m.toFixed(2)], ["표준오차", cur.se.toFixed(2)], ["가장 작은 평균과의 차이", diff.toFixed(2)]], note);
+  }
+
+  $("a1").addEventListener("input", renderC); $("k2").addEventListener("input", renderCV); $("s3").addEventListener("change", renderSE);
+  renderC(); renderCV(); renderSE();
+}());
+</script>
+</body>
+</html>

@@ -47,6 +47,12 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/18.%20imbalanced-data/class-imbalance.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/18.%20imbalanced-data/imbalance-handling.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/18.%20imbalanced-data/threshold-selection.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/19.%20decision-trees/recursive-partitioning.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/19.%20decision-trees/split-criteria.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/19.%20decision-trees/tree-prediction.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/20.%20pruning-and-regression-trees/cost-complexity-pruning.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/20.%20pruning-and-regression-trees/feature-importance.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/20.%20pruning-and-regression-trees/regression-trees.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/00.%20Intro.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/01.%20Learning%20from%20Data.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/02.%20Labels%2C%20Structure%2C%20Rewards.pdf</loc></url>
@@ -66,10 +72,13 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/16.%20Counting%20the%20Mistakes.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/17.%20Paying%20to%20Fit%20Less.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/18.%20When%20Accuracy%20Lies.pdf</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/19.%20Splitting%20the%20Space.pdf</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/20.%20Knowing%20When%20to%20Stop.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/backpropagation.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/cross-validation.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/data-and-learning-types.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/data-leakage.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/decision-trees.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/derivatives-and-probability.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/evaluation-metrics.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/gradient-descent.html</loc></url>
@@ -81,6 +90,7 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/logistic-regression.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/multilayer-perceptrons.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/perceptron.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/pruning-and-regression-trees.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/regularization.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/stochastic-gradient-descent.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/vectors-and-matrices.html</loc></url>

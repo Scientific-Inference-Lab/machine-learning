@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Split Criteria | Machine Learning | Pusan National University</title><meta name="description" content="Classification trees choose the split with the largest decrease in weighted impurity, using Gini index or entropy, with entropy reduction called information gain."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/19.%20decision-trees/split-criteria.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Split Criteria | Machine Learning | Pusan National University"><meta property="og:description" content="Classification trees choose the split with the largest decrease in weighted impurity, using Gini index or entropy, with entropy reduction called information gain."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/19.%20decision-trees/split-criteria.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .lab{font-size:14px;fill:var(--ink-700)}
+    .topic-plot .big{font-size:15px;font-weight:700;fill:var(--ink-900)}
+    .topic-plot .grid{stroke:var(--line-200);stroke-width:1}
+    .topic-plot .axis{stroke:var(--ink-600);stroke-width:1.2}
+    .topic-plot .c-ent{fill:none;stroke:var(--pnu-blue);stroke-width:3}
+    .topic-plot .c-gini{fill:none;stroke:var(--pnu-green);stroke-width:3;stroke-dasharray:9 5}
+    .topic-plot .d-ent{fill:var(--pnu-blue)}
+    .topic-plot .d-gini{fill:var(--pnu-green)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1;stroke-dasharray:3 3}
+    .topic-plot .k1{fill:var(--pnu-green)}
+    .topic-plot .k0{fill:var(--pnu-blue)}
+    .topic-plot .box{fill:none;stroke:var(--ink-600);stroke-width:1.2}
+    .topic-plot .bar{fill:var(--pnu-blue-tint);stroke:var(--pnu-blue);stroke-width:1.5}
+    .topic-plot .bar.is-on{fill:var(--pnu-green);stroke:var(--pnu-green)}
+    .topic-plot .link{stroke:var(--ink-600);stroke-width:1.5}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-split-criteria">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Splitting the Space</span><span class="nav-tag is-current" aria-current="page">Split Criteria</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/19.%20Splitting%20the%20Space.pdf">Splitting the <span class="publication-lecture-tail">Space<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Split Criteria</h1><hr class="accent-rule"><p class="page-subtitle">분류 트리는 한 구역의 범주가 얼마나 섞였는지를 불순도로 재고, 나누기 전 불순도에서 두 자식 구역 불순도의 관측 수 가중평균을 뺀 감소량이 가장 큰 분할을 고른다. 불순도 척도로는 지니 지수(Gini index)와 엔트로피(entropy)를 쓰며, 엔트로피로 잰 감소량을 정보이득(information gain)이라 한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>G = Σ p̂ₖ(1 − p̂ₖ)</strong><span>지니 지수. 두 범주면 2p̂(1 − p̂)이고 한 범주만 있으면 0, 반반이면 최댓값 0.5다.</span></article><article class="summary-card"><strong>D = −Σ p̂ₖ ln p̂ₖ</strong><span>엔트로피. 자연로그를 쓰고 0 ln 0 = 0으로 둔다. 반반이면 최댓값 ln 2 ≈ 0.693이다.</span></article><article class="summary-card"><strong>ΔG = G부모 − [(n_L/n)G_L + (n_R/n)G_R]</strong><span>자식 구역의 불순도를 관측 수로 가중해 평균한 뒤 부모에서 뺀다.</span></article><article class="summary-card"><strong>분할 기준과 평가지표</strong><span>criterion은 분할을 고르는 기준이고, 모델 비교용 평가지표와 같을 필요는 없다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">두 척도는 한 범주만 있으면 0이고 반반 섞이면 가장 크다</h2><p class="lead">한 구역에서 범주 1의 비율 p̂를 바꾸면 두 곡선 위의 점, 다수 범주로 예측했을 때의 정확도가 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="p1">범주 1의 비율 p̂ <output id="p1-out" class="control-value" for="p1">0.90</output></label><input id="p1" type="range" min="0" max="1" step="0.01" value="0.9"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="curve-plot" class="topic-plot" viewBox="0 0 900 360" role="img" aria-labelledby="cu-title cu-desc"><title id="cu-title">지니 지수와 엔트로피</title><desc id="cu-desc">범주 1의 비율에 따른 두 불순도 척도</desc></svg></div><figcaption class="visual-caption">가로축은 범주 1의 비율 p̂, 세로축은 불순도다. 파란 실선이 엔트로피, 초록 점선이 지니 지수이고 세로 점선 위의 두 점이 현재 p̂의 값이다. 오른쪽 막대는 그 구역의 범주 구성이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">분할의 값어치는 부모 불순도에서 자식 구역의 가중평균을 뺀 값이다</h2><p class="lead">두 범주가 50개씩 섞인 구역을 둘로 나눈다. 왼쪽 구역에 보낼 범주 1과 범주 0의 수를 바꾸면 나머지는 오른쪽으로 가고, 두 자식 구역의 불순도와 감소량이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="a2">왼쪽 구역의 범주 1 수 <output id="a2-out" class="control-value" for="a2">40</output></label><input id="a2" type="range" min="0" max="50" step="1" value="40"></div><div class="control-field"><label for="b2">왼쪽 구역의 범주 0 수 <output id="b2-out" class="control-value" for="b2">10</output></label><input id="b2" type="range" min="0" max="50" step="1" value="10"></div></div>
+      <p id="reason-2" class="control-reason" hidden></p>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="split-plot" class="topic-plot" viewBox="0 0 900 330" role="img" aria-labelledby="sp-title sp-desc"><title id="sp-title">분할 전후의 범주 구성</title><desc id="sp-desc">부모 구역과 두 자식 구역의 구성과 불순도</desc></svg></div><figcaption class="visual-caption">막대 하나가 구역 하나이며 막대 길이는 관측 수에 비례한다. 초록 부분이 범주 1, 파란 부분이 범주 0이다. 막대 옆 수는 그 구역의 지니 지수와 엔트로피다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">오분류 수가 같은 두 분할도 지니 지수와 엔트로피는 구별한다</h2><p class="lead">범주 1과 범주 0이 400개씩인 구역의 두 분할 후보 A, B를 같은 자리에서 비교한다. 비교 기준을 바꾸면 막대의 값과 그 기준이 고르는 후보가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="c3">비교 기준</label><select id="c3"><option value="err">오분류 수</option><option value="gini">가중 지니 지수</option><option value="ent">가중 엔트로피</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="ab-plot" class="topic-plot" viewBox="0 0 900 330" role="img" aria-labelledby="ab-title ab-desc"><title id="ab-title">후보 A와 B의 비교</title><desc id="ab-desc">두 후보의 구성과 기준별 값</desc></svg></div><figcaption class="visual-caption">왼쪽은 각 후보가 만든 두 구역의 구성이다. 초록이 범주 1, 파란색이 범주 0이다. 오른쪽 막대는 고른 기준으로 잰 값이며 값이 작을수록 좋고, 초록 막대가 그 기준에서 가장 작은 후보다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../19. decision-trees/recursive-partitioning.html" rel="prev">이전 · Recursive Partitioning</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../19. decision-trees/tree-prediction.html" rel="next">다음 · Tree Prediction</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] ? a : b); }
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function head(svg) { return svg.querySelector("title").outerHTML + svg.querySelector("desc").outerHTML; }
+  function G(c1, c0) { var n = c1 + c0; if (!n) return 0; var p = c1 / n; return 2 * p * (1 - p); }
+  function D(c1, c0) { var n = c1 + c0; if (!n) return 0; var s = 0; [c1 / n, c0 / n].forEach(function (p) { if (p > 0) s -= p * Math.log(p); }); return s; }
+
+  function renderCurve() {
+    var p = Number($("p1").value), svg = $("curve-plot"), h = head(svg);
+    $("p1-out").textContent = p.toFixed(2);
+    var X = function (v) { return 80 + v * 520; }, Y = function (v) { return 310 - v / 0.75 * 280; };
+    [0, 0.25, 0.5, 0.75].forEach(function (v) { h += '<line class="grid" x1="80" y1="' + Y(v) + '" x2="600" y2="' + Y(v) + '"/><text class="small" x="70" y="' + (Y(v) + 4) + '" text-anchor="end">' + v.toFixed(2) + "</text>"; });
+    [0, 0.5, 1].forEach(function (v) { h += '<text class="small" x="' + X(v) + '" y="330" text-anchor="middle">' + v + "</text>"; });
+    h += '<line class="axis" x1="80" y1="310" x2="600" y2="310"/><text class="lab" x="340" y="352" text-anchor="middle">범주 1의 비율 p̂</text>';
+    var pe = "", pg = "";
+    for (var i = 0; i <= 100; i++) { var q = i / 100; pe += (i ? "L" : "M") + X(q).toFixed(1) + " " + Y(D(q, 1 - q)).toFixed(1); pg += (i ? "L" : "M") + X(q).toFixed(1) + " " + Y(G(q, 1 - q)).toFixed(1); }
+    h += '<path class="c-ent" d="' + pe + '"/><path class="c-gini" d="' + pg + '"/>';
+    h += '<text class="lab" x="' + X(0.5) + '" y="' + (Y(Math.log(2)) - 10) + '" text-anchor="middle">엔트로피</text><text class="lab" x="' + X(0.5) + '" y="' + (Y(0.5) + 22) + '" text-anchor="middle">지니 지수</text>';
+    var g = G(p, 1 - p), d = D(p, 1 - p);
+    h += '<line class="guide" x1="' + X(p) + '" y1="30" x2="' + X(p) + '" y2="310"/><circle class="d-ent" cx="' + X(p) + '" cy="' + Y(d) + '" r="7"/><circle class="d-gini" cx="' + X(p) + '" cy="' + Y(g) + '" r="7"/>';
+    var n1 = Math.round(p * 100);
+    h += '<text class="lab" x="680" y="70">범주 구성 (100개 기준)</text><rect class="k1" x="680" y="90" width="' + (n1 * 1.8) + '" height="40"/><rect class="k0" x="' + (680 + n1 * 1.8) + '" y="90" width="' + ((100 - n1) * 1.8) + '" height="40"/><rect class="box" x="680" y="90" width="180" height="40"/>';
+    h += '<text class="small" x="680" y="150">범주 1 ' + n1 + "개, 범주 0 " + (100 - n1) + "개</text>";
+    svg.innerHTML = h;
+    var acc = Math.max(p, 1 - p);
+    svg.querySelector("desc").textContent = "p̂ = " + p.toFixed(2) + ", 지니 지수 " + g.toFixed(3) + ", 엔트로피 " + d.toFixed(3);
+    var note;
+    if (p === 0 || p === 1) note = "한 범주만 있어 두 척도가 모두 0이다. 이 구역은 더 나눠도 불순도를 줄일 수 없다.";
+    else if (Math.abs(p - 0.5) < 1e-9) note = "두 범주가 반반이라 두 척도가 모두 최대다. 지니 지수는 0.5, 엔트로피는 ln 2 ≈ 0.693이다.";
+    else note = "p̂ = " + p.toFixed(2) + "이면 다수 범주 " + jro(p > 0.5 ? 1 : 0) + " 예측하고 정확도는 " + acc.toFixed(2) + "이다. 지니 지수는 " + g.toFixed(4) + ", 엔트로피는 " + d.toFixed(3) + "이다. 비율이 0.5에 가까워질수록 다수 범주는 그대로여도 두 척도가 커지므로, 불순도는 정확도 하나보다 섞인 정도를 더 세밀하게 반영한다.";
+    show(1, [["p̂", p.toFixed(2)], ["지니 지수 G", g.toFixed(4)], ["엔트로피 D", d.toFixed(3)], ["다수 범주 정확도", acc.toFixed(2)]], note);
+  }
+
+  function renderSplit(ev) {
+    var a = Number($("a2").value), b = Number($("b2").value), reason = $("reason-2");
+    if (a + b === 0 || a + b === 100) {
+      reason.hidden = false;
+      reason.textContent = a + b === 0 ? "왼쪽 구역이 비면 분할이 아니므로 왼쪽에 적어도 하나를 남긴다." : "오른쪽 구역이 비면 분할이 아니므로 오른쪽에 적어도 하나를 남긴다.";
+      var el = ev && ev.target && ev.target.id === "b2" ? $("b2") : $("a2");
+      el.value = String(Number(el.value) + (a + b === 0 ? 1 : -1)); a = Number($("a2").value); b = Number($("b2").value);
+    } else reason.hidden = true;
+    $("a2-out").textContent = a; $("b2-out").textContent = b;
+    var ra = 50 - a, rb = 50 - b, nl = a + b, nr = ra + rb, gp = G(50, 50), dp = D(50, 50), gl = G(a, b), gr = G(ra, rb), dl = D(a, b), dr = D(ra, rb);
+    var wg = (nl * gl + nr * gr) / 100, wd = (nl * dl + nr * dr) / 100, svg = $("split-plot"), h = head(svg);
+    function bar(x, y, c1, c0, label, gv, dv) {
+      var W = 3.2; h += '<text class="lab" x="' + x + '" y="' + (y - 10) + '">' + label + " (" + (c1 + c0) + "개, 범주 1 : 범주 0 = " + c1 + " : " + c0 + ")</text>";
+      h += '<rect class="k1" x="' + x + '" y="' + y + '" width="' + c1 * W + '" height="36"/><rect class="k0" x="' + (x + c1 * W) + '" y="' + y + '" width="' + c0 * W + '" height="36"/><rect class="box" x="' + x + '" y="' + y + '" width="' + Math.max((c1 + c0) * W, 1) + '" height="36"/>';
+      h += '<text class="small" x="' + (x + Math.max((c1 + c0) * W, 1) + 10) + '" y="' + (y + 16) + '">G ' + gv.toFixed(3) + '</text><text class="small" x="' + (x + Math.max((c1 + c0) * W, 1) + 10) + '" y="' + (y + 32) + '">D ' + dv.toFixed(3) + "</text>";
+    }
+    bar(40, 50, 50, 50, "나누기 전", gp, dp);
+    h += '<line class="link" x1="200" y1="90" x2="120" y2="170"/><line class="link" x1="200" y1="90" x2="560" y2="170"/>';
+    bar(40, 200, a, b, "왼쪽", gl, dl);
+    bar(470, 200, ra, rb, "오른쪽", gr, dr);
+    h += '<text class="big" x="40" y="300">가중 지니 ' + wg.toFixed(3) + "  →  ΔG = " + (gp - wg).toFixed(3) + "</text>";
+    h += '<text class="big" x="470" y="300">가중 엔트로피 ' + wd.toFixed(3) + "  →  정보이득 " + (dp - wd).toFixed(3) + "</text>";
+    svg.innerHTML = h;
+    svg.querySelector("desc").textContent = "왼쪽 " + a + " : " + b + ", 오른쪽 " + ra + " : " + rb + ", 가중 지니 " + wg.toFixed(3);
+    var note;
+    if (Math.abs(gp - wg) < 1e-9) note = "두 자식 구역의 비율이 부모와 같이 반반이라 가중 지니 지수가 0.500 그대로다. 관측을 나눴지만 범주 구성은 전혀 순수해지지 않아 감소량이 0이다.";
+    else note = "왼쪽 " + a + " : " + b + ", 오른쪽 " + jro(ra + " : " + rb) + " 나누면 가중 지니 지수가 " + jro(wg.toFixed(3)) + " 줄어 ΔG = " + (gp - wg).toFixed(3) + ", 엔트로피로 잰 정보이득은 " + (dp - wd).toFixed(3) + "이다. " +
+      (a === 40 && b === 10 ? "강의의 후보 A(40대 10, 10대 40)이며 0.320까지 줄인다. 후보 B(30대 25, 20대 25)는 0.495에 그친다." : a === 30 && b === 25 ? "강의의 후보 B이며 0.495로 거의 줄지 않는다. 후보 A(40대 10)는 0.320까지 줄인다." : "양쪽이 한 범주 쪽으로 치우칠수록 두 자식의 불순도가 작아지고 감소량이 커진다.");
+    show(2, [["왼쪽 / 오른쪽 구성", a + " : " + b + " / " + ra + " : " + rb], ["가중 지니 지수", wg.toFixed(3)], ["지니 감소 ΔG", (gp - wg).toFixed(3)], ["정보이득", (dp - wd).toFixed(3)]], note);
+  }
+
+  var CAND = { A: [[300, 100], [100, 300]], B: [[200, 400], [200, 0]] };
+  function metrics(sides) {
+    var n = 0, err = 0, wg = 0, wd = 0;
+    sides.forEach(function (s) { var m = s[0] + s[1]; n += m; err += Math.min(s[0], s[1]); wg += m * G(s[0], s[1]); wd += m * D(s[0], s[1]); });
+    return { err: err, gini: wg / n, ent: wd / n };
+  }
+  function renderAB() {
+    var crit = $("c3").value, svg = $("ab-plot"), h = head(svg), m = { before: metrics([[400, 400]]), A: metrics(CAND.A), B: metrics(CAND.B) };
+    ["A", "B"].forEach(function (k, j) {
+      var y = 60 + j * 120, x = 40, W = 0.3;
+      h += '<text class="lab" x="' + x + '" y="' + (y - 14) + '">후보 ' + k + "</text>";
+      CAND[k].forEach(function (s, i) {
+        var xx = x + i * 260; h += '<rect class="k1" x="' + xx + '" y="' + y + '" width="' + s[0] * W + '" height="34"/><rect class="k0" x="' + (xx + s[0] * W) + '" y="' + y + '" width="' + s[1] * W + '" height="34"/><rect class="box" x="' + xx + '" y="' + y + '" width="' + (s[0] + s[1]) * W + '" height="34"/>';
+        h += '<text class="small" x="' + xx + '" y="' + (y + 52) + '">' + (i ? "오른쪽 " : "왼쪽 ") + s[0] + " : " + s[1] + "</text>";
+      });
+    });
+    var keys = ["before", "A", "B"], names = { before: "분할 전", A: "후보 A", B: "후보 B" }, vals = keys.map(function (k) { return m[k][crit]; }), maxv = Math.max.apply(null, vals);
+    var bestAB = m.A[crit] < m.B[crit] - 1e-12 ? "A" : m.B[crit] < m.A[crit] - 1e-12 ? "B" : "같음";
+    keys.forEach(function (k, j) {
+      var y = 50 + j * 80, w = vals[j] / maxv * 200, on = k === bestAB;
+      h += '<text class="lab" x="520" y="' + (y + 20) + '">' + names[k] + '</text><rect class="bar' + (on ? " is-on" : "") + '" x="600" y="' + y + '" width="' + w + '" height="30"/><text class="lab" x="' + (608 + w) + '" y="' + (y + 20) + '">' + (crit === "err" ? vals[j] + "개" : vals[j].toFixed(3)) + "</text>";
+    });
+    svg.innerHTML = h;
+    var label = { err: "오분류 수", gini: "가중 지니 지수", ent: "가중 엔트로피" }[crit];
+    svg.querySelector("desc").textContent = label + ": 분할 전 " + (crit === "err" ? vals[0] : vals[0].toFixed(3)) + ", A " + (crit === "err" ? vals[1] : vals[1].toFixed(3)) + ", B " + (crit === "err" ? vals[2] : vals[2].toFixed(3));
+    var note = crit === "err"
+      ? "두 후보 모두 다수 범주로 예측하면 200개를 틀려 오분류 수로는 구별되지 않는다. 오분류 수는 구역마다 다수 범주가 몇 개 앞서는지만 보므로 B의 오른쪽처럼 완전히 순수한 구역이 생긴 것을 반영하지 못한다."
+      : label + "는 A " + m.A[crit].toFixed(3) + ", B " + jro(m.B[crit].toFixed(3)) + " B가 더 작다. B는 오른쪽에 범주 1만 200개 있는 순수한 구역을 만들어 그쪽 불순도가 0이기 때문이다. 오분류 수가 같아도 불순도 척도는 범주 구성의 차이를 반영해 B를 고른다.";
+    show(3, [["기준", label], ["후보 A", crit === "err" ? m.A.err + "개" : m.A[crit].toFixed(3)], ["후보 B", crit === "err" ? m.B.err + "개" : m.B[crit].toFixed(3)], ["고르는 후보", bestAB === "같음" ? "구별 못함" : "후보 " + bestAB]], note);
+  }
+
+  $("p1").addEventListener("input", renderCurve);
+  $("a2").addEventListener("input", renderSplit); $("b2").addEventListener("input", renderSplit);
+  $("c3").addEventListener("change", renderAB);
+  renderCurve(); renderSplit(); renderAB();
+}());
+</script>
+</body>
+</html>
