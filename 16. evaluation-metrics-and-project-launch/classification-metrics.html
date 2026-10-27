@@ -41,7 +41,7 @@
 <body class="visual-topic topic-classification-metrics">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Counting the Mistakes</span><span class="nav-tag is-current" aria-current="page">Classification Metrics</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/16.%20Counting%20the%20Mistakes.pdf">Counting the <span class="publication-lecture-tail">Mistakes<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Classification Metrics</h1><hr class="accent-rule"><p class="page-subtitle">혼동행렬(confusion matrix)은 이진분류의 결과를 TP, FP, FN, TN 네 칸의 관측 수로 적은 표다. 정확도, 정밀도(precision), 재현율(recall), F₁은 이 네 칸에서 서로 다른 분자와 분모를 골라 계산한다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/16.%20Counting%20the%20Mistakes.pdf">Counting the <span class="publication-lecture-tail">Mistakes<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Classification Metrics</h1><hr class="accent-rule"><p class="page-subtitle">혼동행렬(confusion matrix)은 실제 범주와 예측 범주별 관측 수를 나타낸 표다. 이진분류에서는 TP, FP, FN, TN 네 경우로 나눈다. 정확도, 정밀도(precision), 재현율(recall), F₁은 이 네 칸에서 서로 다른 분자와 분모를 골라 계산한다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>거짓 양성(FP)과 거짓 음성(FN)</strong><span>FP는 실제 음성을 양성으로, FN은 실제 양성을 음성으로 예측한 경우다.</span></article><article class="summary-card"><strong>정밀도 TP / (TP + FP)</strong><span>양성으로 예측한 관측 가운데 실제 양성의 비율이다.</span></article><article class="summary-card"><strong>재현율 TP / (TP + FN)</strong><span>실제 양성 가운데 양성으로 예측한 비율이며 민감도, TPR과 같다.</span></article></div></section>
 
@@ -61,9 +61,9 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">양성을 어느 쪽으로 두느냐에 따라 정밀도와 재현율이 달라진다</h2><p class="lead">질환 검사 결과 TP = 12, FP = 3, FN = 8, TN = 977을 그대로 두고 양성으로 부를 범주를 바꾸면 네 칸의 이름과 정밀도·재현율이 바뀌고 정확도는 그대로다.</p></header>
+    <header class="example-header"><h2 class="section-title">양성 클래스에 따라 정밀도와 재현율이 달라진다</h2><p class="lead">질환 검사 결과 TP = 12, FP = 3, FN = 8, TN = 977을 그대로 두고 양성 클래스를 바꾸면 네 칸의 이름과 정밀도·재현율이 바뀌고 정확도는 그대로다.</p></header>
     <div class="visual-lab">
-      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="posclass">양성으로 두는 범주</label><select id="posclass"><option value="sick">질환 있음</option><option value="healthy">질환 없음</option></select></div></div>
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="posclass">양성 클래스</label><select id="posclass"><option value="sick">질환 있음</option><option value="healthy">질환 없음</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><table id="cm2" class="topic-table" aria-label="양성 범주에 따른 혼동행렬"></table></div><figcaption class="visual-caption">행은 예측, 열은 실제 범주다. 칸마다 관측 수와 현재 양성 기준의 이름을 적었다. 초록 칸이 맞힌 관측이다.</figcaption></figure>
       <div id="read-2" class="visual-readouts" aria-live="polite"></div>
       <p id="note-2" class="visual-note"></p>
@@ -137,7 +137,7 @@
     var prec = TP / (TP + FP), rec = TP / (TP + FN);
     show(2, [["TP · FP · FN", TP + " · " + FP + " · " + FN], ["정밀도", prec.toFixed(3)], ["재현율", rec.toFixed(3)], ["정확도", "0.989"]],
       sick ? "찾아내려는 질환 있음을 양성으로 두면 정밀도 12/15 = 0.800, 재현율 12/20 = 0.600이다. 재현율은 실제 환자 20명 가운데 찾아낸 비율이다."
-        : "질환 없음을 양성으로 두면 TP가 977, FP가 8이 되어 정밀도 977/985 = 0.992, 재현율 977/980 = 0.997로 모두 높아 보인다. 정확도 989/1,000은 그대로다. 환자를 놓친 8명은 이제 FP로 세어져 두 비율에 거의 드러나지 않으므로, 양성을 먼저 정해야 지표의 뜻이 정해진다.");
+        : "질환 없음을 양성으로 두면 TP가 977, FP가 8이 되어 정밀도 977/985 = 0.992, 재현율 977/980 = 0.997로 모두 높아 보인다. 정확도 989/1,000은 그대로다. 환자를 놓친 8명은 이제 FP로 세어져 두 비율에 거의 드러나지 않으므로, 양성 클래스를 먼저 정해야 지표를 해석할 수 있다.");
   }
 
   var POL = { all: { tp: 20, fp: 980 }, one: { tp: 1, fp: 0 }, cm: { tp: 12, fp: 3 }, even: { tp: 16, fp: 4 } };

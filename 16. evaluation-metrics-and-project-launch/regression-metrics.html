@@ -31,7 +31,7 @@
 <body class="visual-topic topic-regression-metrics">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Counting the Mistakes</span><span class="nav-tag is-current" aria-current="page">Regression Metrics</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/16.%20Counting%20the%20Mistakes.pdf">Counting the <span class="publication-lecture-tail">Mistakes<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Regression Metrics</h1><hr class="accent-rule"><p class="page-subtitle">평가지표(evaluation metric)는 관측마다 계산한 오차를 하나의 수로 요약하는 규칙이다. MSE, RMSE, MAE, R²는 같은 예측을 서로 다른 방식으로 요약하므로 무엇을 큰 오류로 볼지 먼저 정한다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/16.%20Counting%20the%20Mistakes.pdf">Counting the <span class="publication-lecture-tail">Mistakes<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Regression Metrics</h1><hr class="accent-rule"><p class="page-subtitle">회귀 평가지표(evaluation metric)는 예측 오차를 요약한 값이다. MSE, RMSE, MAE, R²는 오차를 반영하는 방식이 다르므로 평가 목적에 맞는 지표를 선택한다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>MSE와 RMSE</strong><span>MSE는 오차 제곱의 평균이고 RMSE는 그 제곱근이라 관측값과 단위가 같다.</span></article><article class="summary-card"><strong>MAE</strong><span>절대 오차의 평균이며 오차 크기에 비례해 벌점을 준다.</span></article><article class="summary-card"><strong>R²</strong><span>1 − Σ(yᵢ − ŷᵢ)² / Σ(yᵢ − ȳ)²이며 평가 자료의 평균을 기준선으로 삼는다.</span></article></div></section>
 
@@ -46,9 +46,9 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">절대 오차의 합이 같아도 오차가 몰리면 MSE가 커진다</h2><p class="lead">관측 10개의 절대 오차 합을 10으로 고정하고, 그 오차를 몇 개 관측에 나누어 싣는지 바꾸면 MAE는 그대로이고 MSE와 RMSE만 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">절대 오차의 합이 같아도 오차가 몰리면 MSE가 커진다</h2><p class="lead">관측 10개의 절대 오차 합을 10으로 고정하고, 그 오차를 몇 개 관측에 배분하는지 바꾸면 MAE는 그대로이고 MSE와 RMSE만 바뀐다.</p></header>
     <div class="visual-lab">
-      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="spread">오차를 싣는 방식</label><select id="spread"><option value="1">한 관측에 10</option><option value="2">두 관측에 5씩</option><option value="5">다섯 관측에 2씩</option><option value="10">열 관측에 1씩</option></select></div></div>
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="spread">오차를 배분하는 방식</label><select id="spread"><option value="1">한 관측에 10</option><option value="2">두 관측에 5씩</option><option value="5">다섯 관측에 2씩</option><option value="10">열 관측에 1씩</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="spread-plot" class="topic-plot" viewBox="0 0 900 300" role="img" aria-labelledby="sp-title sp-desc"><title id="sp-title">절대 오차 합 10의 배치</title><desc id="sp-desc">칸 하나가 관측 하나다. 위 파란 막대는 절대 오차, 아래 초록 막대는 제곱 오차이며 막대 위 수가 그 값이다. 회색 칸은 오차가 0인 관측이다.</desc></svg></div><figcaption class="visual-caption">칸 하나가 관측 하나다. 위 파란 막대는 절대 오차, 아래 초록 막대는 제곱 오차이며 막대 위 수가 그 값이다. 회색 칸은 오차가 0인 관측이다.</figcaption></figure>
       <div id="read-2" class="visual-readouts" aria-live="polite"></div>
       <p id="note-2" class="visual-note"></p>
@@ -56,7 +56,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">R²는 평가 자료의 평균을 늘 예측하는 기준선과 비교한다</h2><p class="lead">같은 관측값 y = (2, 4, 6, 8)에서 예측 방식을 바꾸면 모델의 제곱 오차 합과 평균 기준선의 제곱 오차 합의 비, 곧 R²가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">R²는 평가 자료의 평균을 늘 예측하는 기준선과 비교한다</h2><p class="lead">같은 관측값 y = (2, 4, 6, 8)에서 예측 방식을 바꾸면 모델의 제곱 오차 합이 달라지고, 이에 따라 R²도 바뀐다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="model">예측 방식</label><select id="model"><option value="fit">예측 (2, 5, 5, 10)</option><option value="mean">평균 5를 늘 예측</option><option value="shift">예측 (5, 8, 8, 13)</option><option value="perfect">관측값과 같은 예측</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="r2-plot" class="topic-plot" viewBox="0 0 900 250" role="img" aria-labelledby="r2-title r2-desc"><title id="r2-title">모델과 평균 기준선의 제곱 오차 합</title><desc id="r2-desc">위 빨간 막대는 모델의 제곱 오차 합 Σ(yᵢ − ŷᵢ)², 아래 파란 막대는 평균 ȳ = 5를 늘 예측한 기준선의 제곱 오차 합 Σ(yᵢ − ȳ)² = 20이다. 두 막대의 길이 비는 1 − R²다.</desc></svg></div><figcaption class="visual-caption">위 빨간 막대는 모델의 제곱 오차 합 Σ(yᵢ − ŷᵢ)², 아래 파란 막대는 평균 ȳ = 5를 늘 예측한 기준선의 제곱 오차 합 Σ(yᵢ − ȳ)² = 20이다. 두 막대의 길이 비는 1 − R²다.</figcaption></figure>
