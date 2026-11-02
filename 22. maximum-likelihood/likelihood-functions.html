@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Likelihood Functions | Machine Learning | Pusan National University</title><meta name="description" content="A likelihood holds the observed data fixed and varies the parameter, and maximum likelihood estimation selects the parameter that makes those observations most likely."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/22.%20maximum-likelihood/likelihood-functions.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Likelihood Functions | Machine Learning | Pusan National University"><meta property="og:description" content="A likelihood holds the observed data fixed and varies the parameter, and maximum likelihood estimation selects the parameter that makes those observations most likely."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/22.%20maximum-likelihood/likelihood-functions.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .lab{font-size:14px;fill:var(--ink-700);paint-order:stroke;stroke:var(--white);stroke-width:4px}
+    .topic-plot .grid{stroke:var(--line-200);stroke-width:1}
+    .topic-plot .axis{stroke:var(--ink-600);stroke-width:1.2}
+    .topic-plot .bar{fill:var(--pnu-blue-tint);stroke:var(--pnu-blue);stroke-width:1.2}
+    .topic-plot .bar.is-obs{fill:var(--pnu-green);stroke:var(--pnu-green)}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3}
+    .topic-plot .curve2{fill:none;stroke:var(--pnu-green);stroke-width:3;stroke-dasharray:9 5}
+    .topic-plot .area{fill:var(--pnu-blue-tint)}
+    .topic-plot .dot{fill:var(--pnu-green);stroke:var(--white);stroke-width:2}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1;stroke-dasharray:3 3}
+    .topic-plot .mle{stroke:var(--ink-900);stroke-width:2;stroke-dasharray:6 4}
+    .topic-plot .coin circle{stroke-width:2}
+    .topic-plot .coin.h circle{fill:var(--pnu-green);stroke:var(--pnu-green)}
+    .topic-plot .coin.t circle{fill:var(--white);stroke:var(--ink-600)}
+    .topic-plot .coin text{font-size:13px;font-weight:700;text-anchor:middle;dominant-baseline:central}
+    .topic-plot .coin.h text{fill:var(--white)}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-likelihood-functions">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">What Makes the Data Likely</span><span class="nav-tag is-current" aria-current="page">Likelihood Functions</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/22.%20What%20Makes%20the%20Data%20Likely.pdf">What Makes the Data <span class="publication-lecture-tail">Likely<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Likelihood Functions</h1><hr class="accent-rule"><p class="page-subtitle">확률분포는 매개변수 θ를 고정하고 가능한 자료값의 확률을 본다. 우도(likelihood) L(θ)는 반대로 관측한 자료를 고정하고 θ를 움직이며 그 자료가 나올 확률을 비교한다. 최대우도 추정(maximum likelihood estimation, MLE)은 이 곡선을 가장 높게 만드는 θ를 고른다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>L(θ) = θ⁷(1 − θ)³</strong><span>앞 7번, 뒤 3번이 관측한 순서대로 나올 확률을 θ의 함수로 본 것이다. 각 던짐은 독립이고 앞면 확률은 모두 θ다.</span></article><article class="summary-card"><strong>우도는 θ의 확률이 아니다</strong><span>자료값에 대해서는 확률의 합이 1이지만, 우도를 θ에 대해 적분한 값은 1일 필요가 없다.</span></article><article class="summary-card"><strong>상대우도 L(θ)/L(θ̂)</strong><span>최대점에서 1이 되도록 나눈 값으로, 후보 θ가 관측 자료를 얼마나 잘 설명하는지 비교한다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">같은 식도 θ를 고정하면 확률분포, 자료를 고정하면 우도가 된다</h2><p class="lead">동전을 10번 던져 앞, 뒤, 앞, 앞, 뒤, 앞, 앞, 뒤, 앞, 앞을 얻었다. θ를 바꾸면 왼쪽의 앞면 수 확률분포와 오른쪽 우도 곡선 위의 점이 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="t1">앞면 확률 θ <output id="t1-out" class="control-value" for="t1">0.50</output></label><input id="t1" type="range" min="0.01" max="0.99" step="0.01" value="0.5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="pl-plot" class="topic-plot" viewBox="0 0 900 360" role="img" aria-labelledby="pl-title pl-desc"><title id="pl-title">확률분포와 우도</title><desc id="pl-desc">θ를 고정한 앞면 수의 분포와 자료를 고정한 우도 곡선</desc></svg></div><figcaption class="visual-caption">위 줄 동전은 관측한 순서이고 초록이 앞면이다. 왼쪽 막대는 θ를 고정했을 때 앞면 수 0부터 10까지의 확률이며 막대 높이의 합이 1이고, 초록 막대가 관측한 앞면 7번이다. 오른쪽 곡선은 관측 순서를 고정한 L(θ)이고 초록 점이 현재 θ, 검은 점선이 최대점이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">관측한 앞면 수가 바뀌면 우도 곡선의 최대점이 s/n으로 옮겨 간다</h2><p class="lead">10번 가운데 앞면 수를 바꾸면 상대우도 곡선과 그 최대점이 바뀐다. 모두 앞면이거나 모두 뒷면인 경우도 확인한다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="s2">앞면 수 s (10번 중) <output id="s2-out" class="control-value" for="s2">7</output></label><input id="s2" type="range" min="0" max="10" step="1" value="7"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="s-plot" class="topic-plot" viewBox="0 0 900 320" role="img" aria-labelledby="s-title s-desc"><title id="s-title">앞면 수와 상대우도</title><desc id="s-desc">앞면 수에 따른 상대우도 곡선과 최대점</desc></svg></div><figcaption class="visual-caption">가로축은 θ, 세로축은 최대점에서 1이 되도록 나눈 상대우도다. 파란 곡선이 현재 앞면 수의 상대우도, 검은 점선과 점이 최대점이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">앞면 비율이 같아도 관측이 많을수록 우도 곡선이 좁아진다</h2><p class="lead">앞면 비율을 0.7로 두고 던진 횟수를 바꾼다. 곡선의 최대점은 같지만 0.7에서 벗어난 θ의 상대우도가 얼마나 빨리 줄어드는지가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="n3">던진 횟수</label><select id="n3"><option value="10">10번 (앞면 7번)</option><option value="100" selected>100번 (앞면 70번)</option><option value="1000">1,000번 (앞면 700번)</option></select></div><div class="control-field"><label for="c3">비교할 θ <output id="c3-out" class="control-value" for="c3">0.60</output></label><input id="c3" type="range" min="0.3" max="0.95" step="0.01" value="0.6"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="n-plot" class="topic-plot" viewBox="0 0 900 320" role="img" aria-labelledby="n-title n-desc"><title id="n-title">관측 수와 상대우도의 폭</title><desc id="n-desc">10번과 선택한 횟수의 상대우도 곡선</desc></svg></div><figcaption class="visual-caption">회색 곡선은 기준인 10번(앞면 7번), 초록 점선은 선택한 던진 횟수의 상대우도다. 세로 점선과 초록 점이 비교할 θ의 상대우도이고 옅은 파란 띠는 상대우도가 0.15 이상인 구간이다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../21. naive-bayes/conditional-independence.html" rel="prev">이전 · Conditional Independence</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../22. maximum-likelihood/maximum-likelihood-estimation.html" rel="next">다음 · Maximum Likelihood Estimation</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] ? a : b); }
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function head(svg) { return svg.querySelector("title").outerHTML + svg.querySelector("desc").outerHTML; }
+  function ll(t, s, n) { return (s ? s * Math.log(t) : 0) + (n - s ? (n - s) * Math.log(1 - t) : 0); }
+  function rel(t, s, n) { var th = s / n; if (t <= 0 || t >= 1) return (t <= 0 && s === 0) || (t >= 1 && s === n) ? 1 : 0; var m = th <= 0 || th >= 1 ? 0 : ll(th, s, n); return Math.exp(ll(t, s, n) - m); }
+  function choose(n, k) { var r = 1; for (var i = 1; i <= k; i++) r = r * (n - k + i) / i; return r; }
+  function sci(v) { if (v === 0) return "0"; var e = Math.floor(Math.log10(v)); return v >= 0.001 ? v.toFixed(5) : (v / Math.pow(10, e)).toFixed(3) + "×10^" + e; }
+  var SEQ = [1, 0, 1, 1, 0, 1, 1, 0, 1, 1];
+
+  function renderPL() {
+    var t = Number($("t1").value), svg = $("pl-plot"), h = head(svg);
+    $("t1-out").textContent = t.toFixed(2);
+    SEQ.forEach(function (y, i) { var x = 60 + i * 36; h += '<g class="coin ' + (y ? "h" : "t") + '"><circle cx="' + x + '" cy="24" r="14"/><text x="' + x + '" y="24">' + (y ? "앞" : "뒤") + "</text></g>"; });
+    var probs = []; for (var k = 0; k <= 10; k++) probs.push(choose(10, k) * Math.pow(t, k) * Math.pow(1 - t, 10 - k));
+    var maxp = Math.max.apply(null, probs), sum = probs.reduce(function (a, b) { return a + b; }, 0);
+    probs.forEach(function (p, k) { var x = 50 + k * 34, hh = p / Math.max(maxp, 0.3) * 220; h += '<rect class="bar' + (k === 7 ? " is-obs" : "") + '" x="' + x + '" y="' + (300 - hh).toFixed(1) + '" width="26" height="' + hh.toFixed(1) + '"/><text class="small" x="' + (x + 13) + '" y="316" text-anchor="middle">' + k + "</text>"; });
+    h += '<text class="small" x="220" y="340" text-anchor="middle">앞면 수 (θ 고정, 합 = ' + sum.toFixed(3) + ")</text>";
+    var X = function (v) { return 480 + v * 390; }, Y = function (v) { return 300 - v / 0.0023 * 240; }, L = function (v) { return Math.pow(v, 7) * Math.pow(1 - v, 3); };
+    var path = ""; for (var i = 0; i <= 100; i++) { var v = i / 100; path += (i ? "L" : "M") + X(v).toFixed(1) + " " + Y(L(v)).toFixed(1); }
+    [0, 0.5, 1].forEach(function (v) { h += '<text class="small" x="' + X(v) + '" y="316" text-anchor="middle">' + v + "</text>"; });
+    h += '<line class="axis" x1="480" y1="300" x2="870" y2="300"/><path class="curve" d="' + path + '"/><line class="mle" x1="' + X(0.7) + '" y1="56" x2="' + X(0.7) + '" y2="300"/>';
+    h += '<line class="guide" x1="' + X(t) + '" y1="56" x2="' + X(t) + '" y2="300"/><circle class="dot" cx="' + X(t) + '" cy="' + Y(L(t)) + '" r="7"/><text class="small" x="675" y="340" text-anchor="middle">θ (자료 고정)</text><text class="lab" x="484" y="70">L(θ) = θ⁷(1 − θ)³</text>';
+    svg.innerHTML = h;
+    var Lt = L(t), relv = Lt / L(0.7);
+    svg.querySelector("desc").textContent = "θ = " + t + ", 관측 순서의 확률 " + sci(Lt) + ", 상대우도 " + relv.toFixed(3);
+    var note = "θ = " + t.toFixed(2) + "로 고정하면 왼쪽처럼 앞면 수 0부터 10까지의 확률이 정해지고 그 합은 1이다. 관측한 순서가 나올 확률은 " + t.toFixed(2) + "⁷ × " + (1 - t).toFixed(2) + "³ = " + sci(Lt) + "이고, 이 값을 θ마다 이은 것이 오른쪽 우도 곡선이다. " +
+      (Math.abs(t - 0.7) < 0.005 ? "θ = 0.70에서 곡선이 가장 높아 MLE가 된다." : "θ = 0.70일 때의 " + (relv < 0.001 ? "0.1% 미만" : (relv * 100).toFixed(1) + "%") + " 수준이라 관측 자료를 덜 잘 설명한다.") + " 곡선 아래 넓이는 약 0.00076으로 1이 아니므로 우도를 θ의 확률로 읽지 않는다.";
+    note = note.replace("θ = " + t.toFixed(2) + "로 고정", jro("θ = " + t.toFixed(2)) + " 고정");
+    show(1, [["관측 순서의 확률 L(θ)", sci(Lt)], ["상대우도 L(θ)/L(0.7)", relv.toFixed(3)], ["앞면 7번의 확률 (순서 무관)", probs[7].toFixed(3)], ["앞면 수 확률의 합", sum.toFixed(3)]], note);
+  }
+
+  function renderS() {
+    var s = Number($("s2").value), n = 10, svg = $("s-plot"), h = head(svg), th = s / n;
+    $("s2-out").textContent = s;
+    var X = function (v) { return 70 + v * 780; }, Y = function (v) { return 280 - v * 240; };
+    [0, 0.5, 1].forEach(function (v) { h += '<line class="grid" x1="70" y1="' + Y(v) + '" x2="850" y2="' + Y(v) + '"/><text class="small" x="60" y="' + (Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
+    [0, 0.25, 0.5, 0.75, 1].forEach(function (v) { h += '<text class="small" x="' + X(v) + '" y="300" text-anchor="middle">' + v + "</text>"; });
+    var path = ""; for (var i = 0; i <= 200; i++) { var v = i / 200; path += (i ? "L" : "M") + X(v).toFixed(1) + " " + Y(rel(v, s, n)).toFixed(1); }
+    h += '<path class="curve" d="' + path + '"/><line class="mle" x1="' + X(th) + '" y1="36" x2="' + X(th) + '" y2="280"/><circle class="dot" cx="' + X(th) + '" cy="' + Y(1) + '" r="7"/><text class="small" x="460" y="316" text-anchor="middle">θ</text>';
+    svg.innerHTML = h;
+    svg.querySelector("desc").textContent = "앞면 " + s + "번, MLE " + th;
+    var note = s === 10 ? "모두 앞면이면 L(θ) = θ¹⁰이라 θ가 클수록 계속 커지고, 구간 끝 θ = 1에서 최대다. 미분값이 0인 내부 점이 없으므로 경계를 따로 확인한다."
+      : s === 0 ? "모두 뒷면이면 L(θ) = (1 − θ)¹⁰이라 θ = 0에서 최대다. 미분값이 0인 내부 점이 없으므로 경계를 따로 확인한다."
+      : "앞면 " + s + "번, 뒷면 " + (n - s) + "번이면 L(θ) = θ^" + s + kj("(1 − θ)^" + (n - s), "이", "가") + " θ̂ = " + s + "/10 = " + th.toFixed(1) + "에서 최대다. 관측한 앞면 비율이 곧 최대우도 추정값이다.";
+    show(2, [["우도 식", s === 0 ? "(1 − θ)¹⁰" : s === 10 ? "θ¹⁰" : "θ^" + s + "(1 − θ)^" + (n - s)], ["MLE θ̂", th.toFixed(1)], ["θ = 0.5의 상대우도", rel(0.5, s, n).toFixed(3)], ["최대점 위치", s === 0 || s === 10 ? "구간의 끝" : "구간 내부"]], note);
+  }
+
+  function renderN() {
+    var n = Number($("n3").value), s = Math.round(0.7 * n), c = Number($("c3").value), svg = $("n-plot"), h = head(svg);
+    $("c3-out").textContent = c.toFixed(2);
+    var X = function (v) { return 70 + (v - 0.3) / 0.7 * 780; }, Y = function (v) { return 270 - v * 230; };
+    var lo = null, hi = null; for (var i = 0; i <= 700; i++) { var v = 0.3 + i / 1000; if (rel(v, s, n) >= 0.15) { if (lo === null) lo = v; hi = v; } }
+    h += '<rect class="area" x="' + X(lo) + '" y="40" width="' + (X(hi) - X(lo)) + '" height="230"/>';
+    [0.3, 0.5, 0.7, 0.9].forEach(function (v) { h += '<text class="small" x="' + X(v) + '" y="290" text-anchor="middle">' + v + "</text>"; });
+    [0, 0.5, 1].forEach(function (v) { h += '<line class="grid" x1="70" y1="' + Y(v) + '" x2="850" y2="' + Y(v) + '"/><text class="small" x="60" y="' + (Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
+    var p10 = "", pn = "";
+    for (i = 0; i <= 350; i++) { v = 0.3 + i * 0.002; p10 += (i ? "L" : "M") + X(v).toFixed(1) + " " + Y(rel(v, 7, 10)).toFixed(1); pn += (i ? "L" : "M") + X(v).toFixed(1) + " " + Y(rel(v, s, n)).toFixed(1); }
+    h += '<path d="' + p10 + '" style="fill:none;stroke:var(--ink-600);stroke-width:2.5"/><path class="curve2" d="' + pn + '"/>';
+    var rc = rel(c, s, n);
+    h += '<line class="guide" x1="' + X(c) + '" y1="30" x2="' + X(c) + '" y2="270"/><circle class="dot" cx="' + X(c) + '" cy="' + Y(rc) + '" r="7"/><text class="small" x="460" y="310" text-anchor="middle">θ</text>';
+    svg.innerHTML = h;
+    svg.querySelector("desc").textContent = n + "번, θ = " + c + "의 상대우도 " + sci(rc) + ", 0.15 이상 구간 " + lo.toFixed(2) + "부터 " + hi.toFixed(2) + "까지";
+    var r10 = rel(c, 7, 10);
+    var note = n === 10 ? "10번 던져 앞면 7번이면 θ = " + c.toFixed(2) + "의 상대우도가 " + r10.toFixed(3) + "이고, 상대우도 0.15 이상 구간이 " + lo.toFixed(2) + "부터 " + hi.toFixed(2) + "까지 넓다. 관측이 적어 여러 θ가 자료를 비슷하게 설명한다."
+      : n.toLocaleString("en-US") + "번 던져 앞면 " + s + "번이면 최대점은 같은 0.7이지만 θ = " + c.toFixed(2) + "의 상대우도가 " + (rc < 0.001 ? sci(rc) : rc.toFixed(3)) + "로 10번일 때의 " + r10.toFixed(3) + "보다 " + (rc < r10 ? "작다" : "크지 않다") + ". 상대우도 0.15 이상 구간이 " + lo.toFixed(2) + "부터 " + hi.toFixed(2) + "까지로" + " 좁아져, 관측이 많을수록 0.7에서 먼 값은 자료와 맞지 않는다고 더 분명히 말할 수 있다.";
+    if (Math.abs(c - 0.7) < 0.005) note = "θ = 0.70은 최대점이라 어느 횟수에서든 상대우도가 1이다. 다른 θ를 골라 곡선의 폭을 비교한다.";
+    note = note.replace("상대우도가 " + (rc < 0.001 ? sci(rc) : rc.toFixed(3)) + "로", "상대우도가 " + jro(rc < 0.001 ? sci(rc) : rc.toFixed(3)));
+    show(3, [["던진 횟수", n.toLocaleString("en-US") + "번"], ["θ = " + c.toFixed(2) + "의 상대우도", rc < 0.001 ? sci(rc) : rc.toFixed(3)], ["10번일 때 같은 θ", r10.toFixed(3)], ["상대우도 0.15 이상 구간", lo.toFixed(2) + " ~ " + hi.toFixed(2)]], note);
+  }
+
+  $("t1").addEventListener("input", renderPL); $("s2").addEventListener("input", renderS);
+  $("n3").addEventListener("change", renderN); $("c3").addEventListener("input", renderN);
+  renderPL(); renderS(); renderN();
+}());
+</script>
+</body>
+</html>

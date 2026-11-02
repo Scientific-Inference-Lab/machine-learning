@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Probability Model Factorization | Machine Learning | Pusan National University</title><meta name="description" content="Generative models estimate the joint distribution and apply Bayes' theorem, while discriminative models estimate conditional class probabilities directly; both can use maximum likelihood with different likelihood functions."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/22.%20maximum-likelihood/probability-model-factorization.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Probability Model Factorization | Machine Learning | Pusan National University"><meta property="og:description" content="Generative models estimate the joint distribution and apply Bayes' theorem, while discriminative models estimate conditional class probabilities directly; both can use maximum likelihood with different likelihood functions."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/22.%20maximum-likelihood/probability-model-factorization.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .lab{font-size:14px;fill:var(--ink-700);paint-order:stroke;stroke:var(--white);stroke-width:4px}
+    .topic-plot .big{font-size:15px;font-weight:700;fill:var(--ink-900)}
+    .topic-plot .grid{stroke:var(--line-200);stroke-width:1}
+    .topic-plot .axis{stroke:var(--ink-600);stroke-width:1.2}
+    .topic-plot .box rect{fill:var(--white);stroke:var(--line-300);stroke-width:1.5}
+    .topic-plot .box.is-on rect{fill:color-mix(in srgb,var(--pnu-green) 16%,var(--white));stroke:var(--pnu-green);stroke-width:2.5}
+    .topic-plot .box text{font-size:14px;text-anchor:middle;dominant-baseline:central}
+    .topic-plot .arrow{stroke:var(--ink-600);stroke-width:1.8;fill:none}
+    .topic-plot .b-nb{fill:var(--pnu-blue);stroke:var(--pnu-blue)}
+    .topic-plot .b-lr{fill:var(--pnu-green);stroke:var(--pnu-green)}
+    .topic-plot .pt{fill:var(--pnu-blue);stroke:var(--white);stroke-width:1.5}
+    .topic-plot .fit{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res{stroke:var(--alert-700);stroke-width:1.5;stroke-dasharray:3 3}
+    .topic-plot .c-rss{fill:none;stroke:var(--pnu-blue);stroke-width:3}
+    .topic-plot .c-nll{fill:none;stroke:var(--pnu-green);stroke-width:3;stroke-dasharray:9 5}
+    .topic-plot .dot{fill:var(--ink-900)}
+    .topic-plot .guide{stroke:var(--ink-600);stroke-width:1;stroke-dasharray:3 3}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-probability-model-factorization">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">What Makes the Data Likely</span><span class="nav-tag is-current" aria-current="page">Probability Model Factorization</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/22.%20What%20Makes%20the%20Data%20Likely.pdf">What Makes the Data <span class="publication-lecture-tail">Likely<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Probability Model Factorization</h1><hr class="accent-rule"><p class="page-subtitle">분류 모델은 어떤 확률분포를 모델링하느냐로 나뉜다. 생성 모델(generative model)은 결합분포 P(x, y) = f_y(x)π_y를 추정한 뒤 베이즈 정리로 사후확률을 계산하고, 판별 모델(discriminative model)은 P(y | x)를 직접 추정한다. 두 방식 모두 최대우도로 추정하지만 최대화하는 우도가 다르고, 선형 회귀의 최소제곱도 정규 오차를 가정한 최대우도 추정이다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>L_NB = Π f_yᵢ(xᵢ)π_yᵢ</strong><span>나이브 베이즈는 특성과 범주의 결합분포 우도를 최대화한다.</span></article><article class="summary-card"><strong>L_logistic = Π P(Y = yᵢ | xᵢ)</strong><span>로지스틱 회귀는 조건부 우도를 최대화한다. −ℓ은 관측마다의 로지스틱 손실을 더한 값이다.</span></article><article class="summary-card"><strong>가정의 득실</strong><span>타당한 분포 가정은 자료가 적을 때 추정을 안정시킬 수 있다. 가정이 자료와 크게 어긋나면 불리해질 수 있으므로 두 방식의 검증 성능을 비교한다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">생성 모델은 결합확률을 곱해 만든 뒤 합으로 나누어 사후확률을 얻는다</h2><p class="lead">P(y = 1) = 0.4, P(x = 1 | y = 1) = 0.75, P(x = 1 | y = 0) = 0.20인 이진 특성 하나의 예다. 관측한 x와 계산 방식을 바꾸면 두 경로의 중간값과 사후확률이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="x1">관측한 x</label><select id="x1"><option value="1">x = 1</option><option value="0">x = 0</option></select></div><div class="control-field"><label for="w1">계산 방식</label><select id="w1"><option value="gen">생성 모델 (결합확률 → 베이즈 정리)</option><option value="dis">판별 모델 (P(y | x)를 직접)</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="gd-plot" class="topic-plot" viewBox="0 0 900 290" role="img" aria-labelledby="gd-title gd-desc"><title id="gd-title">생성 모델과 판별 모델의 계산 경로</title><desc id="gd-desc">결합확률을 거치는 경로와 조건부 확률을 직접 쓰는 경로</desc></svg></div><figcaption class="visual-caption">위 줄은 생성 모델, 아래 줄은 판별 모델의 계산 경로다. 초록 상자가 고른 계산 방식이 실제로 거치는 단계이고, 두 경로의 마지막 상자가 같은 사후확률을 가리킨다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">최소제곱의 RSS와 정규 오차의 음의 로그 우도는 같은 기울기에서 가장 작다</h2><p class="lead">관측 여섯 개에 절편 0인 직선 y = βx를 맞춘다. 기울기 β를 바꾸면 잔차, RSS, σ² = 1로 둔 음의 로그 우도가 함께 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="b2">기울기 β <output id="b2-out" class="control-value" for="b2">1.50</output></label><input id="b2" type="range" min="0.5" max="3" step="0.05" value="1.5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="ls-plot" class="topic-plot" viewBox="0 0 900 330" role="img" aria-labelledby="ls-title ls-desc"><title id="ls-title">RSS와 음의 로그 우도</title><desc id="ls-desc">직선과 잔차, 기울기별 RSS와 음의 로그 우도</desc></svg></div><figcaption class="visual-caption">왼쪽에서 파란 점이 관측, 초록 선이 현재 직선, 빨간 점선이 잔차다. 오른쪽에서 파란 실선이 RSS/2, 초록 점선이 −ℓ(β)이며 두 곡선은 상수 C만큼 떨어져 있다. 검은 점이 현재 β다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">한 번의 테스트에서는 생성 모델이 나았지만 그 결과를 일반화하지 않는다</h2><p class="lead">Smarket 자료에서 2001년부터 2004년까지로 학습하고 2005년 252일로 평가한 가우시안 나이브 베이즈와 로지스틱 회귀의 결과다. 지표를 바꾸면 두 모델의 값과 계산식이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="m3">테스트 지표</label><select id="m3"><option value="acc">정확도</option><option value="rec">상승 재현율</option><option value="pre">상승 정밀도</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="sm-plot" class="topic-plot" viewBox="0 0 900 220" role="img" aria-labelledby="sm-title sm-desc"><title id="sm-title">두 모델의 테스트 지표</title><desc id="sm-desc">가우시안 나이브 베이즈와 로지스틱 회귀의 지표</desc></svg></div><figcaption class="visual-caption">파란 막대가 가우시안 나이브 베이즈(생성 모델), 초록 막대가 로지스틱 회귀(판별 모델)이며 막대 옆에 분수와 값을 적었다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../22. maximum-likelihood/maximum-likelihood-estimation.html" rel="prev">이전 · Maximum Likelihood Estimation</a><a class="pager-link is-all" href="../index.html">전체</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] ? a : b); }
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function head(svg) { return svg.querySelector("title").outerHTML + svg.querySelector("desc").outerHTML; }
+
+  function renderGD() {
+    var x = Number($("x1").value), way = $("w1").value, svg = $("gd-plot"), h = head(svg);
+    var py1 = 0.4, px1 = x ? 0.75 : 0.25, px0 = x ? 0.2 : 0.8, j1 = py1 * px1, j0 = 0.6 * px0, post = j1 / (j1 + j0);
+    function box(x0, y, w, lines, on) { h += '<g class="box' + (on ? " is-on" : "") + '"><rect x="' + x0 + '" y="' + y + '" width="' + w + '" height="70" rx="6"/>'; lines.forEach(function (t, i) { h += '<text x="' + (x0 + w / 2) + '" y="' + (y + 22 + i * 24) + '"' + (i ? "" : ' style="font-weight:700"') + ">" + t + "</text>"; }); h += "</g>"; }
+    function arr(x0, x1, y) { h += '<line class="arrow" x1="' + x0 + '" y1="' + y + '" x2="' + (x1 - 6) + '" y2="' + y + '"/><path d="M' + (x1 - 8) + " " + (y - 5) + " L" + x1 + " " + y + " L" + (x1 - 8) + " " + (y + 5) + '" style="fill:var(--ink-600)"/>'; }
+    var g = way === "gen", d = !g;
+    h += '<text class="lab" x="20" y="24">생성 모델</text>';
+    box(20, 36, 230, ["범주별 모델 추정", "P(y), P(x | y)"], g);
+    arr(252, 300, 71);
+    box(300, 36, 270, ["결합확률 P(x = " + x + ", y)", "y=1: " + j1.toFixed(2) + " · y=0: " + j0.toFixed(2)], g);
+    arr(572, 620, 71);
+    box(620, 36, 260, ["합으로 나눔", "P(y = 1 | x = " + x + ") = " + post.toFixed(3)], g);
+    h += '<text class="lab" x="20" y="164">판별 모델</text>';
+    box(20, 176, 230, ["조건부 확률 모델 설정", "P(y | x) 식을 둔다"], d);
+    arr(252, 620, 211);
+    h += '<text class="small" x="436" y="200" text-anchor="middle">결합확률을 거치지 않음</text>';
+    box(620, 176, 260, ["직접 추정한 확률", "P(y = 1 | x = " + x + ") = " + post.toFixed(3)], d);
+    svg.innerHTML = h;
+    svg.querySelector("desc").textContent = "x = " + x + ", " + (g ? "생성 모델" : "판별 모델") + ", 사후확률 " + post.toFixed(3);
+    var note = g
+      ? "생성 모델은 먼저 결합확률 P(x = " + x + ", y = 1) = 0.4 × " + px1.toFixed(2) + " = " + j1.toFixed(2) + ", P(x = " + x + ", y = 0) = 0.6 × " + px0.toFixed(2) + " = " + kj(j0.toFixed(2), "을", "를") + " 만들고, 합으로 나누어 P(y = 1 | x = " + x + ") = " + kj(post.toFixed(3), "을", "를") + " 얻는다. 결합분포를 모델링하므로 특성 x의 분포까지 가정한다."
+      : "판별 모델은 x의 분포를 따로 모델링하지 않고 P(y = 1 | x)를 직접 추정한다. 특성이 이 이진 특성 하나뿐이고, 로지스틱 회귀가 절편과 이 특성만 두고 정규화 없이 최대우도로 추정하며, 생성 모델의 확률도 같은 자료의 비율로 추정했다면 두 방식이 같은 " + kj(post.toFixed(3), "을", "를") + " 얻는다. 특성이 여럿이면 두 방식의 값이 달라질 수 있다.";
+    if (x === 1) note += " 강의 예제의 0.30 / (0.30 + 0.12) ≈ 0.714가 이 경우다.";
+    note = note.replace("= " + post.toFixed(3) + "을 얻는다", "= " + kj(post.toFixed(3), "을", "를") + " 얻는다").replace("같은 " + post.toFixed(3) + "을 얻지만", "같은 " + kj(post.toFixed(3), "을", "를") + " 얻지만");
+    show(1, [["결합확률 P(x, y = 1)", j1.toFixed(2)], ["결합확률 P(x, y = 0)", j0.toFixed(2)], ["P(y = 1 | x)", post.toFixed(3)], ["모델링한 분포", g ? "결합분포 P(x, y)" : "조건부 분포 P(y | x)"]], note);
+  }
+
+  var PTS = [[1, 1.8], [2, 4.4], [3, 5.6], [4, 8.9], [5, 9.6], [6, 12.5]];
+  var BHAT = PTS.reduce(function (a, p) { return a + p[0] * p[1]; }, 0) / PTS.reduce(function (a, p) { return a + p[0] * p[0]; }, 0);
+  function rss(b) { return PTS.reduce(function (a, p) { var e = p[1] - b * p[0]; return a + e * e; }, 0); }
+  var C = 3 * Math.log(2 * Math.PI);
+  function renderLS() {
+    var b = Number($("b2").value), svg = $("ls-plot"), h = head(svg);
+    $("b2-out").textContent = b.toFixed(2);
+    var X = function (v) { return 50 + v / 7 * 380; }, Y = function (v) { return 290 - v / 16 * 260; };
+    h += '<line class="axis" x1="50" y1="290" x2="430" y2="290"/><line class="axis" x1="50" y1="30" x2="50" y2="290"/>';
+    h += '<line class="fit" x1="' + X(0) + '" y1="' + Y(0) + '" x2="' + X(Math.min(7, 16 / b)) + '" y2="' + Y(Math.min(7 * b, 16)) + '"/>';
+    PTS.forEach(function (p) { h += '<line class="res" x1="' + X(p[0]) + '" y1="' + Y(p[1]) + '" x2="' + X(p[0]) + '" y2="' + Y(Math.min(b * p[0], 16)) + '"/><circle class="pt" cx="' + X(p[0]) + '" cy="' + Y(p[1]) + '" r="6"/>'; });
+    [0, 2, 4, 6].forEach(function (v) { h += '<text class="small" x="' + X(v) + '" y="308" text-anchor="middle">' + v + "</text>"; });
+    var gx = function (v) { return 500 + (v - 0.5) / 2.5 * 360; }, maxY = Math.max(rss(0.5), rss(3)) / 2 + C, gy = function (v) { return 290 - v / maxY * 250; };
+    var p1 = "", p2 = ""; for (var i = 0; i <= 100; i++) { var v = 0.5 + i * 0.025; p1 += (i ? "L" : "M") + gx(v).toFixed(1) + " " + gy(rss(v) / 2).toFixed(1); p2 += (i ? "L" : "M") + gx(v).toFixed(1) + " " + gy(rss(v) / 2 + C).toFixed(1); }
+    h += '<line class="axis" x1="500" y1="290" x2="860" y2="290"/><path class="c-rss" d="' + p1 + '"/><path class="c-nll" d="' + p2 + '"/><line class="guide" x1="' + gx(BHAT) + '" y1="30" x2="' + gx(BHAT) + '" y2="290"/>';
+    h += '<circle class="dot" cx="' + gx(b) + '" cy="' + gy(rss(b) / 2) + '" r="5"/><circle class="dot" cx="' + gx(b) + '" cy="' + gy(rss(b) / 2 + C) + '" r="5"/>';
+    [0.5, 1.5, 2.5].forEach(function (v) { h += '<text class="small" x="' + gx(v) + '" y="308" text-anchor="middle">' + v + "</text>"; });
+    h += '<text class="small" x="680" y="326" text-anchor="middle">β</text><text class="lab" x="' + (gx(BHAT) + 6) + '" y="44">β̂ = ' + BHAT.toFixed(3) + "</text>";
+    svg.innerHTML = h;
+    var r = rss(b), nll = r / 2 + C;
+    svg.querySelector("desc").textContent = "β = " + b + ", RSS " + r.toFixed(2) + ", 음의 로그 우도 " + nll.toFixed(2);
+    var near = Math.abs(b - BHAT) < 0.03;
+    var note = "오차가 서로 독립이고 N(0, σ²)을 따른다고 두면 −ℓ(β) = RSS/(2σ²) + C이고, σ² = 1이면 C = 3 ln 2π ≈ " + C.toFixed(3) + "는 β와 무관하다. " +
+      (near ? "β = " + b.toFixed(2) + "는 최소제곱 해 β̂ = " + BHAT.toFixed(3) + "에 가까워 RSS와 음의 로그 우도가 함께 가장 작다." : "β = " + b.toFixed(2) + "에서 RSS는 " + r.toFixed(2) + ", 음의 로그 우도는 " + nll.toFixed(2) + "로 둘 다 β̂ = " + BHAT.toFixed(3) + "에서보다 크다. 두 곡선은 위아래로만 떨어져 있어 가장 낮은 β가 같으므로, 최소제곱 계수가 곧 정규 오차 모델의 최대우도 추정값이다.");
+    note = note.replace("C.toFixed(3)", "").replace(C.toFixed(3) + "는", kj(C.toFixed(3), "은", "는")).replace("β = " + b.toFixed(2) + "는", kj("β = " + b.toFixed(2), "은", "는")).replace(nll.toFixed(2) + "로 둘 다", jro(nll.toFixed(2)) + " 둘 다");
+    show(2, [["RSS", r.toFixed(2)], ["−ℓ(β) (σ² = 1)", nll.toFixed(2)], ["최소제곱 해 β̂", BHAT.toFixed(3)], ["β̂에서의 RSS", rss(BHAT).toFixed(2)]], note);
+  }
+
+  var SM = { acc: { label: "정확도", nb: [150, 252], lr: [141, 252] }, rec: { label: "상승 재현율", nb: [121, 141], lr: [106, 141] }, pre: { label: "상승 정밀도", nb: [121, 203], lr: [106, 182] } };
+  function renderSM() {
+    var k = $("m3").value, m = SM[k], svg = $("sm-plot"), h = head(svg);
+    [["가우시안 나이브 베이즈", m.nb, "b-nb"], ["로지스틱 회귀", m.lr, "b-lr"]].forEach(function (r, i) {
+      var y = 40 + i * 80, v = r[1][0] / r[1][1];
+      h += '<text class="lab" x="20" y="' + (y + 24) + '">' + r[0] + '</text><rect x="220" y="' + y + '" width="540" height="36" style="fill:var(--surface-050);stroke:var(--line-200)"/><rect class="' + r[2] + '" x="220" y="' + y + '" width="' + (v * 540).toFixed(1) + '" height="36"/><text class="big" x="' + (228 + v * 540 > 700 ? 220 + v * 540 - 8 : 228 + v * 540) + '" y="' + (y + 24) + '"' + (228 + v * 540 > 700 ? ' text-anchor="end" style="fill:var(--white)"' : "") + ">" + r[1][0] + "/" + r[1][1] + " ≈ " + v.toFixed(3) + "</text>";
+    });
+    svg.innerHTML = h;
+    var nb = m.nb[0] / m.nb[1], lr = m.lr[0] / m.lr[1];
+    svg.querySelector("desc").textContent = m.label + ": 나이브 베이즈 " + nb.toFixed(3) + ", 로지스틱 회귀 " + lr.toFixed(3);
+    var note = "2005년 테스트에서 " + m.label + "은 가우시안 나이브 베이즈 " + nb.toFixed(3) + ", 로지스틱 회귀 " + lr.toFixed(3) + "로 나이브 베이즈가 " + (nb - lr).toFixed(3) + " 높다. 다만 한 해의 테스트 자료 한 번이라, 이 차이로 생성 모델이 모든 자료에서 낫다고 일반화할 수는 없다. 로지스틱 회귀는 정규화 벌점이 없는 기본형이다.";
+    note = note.replace(lr.toFixed(3) + "로 나이브", jro(lr.toFixed(3)) + " 나이브").replace(m.label + "은", m.label + (m.label === "상승 재현율" ? "은" : "는"));
+    show(3, [["지표", m.label], ["가우시안 나이브 베이즈", m.nb[0] + "/" + m.nb[1] + " ≈ " + nb.toFixed(3)], ["로지스틱 회귀", m.lr[0] + "/" + m.lr[1] + " ≈ " + lr.toFixed(3)], ["차이", (nb - lr).toFixed(3)]], note);
+  }
+
+  $("x1").addEventListener("change", renderGD); $("w1").addEventListener("change", renderGD);
+  $("b2").addEventListener("input", renderLS); $("m3").addEventListener("change", renderSM);
+  renderGD(); renderLS(); renderSM();
+}());
+</script>
+</body>
+</html>

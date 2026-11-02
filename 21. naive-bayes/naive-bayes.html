@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Naive Bayes | Machine Learning | Pusan National University</title><meta name="description" content="Naive Bayes estimates class priors and class-conditional distributions and predicts the class with the largest weighted density, using normal distributions for continuous features in the Gaussian model."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/21.%20naive-bayes/naive-bayes.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Naive Bayes | Machine Learning | Pusan National University"><meta property="og:description" content="Naive Bayes estimates class priors and class-conditional distributions and predicts the class with the largest weighted density, using normal distributions for continuous features in the Gaussian model."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/21.%20naive-bayes/naive-bayes.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .lab{font-size:14px;fill:var(--ink-700);paint-order:stroke;stroke:var(--white);stroke-width:4px}
+    .topic-plot .grid{stroke:var(--line-200);stroke-width:1}
+    .topic-plot .axis{stroke:var(--ink-600);stroke-width:1.2}
+    .topic-plot .c0{fill:none;stroke:var(--pnu-blue);stroke-width:3}
+    .topic-plot .c1{fill:none;stroke:var(--pnu-green);stroke-width:3;stroke-dasharray:9 5}
+    .topic-plot .z0{fill:var(--pnu-blue-tint)}
+    .topic-plot .z1{fill:color-mix(in srgb,var(--pnu-green) 14%,var(--white))}
+    .topic-plot .bnd{stroke:var(--ink-900);stroke-width:2;stroke-dasharray:6 4}
+    .topic-plot .true{stroke:var(--alert-700);stroke-width:2;stroke-dasharray:3 3}
+    .topic-plot .pt{stroke:var(--ink-900);stroke-width:2}
+    .topic-plot .d0{fill:var(--pnu-blue)}
+    .topic-plot .d1{fill:var(--pnu-green)}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-naive-bayes">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Turning the Question</span><span class="nav-tag is-current" aria-current="page">Naive Bayes</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/21.%20Turning%20the%20Question.pdf">Turning the <span class="publication-lecture-tail">Question<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Naive Bayes</h1><hr class="accent-rule"><p class="page-subtitle">나이브 베이즈는 자료에서 사전확률 π_k와 범주별 조건부 분포 f_k(x)를 추정하고, 새 관측에서 가중한 밀도 π_k f_k(x)가 가장 큰 범주를 고른다. 연속형 특성에는 범주별 정규분포를 가정하는 가우시안 모델을 쓰며, 두 가중 밀도가 같아지는 점이 결정 경계다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>추정할 값</strong><span>사전확률은 범주의 관측 비율 n_k/n, 정규분포의 평균과 분산은 그 범주 관측만으로 구한다.</span></article><article class="summary-card"><strong>π₁ f₁(x) &gt; π₀ f₀(x)</strong><span>같은 오분류 비용에서 범주 1을 고르는 조건이다. f₁(x)/f₀(x) &gt; π₀/π₁로 바꿔 쓸 수 있다.</span></article><article class="summary-card"><strong>재표본한 비율</strong><span>범주 균형을 맞추려고 재표본한 비율을 모집단의 사전확률로 그대로 쓰지 않는다.</span></article><article class="summary-card"><strong>분포 가정 점검</strong><span>긴 꼬리나 두 봉우리처럼 정규분포와 어긋나는 모양은 학습·검증 자료에서 확인한다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">한 범주가 드물수록 그 범주를 고르는 결정 경계가 그쪽으로 밀린다</h2><p class="lead">범주 0은 N(−1.25, 1), 범주 1은 N(1.25, 1)을 따른다. 범주 1의 사전확률과 새 관측 x를 바꾸면 두 가중 밀도 곡선, 결정 경계, x의 사후확률이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="p1">범주 1의 사전확률 π₁ <output id="p1-out" class="control-value" for="p1">0.50</output></label><input id="p1" type="range" min="0.05" max="0.95" step="0.05" value="0.5"></div><div class="control-field"><label for="x1">새 관측 x <output id="x1-out" class="control-value" for="x1">0.4</output></label><input id="x1" type="range" min="-4" max="4" step="0.1" value="0.4"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="w-plot" class="topic-plot" viewBox="0 0 900 340" role="img" aria-labelledby="w-title w-desc"><title id="w-title">가중한 밀도와 결정 경계</title><desc id="w-desc">두 범주의 π_k f_k(x) 곡선</desc></svg></div><figcaption class="visual-caption">파란 실선이 π₀ f₀(x), 초록 점선이 π₁ f₁(x)다. 검은 점선이 두 값이 같은 결정 경계이고, 바탕의 옅은 파랑·초록 구간이 각각 범주 0·1로 예측하는 구간이다. 검은 세로선과 두 점이 새 관측 x에서의 두 가중 밀도다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">학습 관측으로 추정한 비율·평균·분산이 결정 경계를 정한다</h2><p class="lead">범주 1이 20%인 모집단에서 뽑은 학습 관측으로 가우시안 나이브 베이즈를 추정한다. 학습 관측 수를 바꾸면 범주별 점, 추정한 정규분포 곡선, 결정 경계가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="n2">학습 관측 수 <output id="n2-out" class="control-value" for="n2">50</output></label><input id="n2" type="range" min="25" max="500" step="25" value="50"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="e-plot" class="topic-plot" viewBox="0 0 900 360" role="img" aria-labelledby="e-title e-desc"><title id="e-title">자료로 추정한 분포</title><desc id="e-desc">학습 관측과 추정한 가중 밀도</desc></svg></div><figcaption class="visual-caption">아래 두 줄의 점이 학습 관측이며 위 줄이 범주 1(초록), 아래 줄이 범주 0(파랑)이다. 곡선은 추정한 π̂_k f̂_k(x)이고 검은 점선이 추정한 결정 경계, 빨간 점선이 참 분포로 계산한 경계(0.55)다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">분산이 다른 두 정규분포는 결정 경계를 두 곳에 만든다</h2><p class="lead">사전확률이 같고 평균이 0으로 같은 두 범주에서 범주 1의 표준편차 σ₁을 바꾼다. 퍼진 분포가 양쪽 꼬리에서 이기므로 경계가 두 곳에 생기고 그 위치가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="s3">범주 1의 표준편차 σ₁ <output id="s3-out" class="control-value" for="s3">2.0</output></label><input id="s3" type="range" min="1.2" max="3" step="0.1" value="2"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="v-plot" class="topic-plot" viewBox="0 0 900 320" role="img" aria-labelledby="v-title v-desc"><title id="v-title">분산이 다른 두 분포의 경계</title><desc id="v-desc">N(0, 1)과 N(0, σ₁²)에 같은 사전확률 0.5를 곱한 밀도와 두 경계</desc></svg></div><figcaption class="visual-caption">파란 실선이 범주 0의 N(0, 1), 초록 점선이 범주 1의 N(0, σ₁²)에 같은 사전확률 0.5를 곱한 밀도다. 검은 점선 두 개가 경계이고, 가운데 옅은 파란 구간이 범주 0, 바깥 옅은 초록 구간이 범주 1로 예측하는 구간이다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../21. naive-bayes/bayes-theorem.html" rel="prev">이전 · Bayes Theorem</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../21. naive-bayes/conditional-independence.html" rel="next">다음 · Conditional Independence</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] ? a : b); }
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function head(svg) { return svg.querySelector("title").outerHTML + svg.querySelector("desc").outerHTML; }
+  function npdf(x, m, v) { return Math.exp(-(x - m) * (x - m) / (2 * v)) / Math.sqrt(2 * Math.PI * v); }
+  function roots(g, lo, hi) { var out = [], N = 800, prev = g(lo); for (var i = 1; i <= N; i++) { var x = lo + (hi - lo) * i / N, cur = g(x); if ((prev <= 0 && cur > 0) || (prev >= 0 && cur < 0)) { var a = x - (hi - lo) / N, b = x; for (var k = 0; k < 40; k++) { var m = (a + b) / 2; if ((g(a) <= 0) === (g(m) <= 0)) a = m; else b = m; } out.push((a + b) / 2); } prev = cur; } return out; }
+  var X = function (v) { return 60 + (v + 4) / 8 * 800; };
+
+  function curves(h, f0, f1, Y, zoneY, zoneH, regionOf) {
+    for (var i = 0; i < 400; i++) { var a = -4 + i * 0.02; h.s += '<rect class="z' + regionOf(a + 0.01) + '" x="' + X(a).toFixed(1) + '" y="' + zoneY + '" width="' + (X(a + 0.02) - X(a) + 0.3).toFixed(1) + '" height="' + zoneH + '"/>'; }
+    var p0 = "", p1 = "";
+    for (i = 0; i <= 200; i++) { var x = -4 + i * 0.04; p0 += (i ? "L" : "M") + X(x).toFixed(1) + " " + Y(f0(x)).toFixed(1); p1 += (i ? "L" : "M") + X(x).toFixed(1) + " " + Y(f1(x)).toFixed(1); }
+    h.s += '<path class="c0" d="' + p0 + '"/><path class="c1" d="' + p1 + '"/>';
+    [-4, -2, 0, 2, 4].forEach(function (v) { h.s += '<text class="small" x="' + X(v) + '" y="' + (zoneY + zoneH + 16) + '" text-anchor="middle">' + v + "</text>"; });
+  }
+
+  function renderW() {
+    var p1 = Number($("p1").value), x = Number($("x1").value), p0 = 1 - p1, svg = $("w-plot"), h = { s: head(svg) };
+    $("p1-out").textContent = p1.toFixed(2); $("x1-out").textContent = x.toFixed(1);
+    var f0 = function (t) { return p0 * npdf(t, -1.25, 1); }, f1 = function (t) { return p1 * npdf(t, 1.25, 1); }, Y = function (v) { return 290 - v / 0.4 * 260; };
+    var b = Math.log(p0 / p1) / 2.5;
+    curves(h, f0, f1, Y, 30, 260, function (t) { return f1(t) > f0(t) ? 1 : 0; });
+    h.s += '<line class="bnd" x1="' + X(b) + '" y1="24" x2="' + X(b) + '" y2="290"/><text class="lab" x="' + (X(b) + 6) + '" y="44">경계 ' + b.toFixed(2) + "</text>";
+    h.s += '<line class="pt" x1="' + X(x) + '" y1="290" x2="' + X(x) + '" y2="' + Math.min(Y(f0(x)), Y(f1(x))) + '"/><circle class="d0" cx="' + X(x) + '" cy="' + Y(f0(x)) + '" r="6"/><circle class="d1" cx="' + X(x) + '" cy="' + Y(f1(x)) + '" r="6"/>';
+    h.s += '<text class="lab" x="' + X(-3.9) + '" y="22">π₀ f₀(x)</text><text class="lab" x="' + X(2.7) + '" y="22">π₁ f₁(x)</text>';
+    svg.innerHTML = h.s;
+    var s0 = f0(x), s1 = f1(x), post = s1 / (s0 + s1), pred = s1 > s0 ? 1 : 0;
+    svg.querySelector("desc").textContent = "π₁ = " + p1 + ", 경계 " + b.toFixed(2) + ", x = " + x + "에서 P(Y=1|x) " + post.toFixed(3);
+    var note = Math.abs(p1 - 0.5) < 1e-9
+      ? "사전확률이 같으면 두 곡선의 높이만 비교하므로 두 평균의 한가운데인 x = 0이 경계다. x = " + x.toFixed(1) + (Math.abs(s1 - s0) < 1e-12 ? "에서는 두 가중 밀도가 같아 경계 위에 있고 P(Y = 1 | x) = 0.500이다. 이런 동률은 미리 정한 규칙으로 처리한다." : "에서는 범주 " + pred + "의 가중 밀도가 커서 P(Y = 1 | x) = " + post.toFixed(3) + "이다.")
+      : "π₁ = " + p1.toFixed(2) + "이면 범주 1을 고르려면 밀도비 f₁/f₀가 π₀/π₁ = " + (p0 / p1).toFixed(2) + "보다 커야 해서 경계가 x = " + b.toFixed(2) + "로 " + (p1 < 0.5 ? "범주 1 쪽(오른쪽)으로" : "범주 0 쪽(왼쪽)으로") + " 밀렸다. x = " + x.toFixed(1) + "은 범주 " + pred + "로 예측되고 P(Y = 1 | x) = " + post.toFixed(3) + "이다.";
+    note = note.replace("x = " + b.toFixed(2) + "로", jro("x = " + b.toFixed(2))).replace("x = " + x.toFixed(1) + "은 범주 " + pred + "로", kj("x = " + x.toFixed(1), "은", "는") + " 범주 " + jro(pred));
+    show(1, [["결정 경계", "x = " + b.toFixed(2)], ["밀도비 기준 π₀/π₁", (p0 / p1).toFixed(2)], ["P(Y = 1 | x)", post.toFixed(3)], ["예측 범주", String(pred)]], note);
+  }
+
+  // fixed pool: class labels with 20% class 1, normal features
+  var POOL = (function () { var s = 20260917 >>> 0, r = function () { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }, g = function () { var u = 0; while (u === 0) u = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); }, out = []; for (var i = 0; i < 500; i++) { var c = r() < 0.2 ? 1 : 0; out.push([c, (c ? 1.25 : -1.25) + g()]); } return out; }());
+  function fit(P) { var st = [0, 1].map(function (c) { var xs = P.filter(function (p) { return p[0] === c; }).map(function (p) { return p[1]; }), m = xs.reduce(function (a, b) { return a + b; }, 0) / xs.length, v = xs.reduce(function (a, b) { return a + (b - m) * (b - m); }, 0) / xs.length; return { n: xs.length, m: m, v: v, xs: xs }; }); return { st: st, pi1: st[1].n / P.length }; }
+  function renderE() {
+    var n = Number($("n2").value), P = POOL.slice(0, n), F = fit(P), svg = $("e-plot"), h = { s: head(svg) };
+    $("n2-out").textContent = n;
+    var f0 = function (t) { return (1 - F.pi1) * npdf(t, F.st[0].m, F.st[0].v); }, f1 = function (t) { return F.pi1 * npdf(t, F.st[1].m, F.st[1].v); }, Y = function (v) { return 250 - v / 0.4 * 220; };
+    curves(h, f0, f1, Y, 30, 220, function (t) { return f1(t) > f0(t) ? 1 : 0; });
+    var bs = roots(function (t) { return f1(t) - f0(t); }, -4, 4);
+    bs.forEach(function (b) { h.s += '<line class="bnd" x1="' + X(b) + '" y1="30" x2="' + X(b) + '" y2="250"/>'; });
+    h.s += '<line class="true" x1="' + X(0.5545) + '" y1="30" x2="' + X(0.5545) + '" y2="350"/>';
+    P.forEach(function (p, i) { var jit = ((i * 37) % 11) - 5; h.s += '<circle class="d' + p[0] + '" cx="' + X(Math.max(-4, Math.min(4, p[1]))).toFixed(1) + '" cy="' + ((p[0] ? 300 : 332) + jit) + '" r="3" opacity="0.8"/>'; });
+    h.s += '<text class="small" x="12" y="304">범주 1</text><text class="small" x="12" y="336">범주 0</text>';
+    svg.innerHTML = h.s;
+    var mid = bs.filter(function (b) { return b > -2 && b < 3; }), shown = mid.length ? mid[0] : null;
+    svg.querySelector("desc").textContent = "학습 관측 " + n + "개, π̂₁ " + F.pi1.toFixed(2) + ", 경계 " + bs.map(function (b) { return b.toFixed(2); }).join(", ");
+    var note = "학습 관측 " + n + "개 가운데 범주 1이 " + F.st[1].n + "개라 π̂₁ = " + F.pi1.toFixed(2) + "이고, 범주별 평균은 " + F.st[0].m.toFixed(2) + "와 " + F.st[1].m.toFixed(2) + ", 분산은 " + F.st[0].v.toFixed(2) + "와 " + F.st[1].v.toFixed(2) + "로 추정했다. " +
+      (shown === null ? "추정 경계가 가운데 구간에 없다." : "가운데 경계는 x = " + shown.toFixed(2) + "로 참 경계 0.55와 " + Math.abs(shown - 0.5545).toFixed(2) + " 차이 난다.") + (bs.length > 1 ? " 두 범주의 추정 분산이 달라 먼 꼬리에도 경계가 하나 더 생겼다." : "") + (n <= 75 ? " 범주 1 관측이 " + F.st[1].n + "개뿐이라 그 평균과 분산은 몇 개의 점에 크게 좌우된다." : " 관측이 많아지면 추정값의 흔들림은 줄지만, 한 번 뽑은 표본이라 참값 π₁ = 0.20, 평균 ±1.25, 분산 1과 정확히 같지는 않다.");
+    note = note.replace(F.st[0].m.toFixed(2) + "와", kj(F.st[0].m.toFixed(2), "과", "와")).replace(F.st[0].v.toFixed(2) + "와", kj(F.st[0].v.toFixed(2), "과", "와")).replace(F.st[1].v.toFixed(2) + "로 추정", jro(F.st[1].v.toFixed(2)) + " 추정");
+    if (shown !== null) note = note.replace("x = " + shown.toFixed(2) + "로", jro("x = " + shown.toFixed(2)));
+    show(2, [["π̂₁", F.pi1.toFixed(2)], ["μ̂₀ · μ̂₁", F.st[0].m.toFixed(2) + " · " + F.st[1].m.toFixed(2)], ["σ̂₀² · σ̂₁²", F.st[0].v.toFixed(2) + " · " + F.st[1].v.toFixed(2)], ["추정 경계", bs.map(function (b) { return b.toFixed(2); }).join(", ") || "없음"]], note);
+  }
+
+  function renderV() {
+    var sd = Number($("s3").value), v1 = sd * sd, svg = $("v-plot"), h = { s: head(svg) };
+    $("s3-out").textContent = sd.toFixed(1);
+    var f0 = function (t) { return 0.5 * npdf(t, 0, 1); }, f1 = function (t) { return 0.5 * npdf(t, 0, v1); }, Y = function (v) { return 270 - v / 0.21 * 240; };
+    var c = Math.sqrt(2 * v1 * Math.log(sd) / (v1 - 1));
+    curves(h, f0, f1, Y, 30, 240, function (t) { return Math.abs(t) < c ? 0 : 1; });
+    [-c, c].forEach(function (b) { h.s += '<line class="bnd" x1="' + X(b) + '" y1="30" x2="' + X(b) + '" y2="270"/><text class="lab" x="' + X(b) + '" y="24" text-anchor="middle">' + b.toFixed(2) + "</text>"; });
+    svg.innerHTML = h.s;
+    svg.querySelector("desc").textContent = "σ₁ = " + sd + ", 경계 ±" + c.toFixed(2);
+    var p0mid = f0(0) / (f0(0) + f1(0));
+    var note = "σ₁ = " + sd.toFixed(1) + "이면 |x| < " + c.toFixed(2) + "에서는 좁게 모인 범주 0의 밀도가 크고, 그 바깥 양쪽에서는 넓게 퍼진 범주 1의 밀도가 크다. 결정 경계가 −" + c.toFixed(2) + "와 " + c.toFixed(2) + " 두 곳에 생기며, x = 0에서 범주 0의 사후확률은 " + p0mid.toFixed(3) + "이다." + (Math.abs(sd - 2) < 1e-9 ? " 강의 예제의 √(8 ln 2 / 3) ≈ 1.36이 이 경우다." : "");
+    note = note.replace("−" + c.toFixed(2) + "와", "−" + kj(c.toFixed(2), "과", "와"));
+    show(3, [["σ₁", sd.toFixed(1)], ["경계", "±" + c.toFixed(2)], ["범주 0 구간", "|x| < " + c.toFixed(2)], ["x = 0에서 P(Y = 0 | x)", p0mid.toFixed(3)]], note);
+  }
+
+  $("p1").addEventListener("input", renderW); $("x1").addEventListener("input", renderW);
+  $("n2").addEventListener("input", renderE); $("s3").addEventListener("input", renderV);
+  renderW(); renderE(); renderV();
+}());
+</script>
+</body>
+</html>

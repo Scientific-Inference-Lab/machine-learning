@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Maximum Likelihood Estimation | Machine Learning | Pusan National University</title><meta name="description" content="Maximizing log-likelihood preserves the likelihood maximizer while avoiding numerical underflow; Bernoulli estimation gives the observed success fraction, and gradient descent minimizes negative log-likelihood."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/22.%20maximum-likelihood/maximum-likelihood-estimation.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Maximum Likelihood Estimation | Machine Learning | Pusan National University"><meta property="og:description" content="Maximizing log-likelihood preserves the likelihood maximizer while avoiding numerical underflow; Bernoulli estimation gives the observed success fraction, and gradient descent minimizes negative log-likelihood."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/22.%20maximum-likelihood/maximum-likelihood-estimation.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <style>
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+    .topic-plot .lab{font-size:14px;fill:var(--ink-700);paint-order:stroke;stroke:var(--white);stroke-width:4px}
+    .topic-plot .big{font-size:16px;font-weight:700;fill:var(--ink-900)}
+    .topic-plot .grid{stroke:var(--line-200);stroke-width:1}
+    .topic-plot .axis{stroke:var(--ink-600);stroke-width:1.2}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3}
+    .topic-plot .tan{stroke:var(--pnu-green);stroke-width:2.5}
+    .topic-plot .dot{fill:var(--pnu-green);stroke:var(--white);stroke-width:2}
+    .topic-plot .mle{stroke:var(--ink-900);stroke-width:2;stroke-dasharray:6 4}
+    .topic-plot .arrow{stroke:var(--pnu-green);stroke-width:3;fill:none}
+    .topic-plot .track{fill:var(--surface-050);stroke:var(--line-300)}
+    .topic-plot .fill-p{fill:var(--pnu-blue)}
+    .topic-plot .fill-p.is-zero{fill:var(--alert-700)}
+    .topic-plot .fill-l{fill:var(--pnu-green)}
+    .topic-plot .limit{stroke:var(--alert-700);stroke-width:2;stroke-dasharray:5 4}
+    .topic-plot .pt{fill:var(--pnu-blue);stroke:var(--white);stroke-width:1.5}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-maximum-likelihood-estimation">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">What Makes the Data Likely</span><span class="nav-tag is-current" aria-current="page">Maximum Likelihood Estimation</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/22.%20What%20Makes%20the%20Data%20Likely.pdf">What Makes the Data <span class="publication-lecture-tail">Likely<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Maximum Likelihood Estimation</h1><hr class="accent-rule"><p class="page-subtitle">최대우도 추정은 곱으로 된 우도 대신 로그 우도 ℓ(θ) = ln L(θ)를 최대화한다. 로그는 작은 확률을 곱하다 0으로 반올림되는 문제를 피하고, 양수에서 증가함수라 최대점을 바꾸지 않는다. 베르누이 관측에서는 미분해 0으로 두면 θ̂ = s/n이 나오고, 경사하강법은 음의 로그 우도(negative log-likelihood, NLL)를 최소화하는 같은 문제로 푼다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>ℓ(θ) = s ln θ + (n − s) ln(1 − θ)</strong><span>각 관측의 로그 확률을 더한 값이다. 작은 확률을 먼저 곱하지 않는다.</span></article><article class="summary-card"><strong>ℓ′(θ) = s/θ − (n − s)/(1 − θ) = 0</strong><span>0 &lt; s &lt; n이면 θ̂ = s/n이고 ℓ″ &lt; 0이라 유일한 최대점이다.</span></article><article class="summary-card"><strong>max ℓ ⇔ min −ℓ</strong><span>θ ← θ − η∇(−ℓ)는 θ ← θ + η∇ℓ과 같은 갱신이다.</span></article><article class="summary-card"><strong>정규분포의 MLE</strong><span>μ̂는 표본평균, σ̂²는 분모가 n인 평균제곱편차다. 분모가 n − 1인 불편 표본분산과 다르다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">확률을 곱하면 0으로 반올림되지만 로그를 더하면 값이 남는다</h2><p class="lead">확률 0.5인 항을 n개 곱한 값과 로그를 더한 값을 이 브라우저의 64비트 실수로 계산한다. 항의 수를 바꾸면 두 계산 결과가 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--single"><div class="control-field"><label for="n1">항의 수 n <output id="n1-out" class="control-value" for="n1">1,000</output></label><input id="n1" type="range" min="10" max="1200" step="10" value="1000"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="uf-plot" class="topic-plot" viewBox="0 0 900 250" role="img" aria-labelledby="uf-title uf-desc"><title id="uf-title">곱과 로그 합의 계산</title><desc id="uf-desc">0.5의 n제곱과 n ln 0.5</desc></svg></div><figcaption class="visual-caption">위 막대는 0.5ⁿ의 크기를 10의 지수로 나타낸 것이고, 빨간 점선이 64비트 실수가 0이 아닌 값으로 담을 수 있는 가장 작은 크기(약 10⁻³²⁴)다. 막대가 빨간색이면 계산 결과가 0이다. 아래 초록 막대는 n ln 0.5의 크기다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">로그 우도의 기울기가 0인 곳이 θ̂ = s/n이고, NLL을 내려가도 같은 곳에 닿는다</h2><p class="lead">앞면 7번, 뒷면 3번의 로그 우도에서 θ와 목적함수를 바꾸면 곡선, 접선의 기울기, 학습률 η = 0.02로 한 번 갱신했을 때 θ가 움직이는 방향이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="t2">θ <output id="t2-out" class="control-value" for="t2">0.40</output></label><input id="t2" type="range" min="0.05" max="0.95" step="0.01" value="0.4"></div><div class="control-field"><label for="o2">목적함수</label><select id="o2"><option value="ll">로그 우도 ℓ(θ) 최대화</option><option value="nll">NLL −ℓ(θ) 최소화</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="ll-plot" class="topic-plot" viewBox="0 0 900 340" role="img" aria-labelledby="ll-title ll-desc"><title id="ll-title">로그 우도와 기울기</title><desc id="ll-desc">목적함수 곡선과 접선, 갱신 방향</desc></svg></div><figcaption class="visual-caption">파란 곡선이 고른 목적함수, 초록 선이 현재 θ에서의 접선, 검은 점선이 θ̂ = 0.7이다. 초록 화살표는 한 번의 갱신으로 θ가 움직이는 방향과 크기다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">정규분포의 로그 우도는 표본평균과 분모가 n인 분산에서 가장 크다</h2><p class="lead">관측 8개 4.1, 5.3, 6.0, 4.8, 5.9, 7.2, 5.5, 4.6에 정규분포를 맞춘다. 후보 평균 μ와 분산 σ²를 바꾸면 밀도 곡선과 로그 우도 값이 바뀐다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="m3">μ <output id="m3-out" class="control-value" for="m3">5.00</output></label><input id="m3" type="range" min="3.5" max="7.5" step="0.05" value="5"></div><div class="control-field"><label for="v3">σ² <output id="v3-out" class="control-value" for="v3">1.50</output></label><input id="v3" type="range" min="0.2" max="3" step="0.02" value="1.5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="nm-plot" class="topic-plot" viewBox="0 0 900 320" role="img" aria-labelledby="nm-title nm-desc"><title id="nm-title">정규분포 후보와 로그 우도</title><desc id="nm-desc">관측 8개와 후보 밀도, 로그 우도</desc></svg></div><figcaption class="visual-caption">왼쪽에서 파란 점이 관측, 파란 곡선이 후보 N(μ, σ²)의 밀도, 검은 점선이 MLE로 맞춘 밀도다. 오른쪽 막대는 후보의 로그 우도이고 빨간 점선이 최댓값이다.</figcaption></figure>
+      <div id="read-3" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-3" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../22. maximum-likelihood/likelihood-functions.html" rel="prev">이전 · Likelihood Functions</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../22. maximum-likelihood/probability-model-factorization.html" rel="next">다음 · Probability Model Factorization</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function jro(v) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] === 1 ? "으로" : "로"); }
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""); return String(v) + (JONG[t.charAt(t.length - 1)] ? a : b); }
+  var $ = function (id) { return document.getElementById(id); };
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  function head(svg) { return svg.querySelector("title").outerHTML + svg.querySelector("desc").outerHTML; }
+
+  function renderUF() {
+    var n = Number($("n1").value), svg = $("uf-plot"), h = head(svg), prod = Math.pow(0.5, n), lsum = n * Math.log(0.5), exp10 = n * Math.log10(0.5);
+    $("n1-out").textContent = n.toLocaleString("en-US");
+    var X = function (e) { return 180 + e / 400 * 660; };
+    h += '<text class="lab" x="20" y="64">0.5ⁿ의 크기</text><rect class="track" x="180" y="40" width="660" height="36"/><rect class="fill-p' + (prod === 0 ? " is-zero" : "") + '" x="180" y="40" width="' + (X(Math.min(-exp10, 400)) - 180).toFixed(1) + '" height="36"/>';
+    h += '<line class="limit" x1="' + X(324) + '" y1="30" x2="' + X(324) + '" y2="86"/><text class="small" x="' + X(324) + '" y="102" text-anchor="middle">10⁻³²⁴ 근처</text>';
+    [0, 100, 200, 300, 400].forEach(function (e) { h += '<text class="small" x="' + X(e) + '" y="28" text-anchor="middle">10^−' + e + "</text>"; });
+    h += '<text class="lab" x="20" y="164">n ln 0.5의 크기</text><rect class="track" x="180" y="140" width="660" height="36"/><rect class="fill-l" x="180" y="140" width="' + (Math.abs(lsum) / 900 * 660).toFixed(1) + '" height="36"/>';
+    [0, 300, 600, 900].forEach(function (v) { h += '<text class="small" x="' + (180 + v / 900 * 660) + '" y="196" text-anchor="middle">−' + v + "</text>"; });
+    svg.innerHTML = h;
+    var prodTxt = prod === 0 ? "0.0" : (prod / Math.pow(10, Math.floor(Math.log10(prod)))).toFixed(3) + "×10^" + Math.floor(Math.log10(prod));
+    svg.querySelector("desc").textContent = "n = " + n + ", 0.5ⁿ = " + prodTxt + ", n ln 0.5 = " + lsum.toFixed(3);
+    var note = prod === 0
+      ? "n = " + n.toLocaleString("en-US") + "이면 참값은 약 10^" + exp10.toFixed(0) + "이지만 64비트 실수로 담을 수 있는 가장 작은 크기보다 작아 곱이 0.0으로 반올림되었다. 로그를 더한 값 " + lsum.toFixed(3) + "은 그대로 계산되므로, 로그 우도를 쓰면 관측이 많아도 후보 θ를 비교할 수 있다."
+      : "n = " + n.toLocaleString("en-US") + "이면 0.5ⁿ은 " + prodTxt + "로 아직 0이 아니다. 로그를 더하면 " + lsum.toFixed(3) + "이다. 강의 표처럼 n = 1,000에서는 약 9.333×10^−302가 남지만 n = 1,100에서는 0.0이 된다.";
+    note = note.replace("로그를 더한 값 " + lsum.toFixed(3) + "은", "로그를 더한 값 " + kj(lsum.toFixed(3), "은", "는")).replace(prodTxt + "로 아직", jro(prodTxt) + " 아직");
+    show(1, [["0.5ⁿ 계산 결과", prodTxt], ["n ln 0.5", lsum.toFixed(3)], ["참값의 10의 지수", exp10.toFixed(1)], ["곱이 0이 되었나", prod === 0 ? "그렇다" : "아니다"]], note);
+  }
+
+  var S = 7, N = 10;
+  function renderLL() {
+    var t = Number($("t2").value), obj = $("o2").value, sign = obj === "ll" ? 1 : -1, svg = $("ll-plot"), h = head(svg);
+    $("t2-out").textContent = t.toFixed(2);
+    var f = function (v) { return sign * (S * Math.log(v) + (N - S) * Math.log(1 - v)); }, g = function (v) { return sign * (S / v - (N - S) / (1 - v)); };
+    var lo = obj === "ll" ? -30 : 5.5, hi = obj === "ll" ? -5.5 : 30;
+    var X = function (v) { return 70 + (v - 0.05) / 0.9 * 780; }, Y = function (v) { return 300 - (v - lo) / (hi - lo) * 270; };
+    [lo, (lo + hi) / 2, hi].forEach(function (v) { h += '<line class="grid" x1="70" y1="' + Y(v) + '" x2="850" y2="' + Y(v) + '"/><text class="small" x="62" y="' + (Y(v) + 4) + '" text-anchor="end">' + v.toFixed(1) + "</text>"; });
+    [0.1, 0.3, 0.5, 0.7, 0.9].forEach(function (v) { h += '<text class="small" x="' + X(v) + '" y="318" text-anchor="middle">' + v + "</text>"; });
+    var path = ""; for (var i = 0; i <= 180; i++) { var v = 0.05 + i * 0.005, yv = Math.max(lo, Math.min(hi, f(v))); path += (i ? "L" : "M") + X(v).toFixed(1) + " " + Y(yv).toFixed(1); }
+    h += '<path class="curve" d="' + path + '"/><line class="mle" x1="' + X(0.7) + '" y1="30" x2="' + X(0.7) + '" y2="300"/>';
+    var d = 0.08, y0 = f(t), gy = g(t);
+    h += '<line class="tan" x1="' + X(t - d) + '" y1="' + Y(y0 - gy * d) + '" x2="' + X(t + d) + '" y2="' + Y(y0 + gy * d) + '"/><circle class="dot" cx="' + X(t) + '" cy="' + Y(y0) + '" r="7"/>';
+    var eta = 0.02, gradLL = S / t - (N - S) / (1 - t), tRaw = t + eta * gradLL, rawTxt = tRaw.toFixed(3).replace("-", "−"), out = tRaw <= 0 || tRaw >= 1, tNew = Math.max(0.01, Math.min(0.99, tRaw));
+    h += '<line class="arrow" x1="' + X(t) + '" y1="' + (Y(y0) + 24) + '" x2="' + X(tNew) + '" y2="' + (Y(y0) + 24) + '"/><circle class="dot" cx="' + X(tNew) + '" cy="' + (Y(y0) + 24) + '" r="4"/>';
+    h += '<text class="lab" x="80" y="26">' + (obj === "ll" ? "ℓ(θ) = 7 ln θ + 3 ln(1 − θ)" : "−ℓ(θ) = −7 ln θ − 3 ln(1 − θ)") + "</text>";
+    svg.innerHTML = h;
+    svg.querySelector("desc").textContent = (obj === "ll" ? "로그 우도" : "NLL") + ", θ = " + t + ", 기울기 " + gy.toFixed(2) + ", 갱신 후 θ " + rawTxt + (out ? "(0과 1 사이 밖)" : "");
+    var dir = tRaw > t ? "오른쪽" : tRaw < t ? "왼쪽" : "제자리";
+    var note = Math.abs(t - 0.7) < 0.005
+      ? "θ = 0.70에서 기울기가 0이라 갱신해도 움직이지 않는다. 로그 우도의 최대점이자 NLL의 최소점이 θ̂ = s/n = 7/10이다."
+      : (obj === "ll" ? "로그 우도의 기울기가 " + gy.toFixed(2) + "라 올라가려면 θ를 기울기 방향으로 옮긴다. " : "NLL의 기울기가 " + gy.toFixed(2) + "라 내려가려면 θ를 기울기의 반대 방향으로 옮긴다. ") +
+        (out ? "갱신 θ + 0.02 × ℓ′(θ) = " + rawTxt + "는 0과 1 사이를 벗어나 확률이 될 수 없다. 기울기가 큰 곳에서 학습률이 너무 크면 한 번의 갱신이 매개변수의 범위 밖으로 나간다. 그림의 화살표는 그림 끝에서 멈춘다."
+          : "갱신 θ + 0.02 × ℓ′(θ) = " + rawTxt + "로 θ가 " + dir + "으로 움직" + (Math.abs(tRaw - 0.7) < Math.abs(t - 0.7) ? "여 0.7에 가까워진다." : "이지만 0.7을 지나쳐 오히려 더 멀어진다. 기울기가 큰 곳에서 학습률이 너무 크면 목적함수 개선이 보장되지 않는다.")) + " 두 목적함수의 곡선은 위아래가 뒤집혔을 뿐 갱신은 같다.";
+    note = note.replace("기울기가 " + gy.toFixed(2) + "라", kj("기울기가 " + gy.toFixed(2), "이라", "라")).replace("= " + rawTxt + "로 θ가", "= " + jro(rawTxt) + " θ가").replace("= " + rawTxt + "는", "= " + kj(rawTxt, "은", "는")).replace("오른쪽으로", "오른쪽으로").replace(dir + "으로 움직여", dir + "으로 움직여");
+    show(2, [["목적함수 값", f(t).toFixed(3)], ["기울기", gy.toFixed(2)], ["η = 0.02로 갱신한 θ", rawTxt + (out ? " (범위 밖)" : "")], ["움직이는 방향", dir]], note);
+  }
+
+  var XS = [4.1, 5.3, 6.0, 4.8, 5.9, 7.2, 5.5, 4.6];
+  function ellN(m, v) { return XS.reduce(function (s, x) { return s - 0.5 * Math.log(2 * Math.PI * v) - (x - m) * (x - m) / (2 * v); }, 0); }
+  var MU = XS.reduce(function (a, b) { return a + b; }, 0) / XS.length, V = XS.reduce(function (a, x) { return a + (x - MU) * (x - MU); }, 0) / XS.length, VU = V * XS.length / (XS.length - 1), LMAX = ellN(MU, V);
+  function renderN() {
+    var m = Number($("m3").value), v = Number($("v3").value), svg = $("nm-plot"), h = head(svg);
+    $("m3-out").textContent = m.toFixed(2); $("v3-out").textContent = v.toFixed(2);
+    var X = function (x) { return 50 + (x - 2) / 7 * 520; }, Y = function (d) { return 270 - d / 0.9 * 230; }, pdf = function (x, mm, vv) { return Math.exp(-(x - mm) * (x - mm) / (2 * vv)) / Math.sqrt(2 * Math.PI * vv); };
+    var p1 = "", p2 = ""; for (var i = 0; i <= 140; i++) { var x = 2 + i * 0.05; p1 += (i ? "L" : "M") + X(x).toFixed(1) + " " + Y(pdf(x, m, v)).toFixed(1); p2 += (i ? "L" : "M") + X(x).toFixed(1) + " " + Y(pdf(x, MU, V)).toFixed(1); }
+    h += '<line class="axis" x1="50" y1="270" x2="570" y2="270"/><path d="' + p2 + '" style="fill:none;stroke:var(--ink-900);stroke-width:2;stroke-dasharray:6 4"/><path class="curve" d="' + p1 + '"/>';
+    XS.forEach(function (x) { h += '<circle class="pt" cx="' + X(x) + '" cy="282" r="6"/><line x1="' + X(x) + '" y1="270" x2="' + X(x) + '" y2="' + Y(pdf(x, m, v)).toFixed(1) + '" style="stroke:var(--pnu-blue);stroke-width:1;stroke-dasharray:2 3"/>'; });
+    [2, 4, 6, 8].forEach(function (x) { h += '<text class="small" x="' + X(x) + '" y="306" text-anchor="middle">' + x + "</text>"; });
+    var l = ellN(m, v), W = function (val) { return 700 + (val + 40) / 30 * 150; };
+    h += '<rect class="track" x="700" y="40" width="40" height="230"/><text class="small" x="720" y="30" text-anchor="middle">로그 우도</text>';
+    var top = 270 - Math.max(0, Math.min(230, (l + 40) / 30 * 230));
+    h += '<rect class="fill-l" x="700" y="' + top.toFixed(1) + '" width="40" height="' + (270 - top).toFixed(1) + '"/><line class="limit" x1="690" y1="' + (270 - (LMAX + 40) / 30 * 230).toFixed(1) + '" x2="750" y2="' + (270 - (LMAX + 40) / 30 * 230).toFixed(1) + '"/>';
+    h += '<text class="big" x="760" y="' + (top + 6).toFixed(1) + '">' + l.toFixed(2) + '</text><text class="small" x="684" y="' + (270 - (LMAX + 40) / 30 * 230 + 4).toFixed(1) + '" text-anchor="end">최댓값 ' + LMAX.toFixed(2) + "</text><text class=\"small\" x=\"700\" y=\"290\">아래 끝 −40</text>";
+    void W;
+    svg.innerHTML = h;
+    svg.querySelector("desc").textContent = "μ = " + m + ", σ² = " + v + ", 로그 우도 " + l.toFixed(2) + ", 최댓값 " + LMAX.toFixed(2);
+    var near = Math.abs(m - MU) < 0.03 && Math.abs(v - V) < 0.02;
+    var note = near ? "μ = " + m.toFixed(2) + ", σ² = " + v.toFixed(2) + "는 MLE μ̂ = " + MU.toFixed(3) + ", σ̂² = " + V.toFixed(3) + "와 거의 같아 로그 우도가 최댓값 " + LMAX.toFixed(2) + "에 닿았다. 분모를 n − 1로 한 불편 표본분산 " + VU.toFixed(3) + "은 MLE가 아니다."
+      : "후보의 로그 우도는 " + l.toFixed(2) + "로 최댓값보다 " + (LMAX - l).toFixed(2) + " 작다. " + (Math.abs(m - MU) >= 0.03 ? "평균이 표본평균 " + MU.toFixed(3) + "에서 벗어나면 관측과 곡선 중심이 어긋나고, " : "평균은 표본평균에 가깝지만 ") + (v > V ? "분산이 σ̂² = " + V.toFixed(3) + "보다 크면 밀도가 낮게 퍼진다." : v < V ? "분산이 σ̂² = " + V.toFixed(3) + "보다 작으면 가장자리 관측의 밀도가 급히 낮아진다." : "분산은 MLE와 같다.");
+    note = note.replace("로그 우도는 " + l.toFixed(2) + "로", "로그 우도는 " + jro(l.toFixed(2))).replace("σ² = " + v.toFixed(2) + "는", kj("σ² = " + v.toFixed(2), "은", "는")).replace(V.toFixed(3) + "와 거의", kj(V.toFixed(3), "과", "와") + " 거의").replace(VU.toFixed(3) + "은 MLE", kj(VU.toFixed(3), "은", "는") + " MLE");
+    show(3, [["로그 우도 ℓ(μ, σ²)", l.toFixed(2)], ["μ̂ (표본평균)", MU.toFixed(3)], ["σ̂² (분모 n)", V.toFixed(3)], ["분모 n − 1의 표본분산", VU.toFixed(3)]], note);
+  }
+
+  $("n1").addEventListener("input", renderUF);
+  $("t2").addEventListener("input", renderLL); $("o2").addEventListener("change", renderLL);
+  $("m3").addEventListener("input", renderN); $("v3").addEventListener("input", renderN);
+  renderUF(); renderLL(); renderN();
+}());
+</script>
+</body>
+</html>

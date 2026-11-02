@@ -53,6 +53,12 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/20.%20pruning-and-regression-trees/cost-complexity-pruning.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/20.%20pruning-and-regression-trees/feature-importance.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/20.%20pruning-and-regression-trees/regression-trees.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/21.%20naive-bayes/bayes-theorem.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/21.%20naive-bayes/conditional-independence.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/21.%20naive-bayes/naive-bayes.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/22.%20maximum-likelihood/likelihood-functions.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/22.%20maximum-likelihood/maximum-likelihood-estimation.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/22.%20maximum-likelihood/probability-model-factorization.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/00.%20Intro.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/01.%20Learning%20from%20Data.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/02.%20Labels%2C%20Structure%2C%20Rewards.pdf</loc></url>
@@ -74,6 +80,8 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/18.%20When%20Accuracy%20Lies.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/19.%20Splitting%20the%20Space.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/20.%20Knowing%20When%20to%20Stop.pdf</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/21.%20Turning%20the%20Question.pdf</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/22.%20What%20Makes%20the%20Data%20Likely.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/backpropagation.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/cross-validation.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/data-and-learning-types.html</loc></url>
@@ -88,7 +96,9 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/linear-models.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/linear-separability.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/logistic-regression.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/maximum-likelihood.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/multilayer-perceptrons.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/naive-bayes.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/perceptron.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/pruning-and-regression-trees.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/regularization.html</loc></url>
