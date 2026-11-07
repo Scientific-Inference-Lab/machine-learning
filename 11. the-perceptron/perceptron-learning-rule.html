@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
   <title>Perceptron Learning Rule | Machine Learning | Pusan National University</title><meta name="description" content="The perceptron learning rule updates w and b only on observations with yᵢsᵢ ≤ 0; an epoch without updates means all observations are correct."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/11.%20the-perceptron/perceptron-learning-rule.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Perceptron Learning Rule | Machine Learning | Pusan National University"><meta property="og:description" content="The perceptron learning rule updates w and b only on observations with yᵢsᵢ ≤ 0; an epoch without updates means all observations are correct."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/11.%20the-perceptron/perceptron-learning-rule.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
-  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
   <style>
     .topic-plot .fit{stroke:var(--pnu-blue);stroke-width:3.5}
     .topic-plot .pt{fill:var(--pnu-blue-dark)}
@@ -148,7 +148,7 @@
     $("rule-table").innerHTML = h + "</tbody>";
     var last = run[run.length - 1], done = step === run.length;
     $("p-first").disabled = step === 0; $("p-prev").disabled = step === 0; $("p-next").disabled = done;
-    var reason = step === 0 ? "처음 상태라 이전 단계가 없다." : done ? "갱신이 0회인 에포크를 마쳐 학습이 끝났으므로 다음 단계가 없다." : "";
+    var reason = done ? "갱신이 0회인 에포크를 마쳐 학습이 끝났다." : "";
     $("reason-1").textContent = reason; $("reason-1").hidden = !reason;
     var totalUps = run.slice(0, step).filter(function (r) { return r.up; }).length;
     if (!cur) { show(1, [["현재 단계", "시작 전"], ["(w, b)", "((0, 0), 0)"], ["지금까지 갱신", "0회"]], "모든 관측의 점수가 0이라 yᵢsᵢ = 0이다. 첫 관측부터 경계 위의 경우로 갱신된다."); return; }

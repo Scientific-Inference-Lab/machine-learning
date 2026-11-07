@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
   <title>Pipelines | Machine Learning | Pusan National University</title><meta name="description" content="A pipeline chains preprocessing steps and a model in order, so that fit and predict run as one unit."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/06.%20data-leakage/pipelines.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Pipelines | Machine Learning | Pusan National University"><meta property="og:description" content="A pipeline chains preprocessing steps and a model in order, so that fit and predict run as one unit."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/06.%20data-leakage/pipelines.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
   <link rel="stylesheet" href="../assets/pnu-theme.css">
-  <link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
   <style>
 .topic-pipelines .pipe-svg text {fill:var(--ink-600);font-family:var(--font-sans);font-size:14px}
 .topic-pipelines .pipe-svg .strong {fill:var(--pnu-blue-dark);font-weight:750}
@@ -51,7 +51,7 @@
   </div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">pipeline.fit은 전처리 상태와 모델 매개변수를 차례로 저장한다</h2><p class="lead">단계를 옮기면 흐름에서 지나온 상자와 그 단계에서 저장되는 상태가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">pipeline.fit은 전처리 상태와 모델 매개변수를 차례로 저장한다</h2><p class="lead">단계마다 흐름에서 지나온 상자와 그 단계에서 저장되는 상태가 바뀐다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="fit-stage">pipeline.fit 흐름 <output id="fit-stage-label" class="control-value" for="fit-stage">학습 자료</output></label><input id="fit-stage" type="range" min="0" max="3" step="1" value="0"></div></div>
       <figure class="visual-figure"><div class="visual-frame">
@@ -73,7 +73,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">pipeline.predict는 저장된 상태를 바꾸지 않고 적용한다</h2><p class="lead">단계를 옮기면 새 자료가 지나는 상자와 출력이 바뀌고, 저장된 전처리 상태와 모델 매개변수는 그대로다.</p></header>
+    <header class="example-header"><h2 class="section-title">pipeline.predict는 저장된 상태를 바꾸지 않고 적용한다</h2><p class="lead">단계마다 새 자료가 지나는 상자와 출력이 바뀌고, 저장된 전처리 상태와 모델 매개변수는 그대로다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="predict-stage">pipeline.predict 흐름 <output id="predict-stage-label" class="control-value" for="predict-stage">새 자료</output></label><input id="predict-stage" type="range" min="0" max="2" step="1" value="0"></div></div>
       <figure class="visual-figure"><div class="visual-frame">

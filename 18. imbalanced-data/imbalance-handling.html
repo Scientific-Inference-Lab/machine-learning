@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
   <title>Imbalance Handling | Machine Learning | Pusan National University</title><meta name="description" content="Resampling and class weights change training, so apply them only to training data and compare metrics on validation data that retains the original class proportions."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/18.%20imbalanced-data/imbalance-handling.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Imbalance Handling | Machine Learning | Pusan National University"><meta property="og:description" content="Resampling and class weights change training, so apply them only to training data and compare metrics on validation data that retains the original class proportions."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/18.%20imbalanced-data/imbalance-handling.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
-  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
   <style>
     .topic-plot .small{font-size:12px;fill:var(--ink-600)}
     .topic-plot .lab{font-size:14px;fill:var(--ink-900)}
@@ -96,7 +96,7 @@
     var m = $("method").value, when = $("when").value;
     $("when").disabled = m === "none";
     $("reason-1").hidden = m !== "none";
-    $("reason-1").textContent = "원래 자료는 표본 수를 바꾸지 않으므로 적용 시점을 고를 필요가 없다.";
+    $("reason-1").textContent = "원래 자료는 표본 수를 바꾸지 않으므로 적용 시점과 무관하다.";
     var tr, va, whole = null;
     if (m === "none") { tr = [48, 752, 0]; va = [12, 188, 0]; }
     else if (when === "after") { tr = m === "under" ? [48, 48, 0] : [48, 752, 704]; va = [12, 188, 0]; }

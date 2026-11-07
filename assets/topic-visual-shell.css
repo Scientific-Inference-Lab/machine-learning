@@ -548,3 +548,5 @@
 
   .visual-readouts { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 }
+
+.visual-topic .visual-frame:focus-visible { outline: 3px solid var(--pnu-green); outline-offset: 3px; }
