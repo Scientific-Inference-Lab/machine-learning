@@ -51,7 +51,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">사후확률비는 사전확률비에 조건부 분포의 비를 곱한 값이다</h2><p class="lead">민감도 0.90은 그대로 두고 질환의 사전확률과 거짓 양성률을 바꾸면 사전확률비와 조건부 분포의 비가 달라지고, 둘을 곱한 사후확률비와 P(질환 | +)도 달라진다.</p></header>
+    <header class="example-header"><h2 class="section-title">사후확률비는 사전확률비에 조건부 분포의 비를 곱한 값이다</h2><p class="lead">민감도 0.90을 고정하면 질환의 사전확률은 사전확률비를, 거짓 양성률은 조건부 분포의 비를 정한다. 두 비를 곱한 사후확률비에서 P(질환 | +)를 구한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="lp">질환의 사전확률 (로그 눈금) <output id="lp-out" class="control-value" for="lp">0.010</output></label><input id="lp" type="range" min="-3" max="-0.3" step="0.05" value="-2"></div><div class="control-field"><label for="fp2">거짓 양성률</label><select id="fp2"><option value="0.01">0.01</option><option value="0.05" selected>0.05</option><option value="0.2">0.20</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="odds-plot" class="topic-plot" viewBox="0 0 900 340" role="img" aria-labelledby="od-title od-desc"><title id="od-title">사전확률과 사후확률</title><desc id="od-desc">사전확률에 따른 양성일 때의 질환 확률</desc></svg></div><figcaption class="visual-caption">가로축은 로그 눈금의 사전확률, 세로축은 양성일 때 질환이 있을 사후확률이다. 초록 점이 현재 사전확률이고 오른쪽 식은 같은 상태의 사전확률비, 조건부 분포의 비, 사후확률비다.</figcaption></figure>

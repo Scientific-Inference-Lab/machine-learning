@@ -52,7 +52,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">w는 경계의 방향을, b는 경계의 위치를 정한다</h2><p class="lead">w₁, w₂, b를 바꾸면 결정 경계가 회전하거나 평행 이동하고, 고정한 두 점 x⁽¹⁾ = (3, 2), x⁽²⁾ = (4, −1)의 점수와 예측이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">w는 경계의 방향을, b는 경계의 위치를 정한다</h2><p class="lead">입력 성분에 가중치 w₁, w₂를 곱해 더하고 절편 b를 더한 점수의 부호가 예측을 정한다. 고정한 두 점 x⁽¹⁾ = (3, 2), x⁽²⁾ = (4, −1)도 가중치와 절편에 따라 서로 다른 점수와 예측을 얻는다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--triple"><div class="control-field"><label for="w1">w₁ <output id="w1-out" class="control-value" for="w1">−1</output></label><input id="w1" type="range" min="-2" max="2" step="0.5" value="-1"></div><div class="control-field"><label for="w2">w₂ <output id="w2-out" class="control-value" for="w2">1.5</output></label><input id="w2" type="range" min="-2" max="2" step="0.5" value="1.5"></div><div class="control-field"><label for="bb">b <output id="bb-out" class="control-value" for="bb">3</output></label><input id="bb" type="range" min="-5" max="5" step="0.5" value="3"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="wb-plane" class="topic-plot plane" viewBox="0 0 320 320" role="img" aria-labelledby="wb-title wb-desc"><title id="wb-title">가중치와 절편에 따른 경계</title><desc id="wb-desc">경계와 두 점</desc></svg></div><figcaption class="visual-caption">짙은 직선은 결정 경계, 초록 화살표는 경계 위 한 점에서 그린 w이며 s가 커지는 쪽을 가리킨다. 두 점의 색은 +1(빈 원)과 −1(채운 원) 예측이다.</figcaption></figure>

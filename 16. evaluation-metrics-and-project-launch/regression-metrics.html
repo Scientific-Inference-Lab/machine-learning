@@ -36,7 +36,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>MSE와 RMSE</strong><span>MSE는 오차 제곱의 평균이고 RMSE는 그 제곱근이라 관측값과 단위가 같다.</span></article><article class="summary-card"><strong>MAE</strong><span>절대 오차의 평균이며 오차 크기에 비례해 벌점을 준다.</span></article><article class="summary-card"><strong>R²</strong><span>1 − Σ(yᵢ − ŷᵢ)² / Σ(yᵢ − ȳ)²이며 평가 자료의 평균을 기준선으로 삼는다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">한 관측이 크게 빗나가면 MSE는 MAE보다 빠르게 커진다</h2><p class="lead">관측값 y = (2, 4, 6, 8)을 (2, 5, 5, ŷ₄)로 예측할 때 네 번째 예측값 ŷ₄가 바뀌면 그 관측의 오차와 네 지표가 모두 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">한 관측이 크게 빗나가면 MSE는 MAE보다 빠르게 커진다</h2><p class="lead">관측값 y = (2, 4, 6, 8)을 (2, 5, 5, ŷ₄)로 예측한다. 네 번째 관측의 오차는 8 − ŷ₄이며, 이 오차의 크기를 다르게 반영하는 지표들은 같은 예측에서도 값이 다르다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="p4">네 번째 예측값 ŷ₄ <output id="p4-out" class="control-value" for="p4">10</output></label><input id="p4" type="range" min="2" max="16" step="1" value="10"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="res-plot" class="topic-plot" viewBox="0 0 900 330" role="img" aria-labelledby="rs-title rs-desc"><title id="rs-title">관측값과 예측값의 오차</title><desc id="rs-desc">왼쪽: 짙은 점은 관측값, 빈 초록 원은 예측값, 빨간 점선은 오차다. 초록으로 채운 원이 조절하는 ŷ₄다. 오른쪽: 관측마다 파란 막대는 절대 오차, 초록 막대는 제곱 오차이며 두 막대는 같은 척도다.</desc></svg></div><figcaption class="visual-caption">왼쪽: 짙은 점은 관측값, 빈 초록 원은 예측값, 빨간 점선은 오차다. 초록으로 채운 원이 조절하는 ŷ₄다. 오른쪽: 관측마다 파란 막대는 절대 오차, 초록 막대는 제곱 오차이며 두 막대는 같은 척도다.</figcaption></figure>
@@ -56,7 +56,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">R²는 평가 자료의 평균을 늘 예측하는 기준선과 비교한다</h2><p class="lead">같은 관측값 y = (2, 4, 6, 8)에서도 예측 방식에 따라 모델의 제곱 오차 합이 달라지고 R²도 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">R²는 평가 자료의 평균을 늘 예측하는 기준선과 비교한다</h2><p class="lead">같은 관측값 y = (2, 4, 6, 8)에서 R²은 모델의 제곱 오차 합을 관측값 평균으로 예측한 제곱 오차 합과 비교한다. 모델의 오차 합이 작을수록 R²이 크다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="model">예측 방식</label><select id="model"><option value="fit">예측 (2, 5, 5, 10)</option><option value="mean">평균 5를 늘 예측</option><option value="shift">예측 (5, 8, 8, 13)</option><option value="perfect">관측값과 같은 예측</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="r2-plot" class="topic-plot" viewBox="0 0 900 250" role="img" aria-labelledby="r2-title r2-desc"><title id="r2-title">모델과 평균 기준선의 제곱 오차 합</title><desc id="r2-desc">위 빨간 막대는 모델의 제곱 오차 합 Σ(yᵢ − ŷᵢ)², 아래 파란 막대는 평균 ȳ = 5를 늘 예측한 기준선의 제곱 오차 합 Σ(yᵢ − ȳ)² = 20이다. 두 막대의 길이 비는 1 − R²다.</desc></svg></div><figcaption class="visual-caption">위 빨간 막대는 모델의 제곱 오차 합 Σ(yᵢ − ŷᵢ)², 아래 파란 막대는 평균 ȳ = 5를 늘 예측한 기준선의 제곱 오차 합 Σ(yᵢ − ȳ)² = 20이다. 두 막대의 길이 비는 1 − R²다.</figcaption></figure>

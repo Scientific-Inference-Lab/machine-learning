@@ -43,7 +43,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">추정한 계수를 고정하고 새 입력에 적용하면 예측값이 나온다</h2><p class="lead">새 입력 x₀을 바꾸면 추정한 β̂₀ = 2, β̂₁ = 0.5는 그대로이고 예측값 ŷ₀만 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">추정한 계수를 고정하고 새 입력에 적용하면 예측값이 나온다</h2><p class="lead">추정한 계수 β̂₀ = 2, β̂₁ = 0.5를 고정하면 새 입력 x₀의 예측값은 ŷ₀ = 2 + 0.5x₀이다. 새 관측을 예측할 때 계수를 다시 추정하지 않는다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="x0">새 입력 x₀ <output id="x0-out" class="control-value" for="x0">6</output></label><input id="x0" type="range" min="0" max="10" step="1" value="6"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div class="topic-flow"><div class="flow-box"><strong>추정</strong><span>학습 자료 (X, y)</span><span>→ β̂₀ = 2, β̂₁ = 0.5</span></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-box is-x"><strong>입력</strong><span id="flow-in"></span></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-box is-on"><strong>예측</strong><span id="flow-out"></span></div></div></div><figcaption class="visual-caption">왼쪽 상자는 학습 자료로 한 번 끝나는 추정, 파란 상자는 새 입력, 초록 상자는 고정한 계수를 적용한 예측값이다.</figcaption></figure>

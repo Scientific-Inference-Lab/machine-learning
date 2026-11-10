@@ -55,7 +55,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>sigmoid</strong><span>1 / (1 + e⁻ᶻ)이며 출력이 (0, 1)이고 양 끝에서 도함수가 0에 가깝다.</span></article><article class="summary-card"><strong>ReLU</strong><span>max(0, z)이며 음수는 0, 양수는 그대로 내보낸다.</span></article><article class="summary-card"><strong>선형식의 합성</strong><span>w₂ᵀ(W₁x + b₁) + b₂는 다시 하나의 선형식이다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">sigmoid와 ReLU는 같은 z를 다른 값과 기울기로 바꾼다</h2><p class="lead">가중합 z에 따라 sigmoid와 ReLU의 출력과 도함수 값이 달라진다.</p></header>
+    <header class="example-header"><h2 class="section-title">sigmoid와 ReLU는 같은 z를 다른 값과 기울기로 바꾼다</h2><p class="lead">sigmoid의 도함수는 출력이 0이나 1에 가까울수록 작아지고, ReLU의 도함수는 z가 음수이면 0, 양수이면 1이다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="az">가중합 z <output id="az-out" class="control-value" for="az">1</output></label><input id="az" type="range" min="-6" max="6" step="0.5" value="1"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="act-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="ap-title ap-desc"><title id="ap-title">sigmoid와 ReLU</title><desc id="ap-desc">두 활성함수 곡선</desc></svg></div><figcaption class="visual-caption">파란 실선은 sigmoid σ(z), 초록 점선은 ReLU(z)다. 세로 점선이 현재 z이고, 두 점이 각 함수의 출력이다. 세로축은 0에서 3까지만 보인다.</figcaption></figure>
@@ -65,7 +65,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">은닉층의 ReLU를 빼면 두 층이 하나의 선형식으로 줄어 XOR을 틀린다</h2><p class="lead">은닉층의 활성함수를 바꾸면 네 XOR 관측의 은닉값, 출력 점수, 올바른 분류 수가 바뀐다. 가중치는 h₁ = g(x₁ + x₂), h₂ = g(x₁ + x₂ − 1), s = h₁ − 4h₂ − 0.5로 같다.</p></header>
+    <header class="example-header"><h2 class="section-title">은닉층의 ReLU를 빼면 두 층이 하나의 선형식으로 줄어 XOR을 틀린다</h2><p class="lead">h₁ = g(x₁ + x₂), h₂ = g(x₁ + x₂ − 1), s = h₁ − 4h₂ − 0.5로 가중치를 고정한다. 같은 가중합도 은닉층의 활성함수 g에 따라 은닉값과 출력 점수가 달라져 XOR의 분류 결과가 달라질 수 있다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="actsel">은닉층 활성함수 g</label><select id="actsel"><option value="relu">ReLU</option><option value="id">없음 (g(z) = z)</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><table id="act-table" class="topic-table" aria-label="활성함수에 따른 은닉값과 출력"></table></div><figcaption class="visual-caption">행은 XOR 관측이다. 초록 칸은 정답과 같은 예측, 빨간 글자는 틀린 예측이다.</figcaption></figure>

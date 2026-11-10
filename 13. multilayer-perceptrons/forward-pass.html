@@ -54,7 +54,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>순전파</strong><span>입력 → 은닉층 → 출력 순서로 값을 계산한다.</span></article><article class="summary-card"><strong>은닉 유닛 값</strong><span>hⱼ = ReLU(zⱼ)이며 다음 층의 입력이 된다.</span></article><article class="summary-card"><strong>출력 점수 s</strong><span>s = h₁ − 4h₂ − 0.5이며 부호로 범주를 예측한다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">입력을 넣으면 은닉 유닛과 출력이 차례로 계산된다</h2><p class="lead">입력 x₁, x₂를 바꾸면 두 은닉 유닛의 가중합과 활성화 값, 출력 점수와 예측이 앞에서부터 차례로 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">입력을 넣으면 은닉 유닛과 출력이 차례로 계산된다</h2><p class="lead">입력 x₁, x₂에서 두 은닉 유닛의 가중합과 활성화 값을 구한 뒤, 이 값을 출력층의 입력으로 써 점수와 예측을 구한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="fx1">x₁ <output id="fx1-out" class="control-value" for="fx1">1</output></label><input id="fx1" type="range" min="-1" max="2" step="0.25" value="1"></div><div class="control-field"><label for="fx2">x₂ <output id="fx2-out" class="control-value" for="fx2">0</output></label><input id="fx2" type="range" min="-1" max="2" step="0.25" value="0"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="fwd-net" class="topic-plot net" viewBox="0 0 580 250" role="img" aria-labelledby="fn-title fn-desc"><title id="fn-title">순전파 계산</title><desc id="fn-desc">입력, 은닉, 출력 값</desc></svg></div><figcaption class="visual-caption">원 안의 수가 각 노드의 값이고 선 위의 수가 가중치다. 초록 테두리는 0보다 큰 값을 내보낸 유닛, 회색 점선 테두리는 ReLU가 0으로 바꾼 유닛이다. 은닉 유닛 1의 절편은 0, 유닛 2의 절편은 −1, 출력 절편은 −0.5다.</figcaption></figure>
@@ -64,7 +64,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">출력 가중치 하나를 바꾸면 그 뒤의 점수만 달라진다</h2><p class="lead">h₂에서 출력으로 가는 가중치 w를 바꾸면 은닉값은 그대로이고, XOR 네 관측의 출력 점수와 예측만 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">출력 가중치 하나를 바꾸면 그 뒤의 점수만 달라진다</h2><p class="lead">h₂에서 출력으로 가는 가중치 w는 은닉 유닛의 계산을 바꾸지 않는다. 같은 은닉값에 곱하는 w가 XOR 네 관측의 출력 점수와 예측에 영향을 준다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="ow">h₂ → s 가중치 w <output id="ow-out" class="control-value" for="ow">−4</output></label><input id="ow" type="range" min="-6" max="2" step="0.5" value="-4"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><table id="w-table" class="topic-table" aria-label="가중치에 따른 출력 점수"></table></div><figcaption class="visual-caption">행은 XOR 관측이다. 은닉값 열은 w와 무관하고, 점수 열 s = h₁ + w·h₂ − 0.5만 바뀐다. 초록 칸은 정답과 같은 예측, 빨간 글자는 틀린 예측이다.</figcaption></figure>

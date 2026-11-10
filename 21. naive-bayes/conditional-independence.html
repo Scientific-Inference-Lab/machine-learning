@@ -49,7 +49,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">범주마다 사전확률과 특성별 조건부 확률을 곱해 비교한다</h2><p class="lead">π₁ = 0.20, P(X₁ = 1 | 1) = 0.60, P(X₂ = 1 | 1) = 0.30, P(X₁ = 1 | 0) = 0.10, P(X₂ = 1 | 0) = 0.20이다. 관측한 x₁과 x₂를 바꾸면 곱해지는 확률, 범주별 곱, 사후확률이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">범주마다 사전확률과 특성별 조건부 확률을 곱해 비교한다</h2><p class="lead">π₁ = 0.20, P(X₁ = 1 | 1) = 0.60, P(X₂ = 1 | 1) = 0.30, P(X₁ = 1 | 0) = 0.10, P(X₂ = 1 | 0) = 0.20이다. 관측한 x₁, x₂ 각각에 해당하는 조건부 확률을 곱하고 사전확률로 가중한 뒤 정규화해 사후확률을 구한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="a2">x₁</label><select id="a2"><option value="1">1</option><option value="0">0</option></select></div><div class="control-field"><label for="b2">x₂</label><select id="b2"><option value="1">1</option><option value="0">0</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="mul-plot" class="topic-plot" viewBox="0 0 900 260" role="img" aria-labelledby="mu-title mu-desc"><title id="mu-title">조건부 확률의 곱</title><desc id="mu-desc">범주별로 곱하는 세 확률과 사후확률</desc></svg></div><figcaption class="visual-caption">한 줄이 범주 하나이며 세 칸이 곱하는 π_k, P(X₁ = x₁ | k), P(X₂ = x₂ | k)다. 오른쪽 막대는 곱을 합으로 나눈 사후확률이고 초록 막대가 선택되는 범주다.</figcaption></figure>

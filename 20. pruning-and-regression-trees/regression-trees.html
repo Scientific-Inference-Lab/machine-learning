@@ -70,7 +70,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">분할을 되풀이할수록 계단 모양 예측이 학습 관측에 가까워진다</h2><p class="lead">특성 하나짜리 학습 관측 80개에 회귀 트리를 키운다. 최대 깊이를 바꾸면 끝점 수, 계단 모양 예측, 학습 RSS가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">분할을 되풀이할수록 계단 모양 예측이 학습 관측에 가까워진다</h2><p class="lead">특성 하나짜리 학습 관측 80개에 회귀 트리를 키운다. 깊이를 늘려 더 잘게 분할할수록 학습 RSS는 증가하지 않지만 끝점 수와 예측 구간은 늘 수 있다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="d3">최대 깊이 <output id="d3-out" class="control-value" for="d3">2</output></label><input id="d3" type="range" min="0" max="6" step="1" value="2"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="step-plot" class="topic-plot" viewBox="0 0 900 340" role="img" aria-labelledby="st-title st-desc"><title id="st-title">깊이와 계단 모양 예측</title><desc id="st-desc">학습 관측과 끝점 평균</desc></svg></div><figcaption class="visual-caption">파란 점이 학습 관측, 초록 계단이 끝점마다의 평균 예측, 회색 점선이 자료를 만든 함수다. 계단의 가로 조각 하나가 끝점 하나다.</figcaption></figure>

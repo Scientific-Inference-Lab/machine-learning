@@ -57,7 +57,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">정렬된 자료를 섞지 않고 자르면 묶음이 한 범주로 채워진다</h2><p class="lead">정렬된 순서 그대로 자르는지 섞은 뒤 자르는지에 따라 B = 5인 네 묶음의 범주 구성과 한 범주로만 채워진 묶음 수가 달라진다. 범주 가와 나는 각각 10개다.</p></header>
+    <header class="example-header"><h2 class="section-title">정렬된 자료를 섞지 않고 자르면 묶음이 한 범주로 채워진다</h2><p class="lead">범주 가와 나가 각각 10개인 자료를 B = 5인 네 묶음으로 나눈다. 범주순으로 정렬된 자료를 그대로 자르면 한 범주만 든 묶음이 생기고, 먼저 섞으면 두 범주가 한 묶음에 섞일 수 있다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="order">분할 전 순서</label><select id="order"><option value="sorted">범주별 정렬 유지</option><option value="shuffled">섞은 뒤 분할</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div id="class-strip" class="epoch-strip" role="img" aria-label="범주 구성"></div></div><figcaption class="visual-caption">파란 칸은 범주 가, 초록 칸은 범주 나다. 띠 하나가 B = 5인 미니배치이고 오른쪽 수는 그 묶음의 범주 나 비율이다.</figcaption></figure>
@@ -67,7 +67,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">B가 커지면 평균 그래디언트의 분산은 줄고 한 번의 계산량은 늘어난다</h2><p class="lead">n = 60,000, p = 784인 선형 모델에서 B를 바꾸면 에포크당 갱신 횟수와 한 번의 계산량 규모 Bp가 바뀐다. 분산은 σ² = 9에서 독립 추출 근사 σ²/B로 비교하되, 자료 전체를 쓰는 B = n에서는 추출 변동이 0이다.</p></header>
+    <header class="example-header"><h2 class="section-title">B가 커지면 평균 그래디언트의 분산은 줄고 한 번의 계산량은 늘어난다</h2><p class="lead">n = 60,000, p = 784인 선형 모델에서 묶음 크기 B가 크면 에포크당 갱신 횟수는 줄고 한 번의 계산량 규모 Bp는 커진다. 분산은 σ² = 9에서 독립 추출 근사 σ²/B로 비교하되, 자료 전체를 쓰는 B = n에서는 추출 변동이 0이다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="bcase">미니배치 크기 B</label><select id="bcase"><option value="1">1 (SGD)</option><option value="32" selected>32</option><option value="256">256</option><option value="60000">60,000 (배치 경사하강법)</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><table id="cost-table" class="topic-table" aria-label="미니배치 크기별 비용과 분산"></table></div><figcaption class="visual-caption">행은 미니배치 크기이고 초록 테두리 행이 고른 B다. B &lt; n의 분산은 독립 추출 근삿값이며, B = n의 실제 추출 변동은 0이다. Bp는 비용 규모이지 실제 곱셈 횟수나 실행 시간이 아니다.</figcaption></figure>

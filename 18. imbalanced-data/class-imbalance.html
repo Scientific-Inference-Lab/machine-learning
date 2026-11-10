@@ -39,7 +39,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>기준모델(baseline)</strong><span>다수 범주만 답하는 가장 단순한 모델이며, 같은 평가 자료에서 이보다 나은지부터 확인한다.</span></article><article class="summary-card"><strong>균형 정확도</strong><span>(TP/(TP + FN) + TN/(TN + FP)) / 2이며 한 범주만 예측하면 0.5다.</span></article><article class="summary-card"><strong>PR 곡선</strong><span>임계값을 바꾸며 재현율과 정밀도를 이은 곡선이며, 양성이 드물 때 정밀도의 낮음을 직접 보여 준다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">모두 정상이라 답해도 정확도는 99.83%지만 사기는 하나도 찾지 못한다</h2><p class="lead">사기 거래 102건, 정상 거래 59,708건인 검증 자료다. 모델을 바꾸면 사기 102건 가운데 찾아낸 건과 놓친 건, 네 지표가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">모두 정상이라 답해도 정확도는 99.83%지만 사기는 하나도 찾지 못한다</h2><p class="lead">사기 거래 102건, 정상 거래 59,708건인 검증 자료에서는 정상 거래가 훨씬 많다. 사기를 하나도 찾지 못하는 모델도 정확도가 높을 수 있으므로 사기 102건에서 찾아낸 건과 놓친 건을 함께 평가한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="model">모델</label><select id="model"><option value="base">모두 정상으로 예측하는 기준모델</option><option value="lr" selected>로지스틱 회귀</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="waffle" class="topic-plot" viewBox="0 0 900 300" role="img" aria-labelledby="wf-title wf-desc"><title id="wf-title">사기 거래 102건의 예측 결과</title><desc id="wf-desc">찾아낸 사기와 놓친 사기, 정상 거래의 오류</desc></svg></div><figcaption class="visual-caption">왼쪽 칸 하나가 실제 사기 거래 한 건이다. 초록 칸은 사기로 찾아낸 TP, 빨간 테두리 빈 칸은 놓친 FN이다. 오른쪽 상자는 정상 거래 가운데 사기로 잘못 예측한 FP와 바르게 예측한 TN의 건수다.</figcaption></figure>

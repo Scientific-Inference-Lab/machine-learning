@@ -40,12 +40,12 @@
 <body class="visual-topic topic-cost-complexity-pruning">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Knowing When to Stop</span><span class="nav-tag is-current" aria-current="page">Cost Complexity Pruning</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/20.%20Knowing%20When%20to%20Stop.pdf">Knowing When to <span class="publication-lecture-tail">Stop<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Cost Complexity Pruning</h1><hr class="accent-rule"><p class="page-subtitle">가지치기(pruning)는 크게 키운 나무에서 부분나무를 고르는 절차다. cost complexity pruning은 C_α(T) = RSS(T) + α|T|처럼 잔차제곱합에 끝점 수 |T|의 벌점을 더하고, 복잡도 매개변수(complexity parameter, α)가 커질수록 잎이 적은 부분나무를 고른다. α는 학습 자료로 추정하지 않고 교차검증 오차를 비교해 선택한다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/20.%20Knowing%20When%20to%20Stop.pdf">Knowing When to <span class="publication-lecture-tail">Stop<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Cost Complexity Pruning</h1><hr class="accent-rule"><p class="page-subtitle">가지치기(pruning)는 크게 키운 나무에서 부분나무를 고르는 절차이며, cost complexity pruning은 C_α(T) = RSS(T) + α|T|처럼 잔차제곱합에 끝점 수 |T|의 벌점을 더한다. 복잡도 매개변수(complexity parameter, α)는 직접 적합하지 않고 교차검증 오차를 비교해 선택한다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>두 항</strong><span>RSS(T)는 학습 자료에 대한 적합 오차, α|T|는 잎 수에 비례하는 복잡도 벌점이다.</span></article><article class="summary-card"><strong>α = 0과 아주 큰 α</strong><span>α = 0이면 가장 큰 나무가, α가 아주 크면 뿌리 하나만 남은 나무가 선택된다.</span></article><article class="summary-card"><strong>선택 순서</strong><span>후보 α마다 교차검증 오차를 구해 가장 작은 값을 고르고, 그 α로 개발 자료 전체에 다시 학습한다. 테스트 자료는 마지막 평가에만 쓴다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">α가 커지면 RSS가 조금 커지더라도 잎이 적은 부분나무가 선택된다</h2><p class="lead">잎 4개(RSS 2), 잎 2개(RSS 6), 잎 1개(RSS 14)인 세 부분나무가 후보다. α를 바꾸면 세 목적함수 값과 그 값이 가장 작은 나무가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">α가 커지면 RSS가 조금 커지더라도 잎이 적은 부분나무가 선택된다</h2><p class="lead">잎 4개(RSS 2), 잎 2개(RSS 6), 잎 1개(RSS 14)인 세 부분나무가 후보다. α가 커질수록 잎 하나당 벌점이 커지므로 잎이 적은 부분나무가 유리해진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="a1">α <output id="a1-out" class="control-value" for="a1">3.0</output></label><input id="a1" type="range" min="0" max="12" step="0.5" value="3"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="c-plot" class="topic-plot" viewBox="0 0 900 360" role="img" aria-labelledby="c-title c-desc"><title id="c-title">α에 따른 세 부분나무의 목적함수</title><desc id="c-desc">잎 4개, 2개, 1개 나무의 C_α 직선</desc></svg></div><figcaption class="visual-caption">가로축은 α, 세로축은 C_α다. 파란 실선이 잎 4개(2 + 4α), 진한 파란 긴 점선이 잎 2개(6 + 2α), 회색 짧은 점선이 잎 1개(14 + α)이고 기울기가 잎 수다. 두꺼운 초록 띠는 각 α에서 가장 작은 값을 이은 선이며 초록 점이 현재 α에서 선택된 나무다.</figcaption></figure>
@@ -55,10 +55,10 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">학습 오차는 α가 작을수록 작지만 교차검증 오차는 중간 크기의 나무에서 가장 작다</h2><p class="lead">특성 하나짜리 학습 관측 80개로 끝까지 키운 회귀 트리를 α로 가지치기한다. α 후보를 바꾸면 남는 잎 수, 계단 모양 예측, 학습 MSE와 5겹 교차검증 MSE가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">학습 오차는 α가 작을수록 작지만 교차검증 오차는 중간 크기의 나무에서 가장 작다</h2><p class="lead">특성 하나짜리 학습 관측 80개로 끝까지 키운 회귀 트리를 α로 가지치기한다. α가 작아져 잎이 늘면 학습 MSE는 증가하지 않지만 5-fold 교차검증 MSE는 중간 크기의 나무에서 가장 작아, 두 기준이 고르는 나무가 다르다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="k2">α 후보 <output id="k2-out" class="control-value" for="k2">3</output></label><input id="k2" type="range" min="0" max="15" step="1" value="6"></div></div>
-      <figure class="visual-figure"><div class="visual-frame"><svg id="cv-plot" class="topic-plot" viewBox="0 0 900 380" role="img" aria-labelledby="cv-title cv-desc"><title id="cv-title">α와 교차검증 오차</title><desc id="cv-desc">가지치기한 나무의 예측과 α별 오차</desc></svg></div><figcaption class="visual-caption">왼쪽은 학습 관측과 현재 α로 가지치기한 나무의 계단 예측이다. 오른쪽 가로축은 α 후보를 작은 값부터 늘어놓은 것이고, 파란 실선이 학습 MSE, 초록 점선이 5겹 교차검증 MSE다. 세로 점선이 현재 α, 점선 원이 교차검증 MSE가 가장 작은 α다.</figcaption></figure>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="cv-plot" class="topic-plot" viewBox="0 0 900 380" role="img" aria-labelledby="cv-title cv-desc"><title id="cv-title">α와 교차검증 오차</title><desc id="cv-desc">가지치기한 나무의 예측과 α별 오차</desc></svg></div><figcaption class="visual-caption">왼쪽은 학습 관측과 현재 α로 가지치기한 나무의 계단 예측이다. 오른쪽 가로축은 α 후보를 작은 값부터 늘어놓은 것이고, 파란 실선이 학습 MSE, 초록 점선이 5-fold 교차검증 MSE다. 세로 점선이 현재 α, 점선 원이 교차검증 MSE가 가장 작은 α다.</figcaption></figure>
       <div id="read-2" class="visual-readouts" aria-live="polite"></div>
       <p id="note-2" class="visual-note"></p>
     </div>
@@ -170,7 +170,7 @@
     if (cur === BEST) note = "α = " + cur.a + "에서 교차검증 MSE가 " + jro(cur.cv.toFixed(2)) + " 후보 가운데 가장 작고, 이때 잎은 " + cur.leaves + "개다. 이 α로 개발 자료 전체에 다시 학습한 나무를 테스트 자료에 한 번 평가한다.";
     else if (cur.a < BEST.a) note = "α = " + cur.a + "이면 잎 " + cur.leaves + "개가 남아 학습 MSE는 " + jro(cur.tr.toFixed(2)) + " 작지만 교차검증 MSE는 " + jro(cur.cv.toFixed(2)) + " α = " + BEST.a + "의 " + BEST.cv.toFixed(2) + "보다 크다. 끝점이 잡음까지 따라가, 교차검증 추정으로는 새 자료에서 더 틀릴 것으로 보인다.";
     else note = "α = " + cur.a + "이면 잎이 " + cur.leaves + "개로 줄어 학습 MSE가 " + cur.tr.toFixed(2) + ", 교차검증 MSE가 " + cur.cv.toFixed(2) + "다. " + (cur.cv - BEST.cv < 0.15 ? "잎을 더 줄이자 교차검증 MSE가 α = " + BEST.a + "의 " + BEST.cv.toFixed(2) + "보다 조금 커졌다." : "나무가 너무 작아 곡선의 오르내림을 놓치므로 α = " + BEST.a + "의 " + BEST.cv.toFixed(2) + "보다 크다.");
-    show(2, [["α", String(cur.a)], ["잎 수", cur.leaves + "개"], ["학습 MSE", cur.tr.toFixed(2)], ["5겹 교차검증 MSE", cur.cv.toFixed(2)]], note);
+    show(2, [["α", String(cur.a)], ["잎 수", cur.leaves + "개"], ["학습 MSE", cur.tr.toFixed(2)], ["5-fold 교차검증 MSE", cur.cv.toFixed(2)]], note);
   }
 
   var SE = [{ leaves: 3, m: 0.42, se: 0.06 }, { leaves: 6, m: 0.41, se: 0.07 }, { leaves: 10, m: 0.5, se: 0.08 }];

@@ -39,7 +39,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>임계값을 낮추면</strong><span>점수가 고정되어 있을 때 TP와 FP는 늘거나 같고 FN은 줄거나 같다.</span></article><article class="summary-card"><strong>평가 기준 먼저</strong><span>놓친 사기(FN)와 잘못된 경보(FP)의 비용을 정한 뒤 그 기준으로 임계값을 고른다.</span></article><article class="summary-card"><strong>자료의 역할</strong><span>임계값은 검증 자료에서 고르고, 테스트 자료에서는 고정한 임계값을 한 번 평가한다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">임계값을 낮출수록 사기를 더 찾지만 잘못된 경보도 늘어난다</h2><p class="lead">가상 거래 100건(사기 6건)의 사기 확률 추정값은 그대로 두고 임계값 t를 바꾸면 사기로 분류하는 거래와 네 칸의 수가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">임계값을 낮출수록 사기를 더 찾지만 잘못된 경보도 늘어난다</h2><p class="lead">가상 거래 100건(사기 6건)의 사기 확률 추정값을 고정한다. 임계값 t 이상을 사기로 분류하므로 t를 낮추면 놓치는 사기는 줄 수 있지만 정상 거래의 경보는 늘 수 있다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="t1">임계값 t <output id="t1-out" class="control-value" for="t1">0.50</output></label><input id="t1" type="range" min="0.02" max="0.72" step="0.01" value="0.5"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="strip" class="topic-plot" viewBox="0 0 900 250" role="img" aria-labelledby="st-title st-desc"><title id="st-title">거래 100건의 확률 추정값</title><desc id="st-desc">사기와 정상 거래의 점수와 임계값</desc></svg></div><figcaption class="visual-caption">가로축은 사기 확률 추정값이며 작은 값을 넓게 보이도록 제곱근 눈금을 썼다. 위 줄의 초록 점은 실제 사기 6건, 아래 줄의 파란 점은 정상 94건이다. 빨간 세로선이 임계값, 그 오른쪽 초록 영역이 사기로 분류되는 구간이고 흐린 점은 정상으로 분류된 거래다.</figcaption></figure>

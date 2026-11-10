@@ -26,7 +26,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>상태 sₜ와 행동 aₜ</strong><span>시점 t의 상황과 그때 에이전트가 고른 행동이다.</span></article><article class="summary-card"><strong>보상 rₜ</strong><span>선택한 행동의 결과를 평가하는 수치다.</span></article><article class="summary-card"><strong>지연된 보상</strong><span>여러 번 행동한 뒤에야 관측되는 보상이다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">보상 기준에 따라 보상이 관측되는 시점이 달라진다</h2><p class="lead">보상 기준과 시점 t를 바꾸면 해당 시점의 상태, 행동, 보상이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">보상 기준에 따라 보상이 관측되는 시점이 달라진다</h2><p class="lead">행동에 따른 상태 변화는 같아도 보상을 주는 기준에 따라 즉시 받는 보상과 나중에 받는 보상이 다르다. 시점 t의 상태와 행동에 맞춰 보상을 해석한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="criterion">보상 기준</label><select id="criterion"><option value="click">클릭하면 +1</option><option value="buy">구매 완료하면 +5</option></select></div><div class="control-field"><label for="t">시점 t <output id="t-out" class="control-value" for="t">0</output></label><input id="t" type="range" min="0" max="2" step="1" value="0"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div class="topic-flow" id="episode"></div></div><figcaption class="visual-caption">상자 하나가 한 시점의 상태, 행동, 사용자 반응, 보상이다. 초록 상자가 현재 시점 t이고 흐린 상자는 아직 일어나지 않은 시점이다.</figcaption></figure>

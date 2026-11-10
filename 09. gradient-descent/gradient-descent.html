@@ -48,7 +48,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">비볼록 함수에서는 시작점에 따라 도착하는 최솟값이 다르다</h2><p class="lead">같은 η = 0.1로 40번 갱신할 때 시작점 x₀을 바꾸면 도착하는 골짜기와 목적함수 값이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">비볼록 함수에서는 시작점에 따라 도착하는 최솟값이 다르다</h2><p class="lead">같은 η = 0.1로 40번 갱신해도 시작점 x₀이 다른 골짜기에 속하면 서로 다른 국소 최솟점에 가까워질 수 있다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="nx0">시작점 x₀ <output id="nx0-out" class="control-value" for="nx0">1</output></label><input id="nx0" type="range" min="-4" max="4" step="0.5" value="1"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="nc-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="nc-title nc-desc"><title id="nc-title">비볼록 함수의 경사하강법</title><desc id="nc-desc">두 골짜기가 있는 함수</desc></svg></div><figcaption class="visual-caption">파란 곡선은 두 골짜기가 있는 f(x) = x⁴/20 − x² + x/2 + 7이다. 짙은 점선은 전역 최솟점, 초록 점은 40번 갱신한 뒤의 위치, 짙은 작은 점은 지나온 경로다.</figcaption></figure>

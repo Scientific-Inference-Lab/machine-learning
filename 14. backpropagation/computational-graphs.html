@@ -54,7 +54,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>순전파의 저장</strong><span>z, h, s처럼 중간값을 저장해 역전파에서 다시 쓴다.</span></article><article class="summary-card"><strong>경로의 미분</strong><span>한 경로 위의 연산 미분을 곱한다.</span></article><article class="summary-card"><strong>여러 경로의 합</strong><span>같은 값이 두 연산에 쓰이면 두 경로의 미분값을 더한다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">순전파는 손실까지의 모든 중간값을 차례로 계산해 저장한다</h2><p class="lead">입력 x₁, x₂와 정답 y를 바꾸면 z, h, s, L이 입력 쪽부터 다시 계산된다. 가중치는 h₁ = ReLU(x₁ + x₂), h₂ = ReLU(x₁ + x₂ − 1), s = h₁ − 4h₂ − 0.5다.</p></header>
+    <header class="example-header"><h2 class="section-title">순전파는 손실까지의 모든 중간값을 차례로 계산해 저장한다</h2><p class="lead">가중치는 h₁ = ReLU(x₁ + x₂), h₂ = ReLU(x₁ + x₂ − 1), s = h₁ − 4h₂ − 0.5다. 입력 x₁, x₂에서 z, h, s를 순서대로 구하고, 마지막에 정답 y와 출력의 차이로 손실 L을 계산한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--triple"><div class="control-field"><label for="gx1">x₁ <output id="gx1-out" class="control-value" for="gx1">1</output></label><input id="gx1" type="range" min="0" max="1" step="0.25" value="1"></div><div class="control-field"><label for="gx2">x₂ <output id="gx2-out" class="control-value" for="gx2">1</output></label><input id="gx2" type="range" min="0" max="1" step="0.25" value="1"></div><div class="control-field"><label for="gy">정답 y</label><select id="gy"><option value="-1" selected>−1</option><option value="1">+1</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div id="cg-flow" class="topic-flow"></div></div><figcaption class="visual-caption">상자 하나가 값과 그 값을 만든 연산이다. 왼쪽에서 오른쪽이 순전파 순서이고, 초록 상자는 역전파에서 다시 쓰려고 저장하는 중간값이다.</figcaption></figure>
@@ -64,7 +64,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">같은 값이 두 연산에 쓰이면 두 경로의 미분을 더한다</h2><p class="lead">u를 바꾸면 L = a(u) + b(u)의 두 경로 a(u) = u², b(u) = 3u에서 각각 돌아오는 미분값과 그 합 dL/du가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">같은 값이 두 연산에 쓰이면 두 경로의 미분을 더한다</h2><p class="lead">L = a(u) + b(u), a(u) = u², b(u) = 3u이면 u에서 갈라진 두 경로가 각각 손실에 기여한다. dL/du는 각 경로에서 돌아온 미분값을 더한 값이다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="uu">u <output id="uu-out" class="control-value" for="uu">1</output></label><input id="uu" type="range" min="-3" max="3" step="0.5" value="1"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="branch" class="topic-plot net" viewBox="0 0 620 240" role="img" aria-labelledby="br-title br-desc"><title id="br-title">갈라진 경로</title><desc id="br-desc">u에서 a와 b를 거쳐 L로</desc></svg></div><figcaption class="visual-caption">원 안의 수는 순전파 값, 빨간 점선과 빨간 수는 역전파에서 L에서 u 쪽으로 돌아오는 미분값이다.</figcaption></figure>

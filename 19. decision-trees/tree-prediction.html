@@ -60,7 +60,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">깊이를 늘리면 학습 오차는 계속 줄지만 검증 오차는 어느 깊이부터 다시 커진다</h2><p class="lead">가운데 원 안이면 85%, 밖이면 15%의 확률로 범주 1이 되는 자료에서 학습 관측 100개로 나무를 키우고 검증 관측 1,000개로 잰다. 최대 깊이를 바꾸면 구역 모양과 두 오분류율이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">깊이를 늘리면 학습 오차는 계속 줄지만 검증 오차는 어느 깊이부터 다시 커진다</h2><p class="lead">가운데 원 안이면 85%, 밖이면 15%의 확률로 범주 1이 되는 자료에서 학습 관측 100개로 나무를 키우고 검증 관측 1,000개로 잰다. 깊은 나무는 더 작은 구역으로 학습 자료에 맞출 수 있지만 검증 오분류율도 낮아지는 것은 아니다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="d2">최대 깊이 <output id="d2-out" class="control-value" for="d2">4</output></label><input id="d2" type="range" min="1" max="10" step="1" value="4"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="depth-plot" class="topic-plot" viewBox="0 0 900 430" role="img" aria-labelledby="de-title de-desc"><title id="de-title">깊이와 오분류율</title><desc id="de-desc">학습 관측의 구역과 깊이별 학습·검증 오분류율</desc></svg></div><figcaption class="visual-caption">왼쪽은 학습 관측 100개와 현재 깊이의 구역이고, 빨간 점선 원은 자료를 만든 원의 경계다. 오른쪽 곡선은 깊이별 오분류율이며 파란 실선이 학습, 초록 점선이 검증이고 세로 점선이 현재 깊이다.</figcaption></figure>
@@ -70,7 +70,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">비스듬한 경계는 축에 나란한 분할을 겹쳐 계단 모양으로 근사한다</h2><p class="lead">같은 학습 관측 60개의 범주를 두 가지 참 경계로 정한다. 참 경계의 방향과 최대 깊이에 따라 구역 모양, 필요한 분할 수, 학습 오분류 수가 달라진다.</p></header>
+    <header class="example-header"><h2 class="section-title">비스듬한 경계는 축에 나란한 분할을 겹쳐 계단 모양으로 근사한다</h2><p class="lead">같은 학습 관측 60개의 범주를 두 참 경계 가운데 하나로 정한다. 참 경계의 방향과 최대 깊이에 따라 구역 모양, 필요한 분할 수, 학습 오분류 수가 달라진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="b3">참 경계</label><select id="b3"><option value="obl">비스듬한 경계 x₂ = x₁</option><option value="par">축에 나란한 경계 x₁ = 5</option></select></div><div class="control-field"><label for="d3">최대 깊이 <output id="d3-out" class="control-value" for="d3">2</output></label><input id="d3" type="range" min="1" max="5" step="1" value="2"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="obl-plot" class="topic-plot" viewBox="0 0 900 430" role="img" aria-labelledby="ob-title ob-desc"><title id="ob-title">경계 방향과 계단 근사</title><desc id="ob-desc">참 경계와 나무의 구역</desc></svg></div><figcaption class="visual-caption">초록 원은 범주 1, 파란 사각형은 범주 0이고 빨간 점선이 참 경계다. 구역 색은 나무의 예측이며 검은 선이 분할 경계다. 오른쪽 막대는 깊이마다 쓰인 분할 수다.</figcaption></figure>

@@ -63,7 +63,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">k와 후보 수가 곱해져 학습 횟수가 늘어난다</h2><p class="lead">관측 200개로 후보 모델을 비교한다고 하자. k와 후보 수를 바꾸면 한 번의 학습에 쓰는 관측 수와 전체 학습 횟수가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">k와 후보 수가 곱해져 학습 횟수가 늘어난다</h2><p class="lead">관측 200개를 k개 fold로 나누면 한 번에 k − 1개 fold로 학습하고 하나로 검증한다. 후보마다 k번 적합하므로 전체 학습 횟수는 k와 후보 수의 곱이다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double">
         <div class="control-field"><label for="kc">fold 수 k</label><select id="kc"><option value="5" selected>5</option><option value="10">10</option><option value="200">200 (LOOCV)</option></select></div>

@@ -54,7 +54,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>세 단계의 곱</strong><span>∂L/∂wⱼ = (∂L/∂a)(∂a/∂z)(∂z/∂wⱼ)이며 마지막 항은 xⱼ다.</span></article><article class="summary-card"><strong>δ의 재사용</strong><span>δ = (∂L/∂a)g′(z)이면 ∂L/∂wⱼ = δxⱼ, ∂L/∂b = δ다.</span></article><article class="summary-card"><strong>ReLU의 미분</strong><span>z > 0이면 1, z < 0이면 0이라 음수 구간에서는 미분이 전달되지 않는다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">가중치의 영향은 경로 위 국소 미분의 곱이다</h2><p class="lead">뉴런 하나 z = wx, a = g(z), L = ½(a − 1)²에서 w, x, 활성함수를 바꾸면 세 국소 미분과 그 곱, 중앙차분으로 잰 값이 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">가중치의 영향은 경로 위 국소 미분의 곱이다</h2><p class="lead">뉴런 하나 z = wx, a = g(z), L = ½(a − 1)²에서 손실의 미분은 세 국소 미분의 곱이다. 같은 지점의 중앙차분으로 이 미분값을 근사한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--triple"><div class="control-field"><label for="cw">가중치 w <output id="cw-out" class="control-value" for="cw">0.5</output></label><input id="cw" type="range" min="-2" max="2" step="0.25" value="0.5"></div><div class="control-field"><label for="cx">입력 x <output id="cx-out" class="control-value" for="cx">2</output></label><input id="cx" type="range" min="-2" max="3" step="0.5" value="2"></div><div class="control-field"><label for="cg">활성함수 g</label><select id="cg"><option value="sig">sigmoid</option><option value="relu">ReLU</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div id="chain-flow" class="topic-flow"></div></div><figcaption class="visual-caption">위 줄은 순전파 값, 아래 빨간 글자는 각 연결의 국소 미분이다. 오른쪽에서 왼쪽으로 곱하면 ∂L/∂w가 된다.</figcaption></figure>
@@ -64,7 +64,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">δ를 한 번 구하면 모든 가중치와 절편의 미분에 재사용한다</h2><p class="lead">x = (1, 2, −1), w = (0.5, 0.5, −0.5), 정답 y = 1인 ReLU 뉴런에서 절편 b를 바꾸면 z의 부호와 δ, 네 매개변수의 미분이 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">δ를 한 번 구하면 모든 가중치와 절편의 미분에 재사용한다</h2><p class="lead">x = (1, 2, −1), w = (0.5, 0.5, −0.5), 정답 y = 1인 ReLU 뉴런에서 절편 b가 가중합 z의 부호를 정한다. z가 음수이면 ReLU를 거치는 미분이 0이고, 양수이면 δ에 입력값을 곱해 가중치 미분을 구한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="db">절편 b <output id="db-out" class="control-value" for="db">−1.5</output></label><input id="db" type="range" min="-3" max="1" step="0.25" value="-1.5"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><table id="delta-table" class="topic-table" aria-label="δ로 계산한 매개변수별 미분"></table></div><figcaption class="visual-caption">행은 매개변수다. 모든 행이 같은 δ에 입력 성분 xⱼ(절편은 1)을 곱한다. 빨간 글자는 0이 된 미분이다.</figcaption></figure>
