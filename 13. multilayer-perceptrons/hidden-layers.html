@@ -56,7 +56,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>은닉 유닛</strong><span>가중합 z = wᵀx + b에 활성함수를 적용해 h = g(z)를 출력하는 계산 단위다.</span></article><article class="summary-card"><strong>W₁의 모양</strong><span>K × p이며 행 하나가 은닉 유닛 하나의 가중치 벡터다.</span></article><article class="summary-card"><strong>구조 하이퍼파라미터</strong><span>층 수와 유닛 수는 학습 전에 정하고 검증 성능으로 고른다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">은닉층을 지나면 XOR 관측이 직선으로 나뉘는 좌표로 옮겨진다</h2><p class="lead">h₁ = ReLU(x₁ + x₂), h₂ = ReLU(x₁ + x₂ − 1)로 고정하고 관측을 고르면 입력 좌표와 은닉 좌표에서의 위치, 출력 점수가 함께 강조된다.</p></header>
+    <header class="example-header"><h2 class="section-title">은닉층을 지나면 XOR 관측이 직선으로 나뉘는 좌표로 옮겨진다</h2><p class="lead">h₁ = ReLU(x₁ + x₂), h₂ = ReLU(x₁ + x₂ − 1)은 XOR 관측을 입력 좌표에서 은닉 좌표로 옮기고, 출력 점수는 은닉 좌표에서 계산된다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="hobs">관측</label><select id="hobs"><option value="0">(0, 0) · 정답 −1</option><option value="1">(0, 1) · 정답 +1</option><option value="2">(1, 0) · 정답 +1</option><option value="3" selected>(1, 1) · 정답 −1</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div class="hid-pair"><svg id="in-space" class="topic-plot plane" viewBox="0 0 320 320" role="img" aria-labelledby="is-title is-desc"><title id="is-title">입력 좌표</title><desc id="is-desc">XOR 네 점</desc></svg><svg id="h-space" class="topic-plot plane" viewBox="0 0 320 320" role="img" aria-labelledby="hs-title hs-desc"><title id="hs-title">은닉 좌표</title><desc id="hs-desc">은닉층을 지난 네 점</desc></svg></div></div><figcaption class="visual-caption">왼쪽은 입력 좌표 (x₁, x₂), 오른쪽은 은닉 좌표 (h₁, h₂)다. 빈 원은 정답 +1, 채운 원은 −1이며 점선 원이 고른 관측이다. 오른쪽 짙은 직선은 출력 s = h₁ − 4h₂ − 0.5의 경계이고, 초록 칠이 +1 쪽이다.</figcaption></figure>
@@ -66,7 +66,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">유닛 수와 입력 수가 매개변수 수를 정한다</h2><p class="lead">입력 특성 수 p와 은닉 유닛 수 K를 바꾸면 W₁의 모양, 연결 수, 출력이 하나인 신경망의 매개변수 수 pK + K + K + 1이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">유닛 수와 입력 수가 매개변수 수를 정한다</h2><p class="lead">출력이 하나인 신경망에서 입력 특성 수 p와 은닉 유닛 수 K가 W₁의 모양, 연결 수, 매개변수 수 pK + K + K + 1을 정한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="pp">입력 특성 수 p <output id="pp-out" class="control-value" for="pp">2</output></label><input id="pp" type="range" min="1" max="6" step="1" value="2"></div><div class="control-field"><label for="kk">은닉 유닛 수 K <output id="kk-out" class="control-value" for="kk">2</output></label><input id="kk" type="range" min="1" max="8" step="1" value="2"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="size-net" class="topic-plot net" viewBox="0 0 640 300" role="img" aria-labelledby="sn-title sn-desc"><title id="sn-title">완전 연결 신경망</title><desc id="sn-desc">p→K→1 구조</desc></svg></div><figcaption class="visual-caption">왼쪽 열은 입력, 가운데 열은 은닉 유닛, 오른쪽은 출력 하나다. 선 하나가 가중치 하나이며, 은닉 유닛과 출력 원마다 절편이 하나씩 있다.</figcaption></figure>

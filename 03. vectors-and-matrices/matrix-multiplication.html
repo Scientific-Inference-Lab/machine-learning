@@ -35,7 +35,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>모양 규칙</strong><span>(n × p)(p × k) = (n × k)이며 안쪽 차원이 같아야 한다.</span></article><article class="summary-card"><strong>Xθ + θ₀1ₙ</strong><span>각 행 x⁽ⁱ⁾ᵀ와 θ의 내적에 절편 θ₀을 더한 예측값 벡터다.</span></article><article class="summary-card"><strong>XΔθ + Δθ₀1ₙ</strong><span>θ가 Δθ, θ₀이 Δθ₀만큼 바뀔 때 관측별 예측값의 변화다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">행렬 곱은 왼쪽 열 수와 오른쪽 행 수가 같을 때만 정의된다</h2><p class="lead">두 행렬의 모양을 바꾸면 안쪽 차원의 일치 여부와 결과 행렬의 모양이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">행렬 곱은 왼쪽 열 수와 오른쪽 행 수가 같을 때만 정의된다</h2><p class="lead">두 행렬의 모양에 따라 안쪽 차원이 맞는지와 결과 행렬의 모양이 정해진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--wrap"><div class="control-field"><label for="an">A의 행 수 <output id="an-out" class="control-value" for="an">3</output></label><input id="an" type="range" min="1" max="5" step="1" value="3"></div><div class="control-field"><label for="ad">A의 열 수 <output id="ad-out" class="control-value" for="ad">2</output></label><input id="ad" type="range" min="1" max="5" step="1" value="2"></div><div class="control-field"><label for="bd">B의 행 수 <output id="bd-out" class="control-value" for="bd">2</output></label><input id="bd" type="range" min="1" max="5" step="1" value="2"></div><div class="control-field"><label for="bk">B의 열 수 <output id="bk-out" class="control-value" for="bk">1</output></label><input id="bk" type="range" min="1" max="5" step="1" value="1"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div id="shape-board" class="shape-board" role="img" aria-label="두 행렬과 결과의 모양"></div></div><figcaption class="visual-caption">칸 하나가 성분 하나다. A의 초록 행과 B의 초록 열의 내적이 결과의 초록 칸이 된다. 안쪽 차원이 다르면 빨간 테두리로 표시하고 결과를 만들지 않는다.</figcaption></figure>
@@ -45,7 +45,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">Xθ + θ₀1ₙ은 모든 관측에 같은 가중치를 적용한다</h2><p class="lead">가중치 θ₁, θ₂와 절편 θ₀을 바꾸면 두 관측의 내적, 예측값 ŷ, 기준값에서의 변화 XΔθ + Δθ₀1ₙ이 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">Xθ + θ₀1ₙ은 모든 관측에 같은 가중치를 적용한다</h2><p class="lead">가중치 θ₁, θ₂와 절편 θ₀을 바꾸면 두 관측의 내적과 예측값 ŷ가 바뀌고, 기준값에서 달라진 양은 XΔθ + Δθ₀1ₙ이다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--triple"><div class="control-field"><label for="th1">θ₁ <output id="th1-out" class="control-value" for="th1">3</output></label><input id="th1" type="range" min="-3" max="5" step="1" value="3"></div><div class="control-field"><label for="th2">θ₂ <output id="th2-out" class="control-value" for="th2">1</output></label><input id="th2" type="range" min="-3" max="5" step="1" value="1"></div><div class="control-field"><label for="th0">θ₀ <output id="th0-out" class="control-value" for="th0">2</output></label><input id="th0" type="range" min="-5" max="5" step="1" value="2"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><table id="pred-table" class="topic-table" aria-label="관측별 내적과 예측값"></table></div><figcaption class="visual-caption">X = [[6, 2], [4, 5]]의 두 행이 관측이다. 마지막 열은 기준 θ = (3, 1)ᵀ, θ₀ = 2일 때의 예측값 22, 19에서 달라진 양이다.</figcaption></figure>

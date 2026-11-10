@@ -55,7 +55,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>sigmoid</strong><span>1 / (1 + e⁻ᶻ)이며 출력이 (0, 1)이고 양 끝에서 도함수가 0에 가깝다.</span></article><article class="summary-card"><strong>ReLU</strong><span>max(0, z)이며 음수는 0, 양수는 그대로 내보낸다.</span></article><article class="summary-card"><strong>선형식의 합성</strong><span>w₂ᵀ(W₁x + b₁) + b₂는 다시 하나의 선형식이다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">sigmoid와 ReLU는 같은 z를 다른 값과 기울기로 바꾼다</h2><p class="lead">가중합 z를 바꾸면 두 함수의 출력과 도함수 값, 곡선 위의 위치가 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">sigmoid와 ReLU는 같은 z를 다른 값과 기울기로 바꾼다</h2><p class="lead">가중합 z에 따라 sigmoid와 ReLU의 출력과 도함수 값이 달라진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="az">가중합 z <output id="az-out" class="control-value" for="az">1</output></label><input id="az" type="range" min="-6" max="6" step="0.5" value="1"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="act-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="ap-title ap-desc"><title id="ap-title">sigmoid와 ReLU</title><desc id="ap-desc">두 활성함수 곡선</desc></svg></div><figcaption class="visual-caption">파란 실선은 sigmoid σ(z), 초록 점선은 ReLU(z)다. 세로 점선이 현재 z이고, 두 점이 각 함수의 출력이다. 세로축은 0에서 3까지만 보인다.</figcaption></figure>

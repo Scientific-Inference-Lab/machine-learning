@@ -33,7 +33,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>절편 β₀</strong><span>x = 0일 때의 예측값이며 직선이 세로축과 만나는 높이다.</span></article><article class="summary-card"><strong>계수 β₁</strong><span>x가 1 증가할 때의 예측값 변화량이며 직선의 기울기다.</span></article><article class="summary-card"><strong>추정과 예측</strong><span>추정은 학습 자료에서 계수를, 예측은 새 입력에서 ŷ를 얻는다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">절편은 직선의 높이를, 계수는 기울기를 정한다</h2><p class="lead">β₀과 β₁을 바꾸면 회귀선의 위치와 기울기, x = 0과 x = 4에서의 예측값이 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">절편은 직선의 높이를, 계수는 기울기를 정한다</h2><p class="lead">β₀과 β₁이 회귀선의 위치와 기울기, x = 0과 x = 4의 예측값을 정한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="b0">절편 β₀ <output id="b0-out" class="control-value" for="b0">2</output></label><input id="b0" type="range" min="-2" max="6" step="0.5" value="2"></div><div class="control-field"><label for="b1">계수 β₁ <output id="b1-out" class="control-value" for="b1">0.5</output></label><input id="b1" type="range" min="-1" max="1.5" step="0.25" value="0.5"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="line-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="line-title line-desc"><title id="line-title">회귀선</title><desc id="line-desc">절편과 계수로 정해진 직선</desc></svg></div><figcaption class="visual-caption">파란 직선은 ŷ = β₀ + β₁x다. 점선은 x = 0에서의 높이 β₀과 x가 3에서 4로 1 늘 때의 예측값 변화 β₁을 표시한다.</figcaption></figure>

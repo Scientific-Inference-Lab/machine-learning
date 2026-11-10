@@ -36,7 +36,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>학습 MSE</strong><span>적합에 사용한 관측의 평균제곱오차다.</span></article><article class="summary-card"><strong>테스트 MSE</strong><span>학습에 쓰지 않은 관측의 평균제곱오차다.</span></article><article class="summary-card"><strong>평가 독립성</strong><span>테스트 결과가 모델 결정으로 되돌아가지 않는 성질이다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">학습 MSE가 작은 모델과 테스트 MSE가 작은 모델이 다를 수 있다</h2><p class="lead">평가에 쓰는 자료를 바꾸면 같은 두 모델의 제곱 오차 행, 두 MSE, 더 작은 모델이 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">학습 MSE가 작은 모델과 테스트 MSE가 작은 모델이 다를 수 있다</h2><p class="lead">같은 두 모델도 평가에 쓰는 자료가 바뀌면 제곱 오차와 MSE가 달라지고, MSE가 더 작은 모델도 바뀐다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="eval-set">평가 자료</label><select id="eval-set"><option value="0">학습 관측 3개</option><option value="1">테스트 관측 2개</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><table class="error-table" aria-label="자료별 관측값, 두 모델의 예측과 제곱 오차"><thead><tr><th scope="col">자료</th><th scope="col">관측 y</th><th scope="col">모델 A 예측</th><th scope="col">모델 B 예측</th><th scope="col">A 제곱 오차</th><th scope="col">B 제곱 오차</th></tr></thead><tbody id="error-body"></tbody></table></div><figcaption class="visual-caption">파란 행이 평가에 쓰는 자료다. 초록 테두리 칸은 그 자료에서 MSE가 더 작은 모델의 제곱 오차다.</figcaption></figure>
@@ -46,7 +46,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">테스트 결과로 모델을 고르면 그 값은 독립된 평가가 아니다</h2><p class="lead">테스트 MSE의 쓰임을 바꾸면 결정 흐름에서 되먹임 경로와 최종 보고값의 성격이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">테스트 결과로 모델을 고르면 그 값은 독립된 평가가 아니다</h2><p class="lead">테스트 MSE를 모델 선택에도 쓰면 결과가 결정으로 되돌아가 최종 보고값이 독립된 평가가 아니게 된다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="test-use">테스트 MSE의 쓰임</label><select id="test-use"><option value="final">선택이 끝난 뒤 한 번만 계산해 보고</option><option value="select">모델 A·B 선택에도 사용</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div id="flow" class="flow" role="img" aria-label="모델 결정과 평가의 흐름"></div></div><figcaption class="visual-caption">상자는 결정 순서다. 빨간 점선 상자는 테스트 결과가 모델 결정으로 되돌아간 단계, 초록 상자는 독립된 평가 단계다.</figcaption></figure>

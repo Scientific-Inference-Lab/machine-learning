@@ -43,7 +43,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>L_NB = Π f_yᵢ(xᵢ)π_yᵢ</strong><span>나이브 베이즈는 특성과 범주의 결합분포 우도를 최대화한다.</span></article><article class="summary-card"><strong>L_logistic = Π P(Y = yᵢ | xᵢ)</strong><span>로지스틱 회귀는 조건부 우도를 최대화한다. −ℓ은 관측마다의 로지스틱 손실을 더한 값이다.</span></article><article class="summary-card"><strong>가정의 득실</strong><span>타당한 분포 가정은 자료가 적을 때 추정을 안정시킬 수 있다. 가정이 자료와 크게 어긋나면 불리해질 수 있으므로 두 방식의 검증 성능을 비교한다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">생성 모델은 결합확률을 곱해 만든 뒤 합으로 나누어 사후확률을 얻는다</h2><p class="lead">P(y = 1) = 0.4, P(x = 1 | y = 1) = 0.75, P(x = 1 | y = 0) = 0.20인 이진 특성 하나의 예다. 관측한 x와 계산 방식을 바꾸면 두 경로의 중간값과 사후확률이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">생성 모델은 결합확률을 곱해 만든 뒤 합으로 나누어 사후확률을 얻는다</h2><p class="lead">P(y = 1) = 0.4, P(x = 1 | y = 1) = 0.75, P(x = 1 | y = 0) = 0.20인 이진 특성 하나의 예다. 관측한 x는 사후확률을, 계산 방식은 거치는 중간값을 바꾼다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="x1">관측한 x</label><select id="x1"><option value="1">x = 1</option><option value="0">x = 0</option></select></div><div class="control-field"><label for="w1">계산 방식</label><select id="w1"><option value="gen">생성 모델 (결합확률 → 베이즈 정리)</option><option value="dis">판별 모델 (P(y | x)를 직접)</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="gd-plot" class="topic-plot" viewBox="0 0 900 290" role="img" aria-labelledby="gd-title gd-desc"><title id="gd-title">생성 모델과 판별 모델의 계산 경로</title><desc id="gd-desc">결합확률을 거치는 경로와 조건부 확률을 직접 쓰는 경로</desc></svg></div><figcaption class="visual-caption">위 줄은 생성 모델, 아래 줄은 판별 모델의 계산 경로다. 초록 상자가 고른 계산 방식이 실제로 거치는 단계이고, 두 경로의 마지막 상자가 같은 사후확률을 가리킨다.</figcaption></figure>
@@ -63,7 +63,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">한 번의 테스트에서는 생성 모델이 나았지만 그 결과를 일반화하지 않는다</h2><p class="lead">Smarket 자료에서 2001년부터 2004년까지로 학습하고 2005년 252일로 평가한 가우시안 나이브 베이즈와 로지스틱 회귀의 결과다. 지표를 바꾸면 두 모델의 값과 계산식이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">한 번의 테스트에서는 생성 모델이 나았지만 그 결과를 일반화하지 않는다</h2><p class="lead">Smarket 자료에서 2001년부터 2004년까지를 학습에, 2005년 252일을 평가에 쓴 가우시안 나이브 베이즈와 로지스틱 회귀의 결과다. 지표마다 두 모델의 값과 계산식이 다르다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="m3">테스트 지표</label><select id="m3"><option value="acc">정확도</option><option value="rec">상승 재현율</option><option value="pre">상승 정밀도</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="sm-plot" class="topic-plot" viewBox="0 0 900 220" role="img" aria-labelledby="sm-title sm-desc"><title id="sm-title">두 모델의 테스트 지표</title><desc id="sm-desc">가우시안 나이브 베이즈와 로지스틱 회귀의 지표</desc></svg></div><figcaption class="visual-caption">파란 막대가 가우시안 나이브 베이즈(생성 모델), 초록 막대가 로지스틱 회귀(판별 모델)이며 막대 옆에 분수와 값을 적었다.</figcaption></figure>

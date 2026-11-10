@@ -41,7 +41,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>G = Σ p̂ₖ(1 − p̂ₖ)</strong><span>지니 지수. 두 범주면 2p̂(1 − p̂)이고 한 범주만 있으면 0, 반반이면 최댓값 0.5다.</span></article><article class="summary-card"><strong>D = −Σ p̂ₖ ln p̂ₖ</strong><span>엔트로피. 자연로그를 쓰고 0 ln 0 = 0으로 둔다. 반반이면 최댓값 ln 2 ≈ 0.693이다.</span></article><article class="summary-card"><strong>ΔG = G부모 − [(n_L/n)G_L + (n_R/n)G_R]</strong><span>자식 구역의 불순도를 관측 수로 가중해 평균한 뒤 부모에서 뺀다.</span></article><article class="summary-card"><strong>분할 기준과 평가지표</strong><span>criterion은 분할을 고르는 기준이고, 모델 비교용 평가지표와 같을 필요는 없다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">두 척도는 한 범주만 있으면 0이고 반반 섞이면 가장 크다</h2><p class="lead">한 구역에서 범주 1의 비율 p̂를 바꾸면 두 곡선 위의 점, 다수 범주로 예측했을 때의 정확도가 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">두 척도는 한 범주만 있으면 0이고 반반 섞이면 가장 크다</h2><p class="lead">한 구역에서 범주 1의 비율 p̂가 지니 지수와 엔트로피, 다수 범주로 예측했을 때의 정확도를 정한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="p1">범주 1의 비율 p̂ <output id="p1-out" class="control-value" for="p1">0.90</output></label><input id="p1" type="range" min="0" max="1" step="0.01" value="0.9"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="curve-plot" class="topic-plot" viewBox="0 0 900 360" role="img" aria-labelledby="cu-title cu-desc"><title id="cu-title">지니 지수와 엔트로피</title><desc id="cu-desc">범주 1의 비율에 따른 두 불순도 척도</desc></svg></div><figcaption class="visual-caption">가로축은 범주 1의 비율 p̂, 세로축은 불순도다. 파란 실선이 엔트로피, 초록 점선이 지니 지수이고 세로 점선 위의 두 점이 현재 p̂의 값이다. 오른쪽 막대는 그 구역의 범주 구성이다.</figcaption></figure>
@@ -62,7 +62,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">오분류 수가 같은 두 분할도 지니 지수와 엔트로피는 구별한다</h2><p class="lead">범주 1과 범주 0이 400개씩인 구역의 두 분할 후보 A, B를 같은 자리에서 비교한다. 비교 기준을 바꾸면 막대의 값과 그 기준이 고르는 후보가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">오분류 수가 같은 두 분할도 지니 지수와 엔트로피는 구별한다</h2><p class="lead">범주 1과 범주 0이 400개씩인 구역에서 두 분할 후보 A, B를 비교한다. 오분류 수, 가중 지니 지수, 가중 엔트로피 가운데 어느 기준으로 재느냐에 따라 값과 고르는 후보가 달라진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="c3">비교 기준</label><select id="c3"><option value="err">오분류 수</option><option value="gini">가중 지니 지수</option><option value="ent">가중 엔트로피</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="ab-plot" class="topic-plot" viewBox="0 0 900 330" role="img" aria-labelledby="ab-title ab-desc"><title id="ab-title">후보 A와 B의 비교</title><desc id="ab-desc">두 후보의 구성과 기준별 값</desc></svg></div><figcaption class="visual-caption">왼쪽은 각 후보가 만든 두 구역의 구성이다. 초록이 범주 1, 파란색이 범주 0이다. 오른쪽 막대는 고른 기준으로 잰 값이며 값이 작을수록 좋고, 초록 막대가 그 기준에서 가장 작은 후보다.</figcaption></figure>

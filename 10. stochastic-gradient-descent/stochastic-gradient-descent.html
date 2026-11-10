@@ -38,7 +38,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>배치 경사하강법</strong><span>자료 전체의 평균 그래디언트로 갱신하며 선형 모델에서 한 번에 O(np)다.</span></article><article class="summary-card"><strong>SGD</strong><span>관측 하나의 그래디언트로 갱신하며 한 번에 O(p)다.</span></article><article class="summary-card"><strong>균등 추출의 기댓값</strong><span>같은 θ에서 균등 추출한 gᵢ의 기댓값은 ∇J(θ)와 같다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">관측 하나의 그래디언트는 전체 그래디언트와 다를 수 있다</h2><p class="lead">같은 θ에서 고른 관측을 바꾸면 그 관측의 그래디언트 성분 gᵢ와 η = 0.1일 때의 갱신 방향, 전체 평균과의 차이가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">관측 하나의 그래디언트는 전체 그래디언트와 다를 수 있다</h2><p class="lead">같은 θ에서도 그래디언트 성분 gᵢ는 관측마다 다르므로 η = 0.1일 때의 갱신량 −ηgᵢ와 gᵢ가 전체 평균 1에서 떨어진 정도도 관측마다 다르다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="pick">고른 관측</label><select id="pick"><option value="0">관측 1 (g₁ = −2)</option><option value="1">관측 2 (g₂ = 1)</option><option value="2">관측 3 (g₃ = 4)</option><option value="all">자료 전체 평균</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="g-line" class="topic-plot" viewBox="0 0 600 170" role="img" aria-labelledby="gl-title gl-desc"><title id="gl-title">그래디언트 성분의 수직선</title><desc id="gl-desc">세 관측의 그래디언트와 평균</desc></svg></div><figcaption class="visual-caption">수직선 위 짙은 점은 세 관측의 그래디언트 성분, 짙은 점선은 전체 평균 ∇J = 1이다. 초록 점이 갱신에 쓰는 값이고, 아래 초록 화살표가 θ의 이동 방향 −ηg다.</figcaption></figure>

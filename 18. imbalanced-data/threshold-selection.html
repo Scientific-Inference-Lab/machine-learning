@@ -34,7 +34,7 @@
 <body class="visual-topic topic-threshold-selection">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">When Accuracy Lies</span><span class="nav-tag is-current" aria-current="page">Threshold Selection</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/18.%20When%20Accuracy%20Lies.pdf">When Accuracy <span class="publication-lecture-tail">Lies<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Threshold Selection</h1><hr class="accent-rule"><p class="page-subtitle">모델이 추정한 사기 확률에 임계값(threshold)을 적용해 사기 여부를 분류한다. 0.5가 모든 목적에 가장 좋은 것은 아니므로, 어떤 오류가 더 비싼지 평가 기준을 먼저 정하고 검증 자료에서 임계값을 고른 뒤 테스트 평가 전에 고정한다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/18.%20When%20Accuracy%20Lies.pdf">When Accuracy <span class="publication-lecture-tail">Lies<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Threshold Selection</h1><hr class="accent-rule"><p class="page-subtitle">모델이 추정한 사기 확률에 임계값(threshold)을 적용해 사기 여부를 분류한다. 0.5가 모든 목적에 가장 좋지는 않으므로, 어떤 오류가 더 비싼지 평가 기준을 먼저 정하고 검증 자료에서 임계값을 고른 뒤 테스트 평가 전에 고정한다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>임계값을 낮추면</strong><span>점수가 고정되어 있을 때 TP와 FP는 늘거나 같고 FN은 줄거나 같다.</span></article><article class="summary-card"><strong>평가 기준 먼저</strong><span>놓친 사기(FN)와 잘못된 경보(FP)의 비용을 정한 뒤 그 기준으로 임계값을 고른다.</span></article><article class="summary-card"><strong>자료의 역할</strong><span>임계값은 검증 자료에서 고르고, 테스트 자료에서는 고정한 임계값을 한 번 평가한다.</span></article></div></section>
 
@@ -49,7 +49,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">FN 비율과 FP 비율은 임계값을 따라 엇갈린다</h2><p class="lead">같은 거래 100건에서 임계값을 옮기면 실제 사기 중 놓친 비율, 실제 정상 중 잘못 경보한 비율, 전체 오류율이 곡선 위에서 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">FN 비율과 FP 비율은 임계값을 따라 엇갈린다</h2><p class="lead">같은 거래 100건에서 임계값마다 실제 사기 중 놓친 비율, 실제 정상 중 잘못 경보한 비율, 전체 오류율이 정해진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="t2">임계값 t <output id="t2-out" class="control-value" for="t2">0.20</output></label><input id="t2" type="range" min="0.02" max="0.72" step="0.01" value="0.2"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="rates" class="topic-plot" viewBox="0 0 900 300" role="img" aria-labelledby="rt-title rt-desc"><title id="rt-title">임계값에 따른 오류 비율</title><desc id="rt-desc">FN 비율, FP 비율, 전체 오류율</desc></svg></div><figcaption class="visual-caption">가로축은 임계값이다. 초록 긴 점선은 FN 비율 FN/6, 파란 짧은 점선은 FP 비율 FP/94, 검은 실선은 전체 오류율 (FN + FP)/100이며 빨간 세로선이 현재 임계값이다.</figcaption></figure>
@@ -59,7 +59,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">비용 기준을 정하고 검증 자료에서 고른 임계값을 테스트 자료에 그대로 적용한다</h2><p class="lead">놓친 사기 하나의 비용을 잘못된 경보 하나의 몇 배로 볼지 바꾸면 검증 자료에서 총비용이 가장 작은 임계값이 바뀐다. 테스트 자료(사기 6건, 정상 94건)에서는 그 임계값을 고정해 평가한다.</p></header>
+    <header class="example-header"><h2 class="section-title">비용 기준을 정하고 검증 자료에서 고른 임계값을 테스트 자료에 그대로 적용한다</h2><p class="lead">놓친 사기 하나의 비용을 잘못된 경보 하나의 몇 배로 보느냐에 따라 검증 자료에서 총비용이 가장 작은 임계값이 달라진다. 테스트 자료(사기 6건, 정상 94건)에서는 그 임계값을 고정해 평가한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="cost">FN 한 건의 비용 (FP 한 건 = 1)</label><select id="cost"><option value="1">1</option><option value="5">5</option><option value="20" selected>20</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="costs" class="topic-plot" viewBox="0 0 900 300" role="img" aria-labelledby="cs-title cs-desc"><title id="cs-title">임계값에 따른 총비용</title><desc id="cs-desc">검증 자료와 테스트 자료의 총비용</desc></svg></div><figcaption class="visual-caption">가로축은 임계값, 세로축은 총비용 FN × 비용 + FP다. 짙은 파란 실선은 검증 자료, 빨간 점선은 테스트 자료이며 초록 점이 검증 자료에서 고른 임계값이다.</figcaption></figure>

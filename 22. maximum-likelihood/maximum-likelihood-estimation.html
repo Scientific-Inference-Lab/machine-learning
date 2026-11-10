@@ -41,7 +41,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>ℓ(θ) = s ln θ + (n − s) ln(1 − θ)</strong><span>각 관측의 로그 확률을 더한 값이다. 작은 확률을 먼저 곱하지 않는다.</span></article><article class="summary-card"><strong>ℓ′(θ) = s/θ − (n − s)/(1 − θ) = 0</strong><span>0 &lt; s &lt; n이면 θ̂ = s/n이고 ℓ″ &lt; 0이라 유일한 최대점이다.</span></article><article class="summary-card"><strong>max ℓ ⇔ min −ℓ</strong><span>θ ← θ − η∇(−ℓ)는 θ ← θ + η∇ℓ과 같은 갱신이다.</span></article><article class="summary-card"><strong>정규분포의 MLE</strong><span>μ̂는 표본평균, σ̂²는 분모가 n인 평균제곱편차다. 분모가 n − 1인 불편 표본분산과 다르다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">확률을 곱하면 0으로 반올림되지만 로그를 더하면 값이 남는다</h2><p class="lead">확률 0.5인 항을 n개 곱한 값과 로그를 더한 값을 이 브라우저의 64비트 실수로 계산한다. 항의 수를 바꾸면 두 계산 결과가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">확률을 곱하면 0으로 반올림되지만 로그를 더하면 값이 남는다</h2><p class="lead">확률 0.5인 항 n개를 64비트 실수로 곱하면 n이 충분히 클 때 0으로 반올림되지만, 로그를 더한 값 n ln 0.5는 그대로 남는다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="n1">항의 수 n <output id="n1-out" class="control-value" for="n1">1,000</output></label><input id="n1" type="range" min="10" max="1200" step="10" value="1000"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="uf-plot" class="topic-plot" viewBox="0 0 900 250" role="img" aria-labelledby="uf-title uf-desc"><title id="uf-title">곱과 로그 합의 계산</title><desc id="uf-desc">0.5의 n제곱과 n ln 0.5</desc></svg></div><figcaption class="visual-caption">위 막대는 0.5ⁿ의 크기를 10의 지수로 나타낸 것이고, 빨간 점선이 64비트 실수가 0이 아닌 값으로 담을 수 있는 가장 작은 크기(약 10⁻³²⁴)다. 막대가 빨간색이면 계산 결과가 0이다. 아래 초록 막대는 n ln 0.5의 크기다.</figcaption></figure>
@@ -61,7 +61,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">정규분포의 로그 우도는 표본평균과 분모가 n인 분산에서 가장 크다</h2><p class="lead">관측 8개 4.1, 5.3, 6.0, 4.8, 5.9, 7.2, 5.5, 4.6에 정규분포를 맞춘다. 후보 평균 μ와 분산 σ²를 바꾸면 밀도 곡선과 로그 우도 값이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">정규분포의 로그 우도는 표본평균과 분모가 n인 분산에서 가장 크다</h2><p class="lead">관측 8개 4.1, 5.3, 6.0, 4.8, 5.9, 7.2, 5.5, 4.6에 정규분포를 맞춘다. 후보 평균 μ와 분산 σ²의 조합마다 밀도 곡선과 로그 우도 값이 다르다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="m3">μ <output id="m3-out" class="control-value" for="m3">5.00</output></label><input id="m3" type="range" min="3.5" max="7.5" step="0.05" value="5"></div><div class="control-field"><label for="v3">σ² <output id="v3-out" class="control-value" for="v3">1.50</output></label><input id="v3" type="range" min="0.2" max="3" step="0.02" value="1.5"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="nm-plot" class="topic-plot" viewBox="0 0 900 320" role="img" aria-labelledby="nm-title nm-desc"><title id="nm-title">정규분포 후보와 로그 우도</title><desc id="nm-desc">관측 8개와 후보 밀도, 로그 우도</desc></svg></div><figcaption class="visual-caption">왼쪽에서 파란 점이 관측, 파란 곡선이 후보 N(μ, σ²)의 밀도, 검은 점선이 MLE로 맞춘 밀도다. 오른쪽 막대는 후보의 로그 우도이고 빨간 점선이 최댓값이다.</figcaption></figure>

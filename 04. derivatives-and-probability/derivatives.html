@@ -35,7 +35,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>평균변화율</strong><span>두 점을 잇는 할선의 기울기 [J(θ+h) − J(θ)] / h다.</span></article><article class="summary-card"><strong>도함수 J′(θ)</strong><span>h가 0으로 갈 때 평균변화율의 극한이며 접선의 기울기다.</span></article><article class="summary-card"><strong>부호와 크기</strong><span>부호는 θ가 늘 때 J의 증가·감소, 절댓값은 그 변화의 빠르기다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">h가 작아지면 할선이 접선에 가까워진다</h2><p class="lead">J(θ) = (θ − 2)²에서 기준점 θ = 4를 고정하고 간격 h를 바꾸면 두 번째 점, 할선, 평균변화율 4 + h가 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">h가 작아지면 할선이 접선에 가까워진다</h2><p class="lead">J(θ) = (θ − 2)²에서 기준점 θ = 4와 두 번째 점 θ = 4 + h를 잇는 할선의 기울기가 평균변화율 4 + h다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="h">간격 h <output id="h-out" class="control-value" for="h">−1.0</output></label><input id="h" type="range" min="-1" max="1" step="0.1" value="-1"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="secant-plot" class="plot" viewBox="0 0 640 300" role="img" aria-labelledby="sec-title sec-desc"><title id="sec-title">포물선과 할선</title><desc id="sec-desc">기준점 θ=4와 θ=4+h를 잇는 할선</desc></svg></div><figcaption class="visual-caption">파란 곡선은 J(θ), 짙은 점선은 θ = 4의 접선(기울기 4), 초록 실선은 두 점을 잇는 할선이다. 초록 점이 θ = 4 + h다.</figcaption></figure>
@@ -45,7 +45,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">도함수의 부호와 크기가 국소 변화를 정한다</h2><p class="lead">평가점 θ를 바꾸면 J′(θ) = 2(θ − 2)에 따라 접선의 기울기, J가 변하는 방향, 변화의 빠르기가 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">도함수의 부호와 크기가 국소 변화를 정한다</h2><p class="lead">평가점 θ에 따라 접선의 기울기 J′(θ) = 2(θ − 2)가 달라지고, 그 부호와 크기가 J가 변하는 방향과 빠르기를 정한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="theta">평가점 θ <output id="theta-out" class="control-value" for="theta">1</output></label><input id="theta" type="range" min="0" max="4" step="0.5" value="1"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="tangent-plot" class="plot" viewBox="0 0 640 300" role="img" aria-labelledby="tan-title tan-desc"><title id="tan-title">평가점의 접선</title><desc id="tan-desc">선택한 θ에서 J(θ)의 접선</desc></svg></div><figcaption class="visual-caption">초록 점이 평가점이고 짙은 선이 그 점의 접선이다.</figcaption></figure>

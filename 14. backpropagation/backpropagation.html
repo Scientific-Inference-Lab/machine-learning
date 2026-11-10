@@ -54,7 +54,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>출력층 미분</strong><span>∂L/∂w₂ = (s − y)h, ∂L/∂b₂ = s − y다.</span></article><article class="summary-card"><strong>은닉층으로 전달</strong><span>∂L/∂h = (s − y)w₂이고, ReLU′(z)를 곱해 ∂L/∂z를 얻는다.</span></article><article class="summary-card"><strong>갱신</strong><span>θ ← θ − η∇θL이며 역전파는 그래디언트만 계산한다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">출력의 오차 신호가 출력 가중치를 거쳐 은닉층으로 전달된다</h2><p class="lead">XOR 관측을 바꾸면 순전파 값과 손실, 출력에서 은닉층과 입력 쪽 가중치로 돌아가는 미분값이 모두 다시 계산된다.</p></header>
+    <header class="example-header"><h2 class="section-title">출력의 오차 신호가 출력 가중치를 거쳐 은닉층으로 전달된다</h2><p class="lead">XOR 관측마다 순전파 값과 손실이 다르고, 출력에서 은닉층을 거쳐 입력 쪽 가중치로 돌아가는 미분값도 달라진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="bobs">관측 (x, y)</label><select id="bobs"><option value="0">(0, 0), y = −1</option><option value="1">(0, 1), y = +1</option><option value="2">(1, 0), y = +1</option><option value="3" selected>(1, 1), y = −1</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="bp-net" class="topic-plot net" viewBox="0 0 700 260" role="img" aria-labelledby="bp-title bp-desc"><title id="bp-title">역전파 미분값</title><desc id="bp-desc">노드 값과 연결별 미분</desc></svg></div><figcaption class="visual-caption">원 안의 수는 순전파 값, 선 위 회색 수는 가중치, 선 아래 빨간 수는 그 가중치에 대한 손실의 미분이다. 회색 점선 테두리는 z ≤ 0이라 ReLU가 미분을 막은 은닉 유닛이다.</figcaption></figure>
@@ -64,7 +64,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">학습률이 알맞으면 한 번의 갱신으로 손실이 줄고, 너무 크면 오히려 커진다</h2><p class="lead">x = (1, 1), y = −1에서 학습률 η를 바꾸면 아홉 매개변수를 한꺼번에 갱신한 뒤의 출력 가중치와 손실이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">학습률이 알맞으면 한 번의 갱신으로 손실이 줄고, 너무 크면 오히려 커진다</h2><p class="lead">x = (1, 1), y = −1에서 아홉 매개변수를 한꺼번에 갱신할 때 학습률 η가 갱신 뒤 출력 가중치와 손실을 정한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="beta">학습률 η <output id="beta-out" class="control-value" for="beta">0.02</output></label><input id="beta" type="range" min="0" max="0.1" step="0.01" value="0.02"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><table id="upd-table" class="topic-table" aria-label="갱신 전후 매개변수와 손실"></table></div><figcaption class="visual-caption">행은 매개변수와 손실이다. 갱신 뒤 값은 θ − η × 그래디언트이며 초록 칸이 갱신 뒤 손실이다. 강의 예는 두 출력 가중치만 갱신하지만, 여기서는 아홉 매개변수를 모두 갱신한다.</figcaption></figure>

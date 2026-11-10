@@ -50,7 +50,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>ŷ_Rm = (1/n_m) Σ yᵢ</strong><span>구역 R_m에 도달한 학습 관측값의 평균이 그 끝점의 예측값이며, 제곱오차를 가장 작게 만든다.</span></article><article class="summary-card"><strong>분할 후 RSS</strong><span>후보마다 두 자식 구역에서 각자의 평균으로 잰 잔차제곱합을 더하고 가장 작은 후보를 고른다.</span></article><article class="summary-card"><strong>같은 끝점, 같은 예측</strong><span>한 구역 안의 새 관측은 특성값이 달라도 모두 같은 평균값을 받으므로 예측이 계단 모양이 된다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">기준값 후보마다 두 구역의 RSS를 더해 가장 작은 곳에서 자른다</h2><p class="lead">x = (2, 5, 9, 14), y = (1, 2, 8, 9)인 관측 네 개를 한 번 나눈다. 기준값을 바꾸면 두 구역의 평균선, 잔차, 분할 후 RSS가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">기준값 후보마다 두 구역의 RSS를 더해 가장 작은 곳에서 자른다</h2><p class="lead">x = (2, 5, 9, 14), y = (1, 2, 8, 9)인 관측 네 개를 한 번 나눈다. 기준값이 두 구역의 평균 예측과 잔차, 분할 후 RSS를 정한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="t1">기준값</label><select id="t1"><option value="none">나누지 않음</option><option value="3.5">3.5</option><option value="7" selected>7</option><option value="11.5">11.5</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="rss-plot" class="topic-plot" viewBox="0 0 900 340" role="img" aria-labelledby="rs-title rs-desc"><title id="rs-title">기준값과 분할 후 RSS</title><desc id="rs-desc">네 관측, 구역 평균, 잔차</desc></svg></div><figcaption class="visual-caption">왼쪽에서 파란 점이 관측, 검은 점선이 기준값, 초록 가로선이 각 구역의 평균 예측, 빨간 점선이 잔차다. 오른쪽 막대는 네 경우의 RSS이며 초록 막대가 현재 선택이다. 기준값 후보는 서로 다른 x값 사이의 중간값이다.</figcaption></figure>
@@ -60,7 +60,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">경로의 조건을 따라가면 끝점의 평균이 예측값이 된다</h2><p class="lead">야구 선수의 경력(년)과 지난해 안타 수로 로그 연봉을 예측하는 잎 세 개짜리 나무다. 두 값을 바꾸면 선수가 놓인 구역, 따라가는 경로, 예측값이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">경로의 조건을 따라가면 끝점의 평균이 예측값이 된다</h2><p class="lead">야구 선수의 경력(년)과 지난해 안타 수로 로그 연봉을 예측하는 잎 세 개짜리 나무다. 두 값에 따라 선수가 놓이는 구역과 따라가는 경로가 정해지고, 그 끝점의 평균이 예측값이 된다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="yr">경력(년) <output id="yr-out" class="control-value" for="yr">6</output></label><input id="yr" type="range" min="1" max="24" step="1" value="6"></div><div class="control-field"><label for="hit">안타 수 <output id="hit-out" class="control-value" for="hit">150</output></label><input id="hit" type="range" min="0" max="240" step="5" value="150"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="hit-plot" class="topic-plot" viewBox="0 0 900 380" role="img" aria-labelledby="hi-title hi-desc"><title id="hi-title">잎 세 개의 회귀 트리</title><desc id="hi-desc">경력과 안타 수 구역, 나무의 경로</desc></svg></div><figcaption class="visual-caption">왼쪽은 경력과 안타 수 평면을 두 번의 분할로 나눈 세 구역이고 구역 안의 수가 예측하는 로그 연봉이다. 색이 진할수록 예측값이 크다. 검은 마름모가 입력한 선수이고 초록 테두리가 그 구역이다. 오른쪽 나무의 굵은 초록 선이 따라간 경로다.</figcaption></figure>

@@ -37,7 +37,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>줄일 수 있는 오차</strong><span>[f(x) − f̂(x)]²이며 예측이 참 함수값에 가까울수록 작아진다.</span></article><article class="summary-card"><strong>줄일 수 없는 오차</strong><span>Var(ε)이며 어떤 예측으로도 없앨 수 없는 잡음의 분산이다.</span></article><article class="summary-card"><strong>관측 오차</strong><span>한 번 생성된 Y에 대한 (Y − f̂(x))²이며 그 기댓값과 다르다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">잡음은 오차 곡선의 바닥을 올리고 최저 위치는 그대로 둔다</h2><p class="lead">f(x) = 4에서 예측값 f̂(x)와 잡음 분산 Var(ε)를 바꾸면 곡선의 높이, 현재 점, 두 항의 크기가 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">잡음은 오차 곡선의 바닥을 올리고 최저 위치는 그대로 둔다</h2><p class="lead">f(x) = 4에서 예측값 f̂(x)는 줄일 수 있는 오차 (4 − f̂)²의 크기를 정하고, 곡선 바닥은 잡음 분산 Var(ε)만큼 올라간다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double">
         <div class="control-field"><label for="prediction">예측값 f̂(x) <output id="prediction-out" class="control-value" for="prediction">2</output></label><input id="prediction" type="range" min="0" max="8" step="1" value="2"></div>
@@ -50,7 +50,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">한 관측의 오차는 잡음 바닥보다 작을 수 있다</h2><p class="lead">f(x) = 4, f̂(x) = 2, Var(ε) = 1로 고정하고 이번 관측의 잡음 ε를 바꾸면 Y와 관측 제곱 오차가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">한 관측의 오차는 잡음 바닥보다 작을 수 있다</h2><p class="lead">f(x) = 4, f̂(x) = 2, Var(ε) = 1로 고정하면 이번 관측의 잡음 ε에 따라 Y와 관측 제곱 오차가 달라진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="epsilon">이번 잡음 ε <output id="epsilon-out" class="control-value" for="epsilon">−2</output></label><input id="epsilon" type="range" min="-3" max="3" step="1" value="-2"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div class="error-board"><div class="error-card"><strong>f(x) = 4</strong>참 함수값</div><div class="error-card"><strong>f̂(x) = 2</strong>예측</div><div class="error-card is-now"><strong id="observed-y"></strong>Y = f(x) + ε</div></div></div><figcaption class="visual-caption">세 카드는 참 함수값, 고정된 예측, 이번 잡음으로 생성된 관측이다. 초록 테두리가 ε에 따라 바뀌는 값이다.</figcaption></figure>

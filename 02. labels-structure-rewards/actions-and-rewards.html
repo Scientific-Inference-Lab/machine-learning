@@ -21,7 +21,7 @@
 <body class="visual-topic topic-actions-and-rewards">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Labels, Structure, Rewards</span><span class="nav-tag is-current" aria-current="page">Actions and Rewards</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/02.%20Labels,%20Structure,%20Rewards.pdf">Labels, Structure, <span class="publication-lecture-tail">Rewards<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Actions and Rewards</h1><hr class="accent-rule"><p class="page-subtitle">강화학습(reinforcement learning)에서 에이전트는 상태를 바탕으로 행동을 고르고, 환경은 상태를 바꾸며 보상(reward)을 돌려준다. 보상은 곧바로 올 수도, 여러 행동 뒤에 올 수도 있다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/02.%20Labels,%20Structure,%20Rewards.pdf">Labels, Structure, <span class="publication-lecture-tail">Rewards<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Actions and Rewards</h1><hr class="accent-rule"><p class="page-subtitle">강화학습(reinforcement learning)에서 에이전트는 상태를 보고 행동을 고르고, 환경은 상태를 바꾸며 보상(reward)을 돌려준다. 보상은 곧바로 올 수도, 여러 행동 뒤에 올 수도 있다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>상태 sₜ와 행동 aₜ</strong><span>시점 t의 상황과 그때 에이전트가 고른 행동이다.</span></article><article class="summary-card"><strong>보상 rₜ</strong><span>선택한 행동의 결과를 평가하는 수치다.</span></article><article class="summary-card"><strong>지연된 보상</strong><span>여러 번 행동한 뒤에야 관측되는 보상이다.</span></article></div></section>
 
@@ -36,7 +36,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">같은 클릭 기록도 쓰임에 따라 출력 y 또는 보상이 된다</h2><p class="lead">클릭 기록의 쓰임을 바꾸면 그 기록이 맡는 역할, 학습 목표, 기록이 주는 정보가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">같은 클릭 기록도 쓰임에 따라 출력 y 또는 보상이 된다</h2><p class="lead">클릭 기록을 클릭 예측에 쓰는지 콘텐츠 선택에 쓰는지가 기록의 역할, 학습 목표, 주어지는 정보를 정한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="use">클릭 기록의 쓰임</label><select id="use"><option value="y">이 사용자가 클릭할지 예측</option><option value="r">어떤 콘텐츠를 보여 줄지 선택</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div class="topic-flow" id="use-flow"></div></div><figcaption class="visual-caption">상자는 클릭 기록이 학습에 들어가는 순서다. 파란 상자는 모델이나 에이전트가 받는 값, 초록 상자는 클릭 기록이 맡는 역할이다.</figcaption></figure>

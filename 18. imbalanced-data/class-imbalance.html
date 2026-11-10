@@ -49,7 +49,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">정확도는 범주별 재현율을 관측 비율로 가중하고, 균형 정확도는 같은 비중으로 평균한다</h2><p class="lead">로지스틱 회귀의 사기 재현율 0.618과 정상 재현율 0.99987을 그대로 두고 평가 자료의 사기 비율만 바꾸면 정확도와 기준모델의 정확도가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">정확도는 범주별 재현율을 관측 비율로 가중하고, 균형 정확도는 같은 비중으로 평균한다</h2><p class="lead">로지스틱 회귀의 사기 재현율 0.618과 정상 재현율 0.99987을 그대로 두고 평가 자료의 사기 비율만 바꿔도 이 모델과 기준모델의 정확도가 달라진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="rate">사기 비율</label><select id="rate"><option value="0.0017">0.17%</option><option value="0.01">1%</option><option value="0.1">10%</option><option value="0.5">50%</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="weight-plot" class="topic-plot" viewBox="0 0 900 230" role="img" aria-labelledby="wp-title wp-desc"><title id="wp-title">정확도와 균형 정확도의 구성</title><desc id="wp-desc">범주별 재현율과 가중치</desc></svg></div><figcaption class="visual-caption">막대 전체 길이가 1이다. 위 막대는 정확도로, 초록은 사기 비율 × 사기 재현율, 파랑은 정상 비율 × 정상 재현율, 회색은 틀린 몫이다. 아래 막대는 균형 정확도로 두 재현율에 같은 비중 0.5를 준다.</figcaption></figure>
@@ -59,7 +59,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">양성이 드물면 ROC 곡선이 좋아 보여도 정밀도는 낮을 수 있다</h2><p class="lead">양성 30개, 음성 2,970개(양성 1%)의 점수에서 임계값 t를 옮기면 ROC 곡선과 PR 곡선 위의 현재 점이 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">양성이 드물면 ROC 곡선이 좋아 보여도 정밀도는 낮을 수 있다</h2><p class="lead">양성 30개, 음성 2,970개(양성 1%)의 점수에서 임계값 t마다 ROC 곡선의 (FPR, 재현율)과 PR 곡선의 (재현율, 정밀도)가 함께 정해진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="t">임계값 t <output id="t-out" class="control-value" for="t">0.70</output></label><input id="t" type="range" min="0.2" max="0.95" step="0.05" value="0.7"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="curves" class="topic-plot" viewBox="0 0 900 360" role="img" aria-labelledby="cu-title cu-desc"><title id="cu-title">ROC 곡선과 PR 곡선</title><desc id="cu-desc">같은 점수의 두 곡선과 현재 임계값</desc></svg></div><figcaption class="visual-caption">왼쪽 ROC 곡선은 가로축 FPR, 세로축 재현율이고 회색 점선이 무작위 순위다. 오른쪽 PR 곡선은 가로축 재현율, 세로축 정밀도이고 빨간 점선이 양성 비율 0.01이다. 초록 점이 현재 임계값의 점이다.</figcaption></figure>

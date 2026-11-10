@@ -42,7 +42,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>L(θ) = θ⁷(1 − θ)³</strong><span>앞 7번, 뒤 3번이 관측한 순서대로 나올 확률을 θ의 함수로 본 것이다. 각 던짐은 독립이고 앞면 확률은 모두 θ다.</span></article><article class="summary-card"><strong>우도는 θ의 확률이 아니다</strong><span>자료값에 대해서는 확률의 합이 1이지만, 우도를 θ에 대해 적분한 값은 1일 필요가 없다.</span></article><article class="summary-card"><strong>상대우도 L(θ)/L(θ̂)</strong><span>최대점에서 1이 되도록 나눈 값으로, 후보 θ가 관측 자료를 얼마나 잘 설명하는지 비교한다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">같은 식도 θ를 고정하면 확률분포, 자료를 고정하면 우도가 된다</h2><p class="lead">동전을 10번 던져 앞, 뒤, 앞, 앞, 뒤, 앞, 앞, 뒤, 앞, 앞을 얻었다. θ를 바꾸면 왼쪽의 앞면 수 확률분포와 오른쪽 우도 곡선 위의 점이 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">같은 식도 θ를 고정하면 확률분포, 자료를 고정하면 우도가 된다</h2><p class="lead">동전을 10번 던져 앞, 뒤, 앞, 앞, 뒤, 앞, 앞, 뒤, 앞, 앞을 얻었다. θ마다 앞면 수의 확률분포와 관측한 순서의 우도 L(θ)가 다르다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="t1">앞면 확률 θ <output id="t1-out" class="control-value" for="t1">0.50</output></label><input id="t1" type="range" min="0.01" max="0.99" step="0.01" value="0.5"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="pl-plot" class="topic-plot" viewBox="0 0 900 360" role="img" aria-labelledby="pl-title pl-desc"><title id="pl-title">확률분포와 우도</title><desc id="pl-desc">θ를 고정한 앞면 수의 분포와 자료를 고정한 우도 곡선</desc></svg></div><figcaption class="visual-caption">위 줄 동전은 관측한 순서이고 초록이 앞면이다. 왼쪽 막대는 θ를 고정했을 때 앞면 수 0부터 10까지의 확률이며 막대 높이의 합이 1이고, 초록 막대가 관측한 앞면 7번이다. 오른쪽 곡선은 관측 순서를 고정한 L(θ)이고 초록 점이 현재 θ, 검은 점선이 최대점이다.</figcaption></figure>
@@ -52,7 +52,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">관측한 앞면 수가 바뀌면 우도 곡선의 최대점이 s/n으로 옮겨 간다</h2><p class="lead">10번 가운데 앞면 수를 바꾸면 상대우도 곡선과 그 최대점이 바뀐다. 모두 앞면이거나 모두 뒷면인 경우도 확인한다.</p></header>
+    <header class="example-header"><h2 class="section-title">관측한 앞면 수가 바뀌면 우도 곡선의 최대점이 s/n으로 옮겨 간다</h2><p class="lead">10번 가운데 앞면 수 s에 따라 상대우도 곡선과 그 최대점 s/10이 달라지고, 모두 앞면이거나 모두 뒷면이면 최대점이 1이나 0이 된다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="s2">앞면 수 s (10번 중) <output id="s2-out" class="control-value" for="s2">7</output></label><input id="s2" type="range" min="0" max="10" step="1" value="7"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="s-plot" class="topic-plot" viewBox="0 0 900 320" role="img" aria-labelledby="s-title s-desc"><title id="s-title">앞면 수와 상대우도</title><desc id="s-desc">앞면 수에 따른 상대우도 곡선과 최대점</desc></svg></div><figcaption class="visual-caption">가로축은 θ, 세로축은 최대점에서 1이 되도록 나눈 상대우도다. 파란 곡선이 현재 앞면 수의 상대우도, 검은 점선과 점이 최대점이다.</figcaption></figure>
@@ -62,7 +62,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">앞면 비율이 같아도 관측이 많을수록 우도 곡선이 좁아진다</h2><p class="lead">앞면 비율을 0.7로 두고 던진 횟수를 바꾼다. 곡선의 최대점은 같지만 0.7에서 벗어난 θ의 상대우도가 얼마나 빨리 줄어드는지가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">앞면 비율이 같아도 관측이 많을수록 우도 곡선이 좁아진다</h2><p class="lead">앞면 비율을 0.7로 두면 던진 횟수가 달라도 최대점은 같지만, 횟수가 많을수록 0.7에서 벗어난 θ의 상대우도가 빨리 줄어든다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="n3">던진 횟수</label><select id="n3"><option value="10">10번 (앞면 7번)</option><option value="100" selected>100번 (앞면 70번)</option><option value="1000">1,000번 (앞면 700번)</option></select></div><div class="control-field"><label for="c3">비교할 θ <output id="c3-out" class="control-value" for="c3">0.60</output></label><input id="c3" type="range" min="0.3" max="0.95" step="0.01" value="0.6"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="n-plot" class="topic-plot" viewBox="0 0 900 320" role="img" aria-labelledby="n-title n-desc"><title id="n-title">관측 수와 상대우도의 폭</title><desc id="n-desc">10번과 선택한 횟수의 상대우도 곡선</desc></svg></div><figcaption class="visual-caption">회색 곡선은 기준인 10번(앞면 7번), 초록 점선은 선택한 던진 횟수의 상대우도다. 세로 점선과 초록 점이 비교할 θ의 상대우도이고 옅은 파란 띠는 상대우도가 0.15 이상인 구간이다.</figcaption></figure>

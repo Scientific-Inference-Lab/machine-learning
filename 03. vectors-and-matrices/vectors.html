@@ -31,7 +31,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>벡터 x ∈ ℝᵖ</strong><span>성분 p개를 정해진 순서로 담는다. xⱼ는 j번째 특성의 값이다.</span></article><article class="summary-card"><strong>덧셈과 스칼라배</strong><span>같은 자리끼리 더하고, 수 하나를 모든 성분에 곱한다.</span></article><article class="summary-card"><strong>행렬 X ∈ ℝⁿˣᵖ</strong><span>관측 n개를 행으로, 특성 p개를 열로 모은 배열이다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">벡터의 덧셈은 같은 자리의 성분끼리 더한다</h2><p class="lead">v의 두 성분을 바꾸면 v 화살표, u + v 화살표, 성분별 합이 함께 바뀐다. u = (1, 2)ᵀ로 고정한다.</p></header>
+    <header class="example-header"><h2 class="section-title">벡터의 덧셈은 같은 자리의 성분끼리 더한다</h2><p class="lead">v의 두 성분이 바뀌면 같은 자리끼리 더한 u + v의 성분도 바뀐다. u = (1, 2)ᵀ로 고정한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="v1">v₁ <output id="v1-out" class="control-value" for="v1">2</output></label><input id="v1" type="range" min="-3" max="3" step="1" value="2"></div><div class="control-field"><label for="v2">v₂ <output id="v2-out" class="control-value" for="v2">−1</output></label><input id="v2" type="range" min="-3" max="3" step="1" value="-1"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="add-plot" class="topic-plot square" viewBox="0 0 300 300" role="img" aria-labelledby="add-title add-desc"><title id="add-title">벡터 덧셈</title><desc id="add-desc">u, v, u+v 화살표</desc></svg></div><figcaption class="visual-caption">눈금 한 칸이 1이다. 짙은 점선은 u, 파란 실선은 v, 초록 굵은 선은 u + v이며 회색 점선은 u 끝에서 v를 이어 붙인 경로다.</figcaption></figure>
@@ -51,7 +51,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">관측을 행으로 쌓아야 X의 모양이 n × p가 된다</h2><p class="lead">배치와 성분 위치 i, j를 바꾸면 행렬의 모양과 x⁽ⁱ⁾ⱼ가 놓이는 칸, NumPy 첨자가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">관측을 행으로 쌓아야 X의 모양이 n × p가 된다</h2><p class="lead">관측을 행으로 둔 X인지 전치한 Xᵀ인지와 위치 i, j가 행렬의 모양, x⁽ⁱ⁾ⱼ가 놓이는 칸, NumPy 첨자를 정한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--triple"><div class="control-field"><label for="layout">배치</label><select id="layout"><option value="X">관측을 행으로 (X)</option><option value="XT">전치 (Xᵀ)</option></select></div><div class="control-field"><label for="mi">관측 i <output id="mi-out" class="control-value" for="mi">2</output></label><input id="mi" type="range" min="1" max="4" step="1" value="2"></div><div class="control-field"><label for="mj">특성 j <output id="mj-out" class="control-value" for="mj">3</output></label><input id="mj" type="range" min="1" max="3" step="1" value="3"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><table id="matrix" class="topic-table" aria-label="자료 행렬"></table></div><figcaption class="visual-caption">행 머리는 관측 또는 특성, 열 머리는 그 반대다. 파란 칸은 관측 i 한 줄, 초록 테두리 칸이 x⁽ⁱ⁾ⱼ다.</figcaption></figure>

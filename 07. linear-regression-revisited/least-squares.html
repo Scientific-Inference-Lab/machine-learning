@@ -37,7 +37,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>잔차 eᵢ</strong><span>yᵢ − ŷᵢ이며 양수면 과소 예측, 음수면 과대 예측이다.</span></article><article class="summary-card"><strong>제곱 손실</strong><span>eᵢ²이며 부호를 없애고 큰 오차를 더 무겁게 센다.</span></article><article class="summary-card"><strong>RSS(β₀, β₁)</strong><span>Σ(yᵢ − β₀ − β₁xᵢ)²이며 계수마다 값이 하나 정해진다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">계수를 바꾸면 모든 잔차와 RSS가 함께 바뀐다</h2><p class="lead">후보 계수 β₀, β₁을 바꾸면 직선, 관측별 잔차, RSS 지도 위의 현재 위치가 함께 움직인다.</p></header>
+    <header class="example-header"><h2 class="section-title">계수를 바꾸면 모든 잔차와 RSS가 함께 바뀐다</h2><p class="lead">후보 계수 β₀, β₁이 직선을 정하고, 그 직선에서 관측별 잔차와 잔차 제곱합 RSS가 계산된다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="c0">절편 β₀ <output id="c0-out" class="control-value" for="c0">2.5</output></label><input id="c0" type="range" min="-1" max="4" step="0.25" value="2.5"></div><div class="control-field"><label for="c1">계수 β₁ <output id="c1-out" class="control-value" for="c1">0.5</output></label><input id="c1" type="range" min="0" max="2" step="0.05" value="0.5"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div class="ls-pair"><svg id="fit-plot" class="topic-plot" viewBox="0 0 380 300" role="img" aria-labelledby="fit-title fit-desc"><title id="fit-title">후보 직선과 잔차</title><desc id="fit-desc">관측 6개와 후보 직선</desc></svg><svg id="rss-map" class="topic-plot" viewBox="0 0 300 300" role="img" aria-labelledby="map-title map-desc"><title id="map-title">RSS 지도</title><desc id="map-desc">계수 조합별 RSS</desc></svg></div></div><figcaption class="visual-caption">왼쪽: 점은 관측, 파란 직선은 후보 직선이다. 초록 실선은 양의 잔차(과소 예측), 빨간 점선은 음의 잔차(과대 예측)다. 오른쪽: 가로축 β₀, 세로축 β₁이며 칸이 짙을수록 RSS가 작다. 초록 점이 현재 후보, 빨간 십자가 RSS 최소 계수다.</figcaption></figure>
@@ -47,7 +47,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">제곱 손실은 큰 잔차를 더 무겁게 센다</h2><p class="lead">잔차 e를 바꾸면 손실 e²이 곡선을 따라 바뀌고, 잔차가 2배일 때 벌점은 4배가 된다.</p></header>
+    <header class="example-header"><h2 class="section-title">제곱 손실은 큰 잔차를 더 무겁게 센다</h2><p class="lead">잔차 e의 손실은 e²이라 잔차가 2배가 되면 벌점은 4배가 된다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="e">잔차 e <output id="e-out" class="control-value" for="e">2</output></label><input id="e" type="range" min="-3" max="3" step="0.5" value="2"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="loss-plot" class="topic-plot" viewBox="0 0 600 260" role="img" aria-labelledby="loss-title loss-desc"><title id="loss-title">제곱 손실 곡선</title><desc id="loss-desc">잔차와 제곱 손실</desc></svg></div><figcaption class="visual-caption">파란 곡선은 e², 회색 점선은 절댓값 |e|다. 초록 점이 현재 잔차의 제곱 손실이다.</figcaption></figure>

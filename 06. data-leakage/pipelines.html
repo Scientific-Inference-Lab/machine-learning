@@ -41,7 +41,7 @@
   <div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Data Leakage</span><span class="nav-tag is-current" aria-current="page">Pipelines</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div>
 </div></header>
 
-<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/06.%20Data%20Leakage.pdf">Data <span class="publication-lecture-tail">Leakage<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Pipelines</h1><hr class="accent-rule"><p class="page-subtitle">파이프라인은 전처리 단계와 모델을 순서대로 묶어 fit과 predict를 한 단위로 실행하는 객체다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/06.%20Data%20Leakage.pdf">Data <span class="publication-lecture-tail">Leakage<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Pipelines</h1><hr class="accent-rule"><p class="page-subtitle">파이프라인(pipeline)은 전처리 단계와 모델을 순서대로 묶어 fit과 predict를 한 단위로 실행하는 객체다.</p></div></section>
 
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid">
@@ -51,7 +51,7 @@
   </div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">pipeline.fit은 전처리 상태와 모델 매개변수를 차례로 저장한다</h2><p class="lead">단계마다 흐름에서 지나온 상자와 그 단계에서 저장되는 상태가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">pipeline.fit은 전처리 상태와 모델 매개변수를 차례로 저장한다</h2><p class="lead">학습 자료가 전처리 fit을 지날 때 평균, 표준편차, 범주 목록이 저장되고 모델 fit을 지날 때 모델 매개변수가 저장된다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="fit-stage">pipeline.fit 흐름 <output id="fit-stage-label" class="control-value" for="fit-stage">학습 자료</output></label><input id="fit-stage" type="range" min="0" max="3" step="1" value="0"></div></div>
       <figure class="visual-figure"><div class="visual-frame">
@@ -73,7 +73,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">pipeline.predict는 저장된 상태를 바꾸지 않고 적용한다</h2><p class="lead">단계마다 새 자료가 지나는 상자와 출력이 바뀌고, 저장된 전처리 상태와 모델 매개변수는 그대로다.</p></header>
+    <header class="example-header"><h2 class="section-title">pipeline.predict는 저장된 상태를 바꾸지 않고 적용한다</h2><p class="lead">새 자료가 단계를 지날 때마다 출력이 바뀌지만 저장된 전처리 상태와 모델 매개변수는 그대로다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="predict-stage">pipeline.predict 흐름 <output id="predict-stage-label" class="control-value" for="predict-stage">새 자료</output></label><input id="predict-stage" type="range" min="0" max="2" step="1" value="0"></div></div>
       <figure class="visual-figure"><div class="visual-frame">
@@ -93,7 +93,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">ColumnTransformer는 열 종류별 변환을 하나의 행렬로 합친다</h2><p class="lead">경로를 바꾸면 연결되는 변환과 모델로 전달되는 출력이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">ColumnTransformer는 열 종류별 변환을 하나의 행렬로 합친다</h2><p class="lead">수치형 열과 범주형 열은 서로 다른 변환을 거치고 두 출력을 합친 행렬이 모델로 전달된다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="branch-buttons">연결할 경로</label><select id="branch-buttons"><option value="numeric">수치형 경로</option><option value="categorical">범주형 경로</option><option value="both">두 경로 병합</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame">

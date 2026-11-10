@@ -42,7 +42,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>선형 점수 s</strong><span>wᵀx + b이며 가중치 w와 입력 x의 성분 수가 같아야 한다.</span></article><article class="summary-card"><strong>부호 판정</strong><span>s ≥ 0이면 +1, s < 0이면 −1로 예측한다.</span></article><article class="summary-card"><strong>결정 경계</strong><span>{x : wᵀx + b = 0}이며 2차원에서는 직선, p차원에서는 초평면이다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">점수의 부호가 점이 놓인 반공간과 예측 범주를 정한다</h2><p class="lead">w = (−1, 1.5)ᵀ, b = 3으로 고정하고 입력 x의 두 성분을 바꾸면 점의 위치, 선형 점수, 예측 범주가 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">점수의 부호가 점이 놓인 반공간과 예측 범주를 정한다</h2><p class="lead">w = (−1, 1.5)ᵀ, b = 3으로 고정하면 입력 x의 두 성분에 따라 선형 점수가 달라지고 그 부호가 예측 범주를 정한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="px1">x₁ <output id="px1-out" class="control-value" for="px1">3</output></label><input id="px1" type="range" min="-4" max="6" step="0.5" value="3"></div><div class="control-field"><label for="px2">x₂ <output id="px2-out" class="control-value" for="px2">2</output></label><input id="px2" type="range" min="-4" max="6" step="0.5" value="2"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="pred-plane" class="topic-plot plane" viewBox="0 0 320 320" role="img" aria-labelledby="pp-title pp-desc"><title id="pp-title">결정 경계와 입력 점</title><desc id="pp-desc">경계와 점</desc></svg></div><figcaption class="visual-caption">초록으로 옅게 칠한 쪽은 s ≥ 0(+1), 파랗게 칠한 쪽은 s < 0(−1)이다. 짙은 직선이 결정 경계, 점선 원이 입력 점이다. 눈금 한 칸이 1이다.</figcaption></figure>

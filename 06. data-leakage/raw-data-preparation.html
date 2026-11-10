@@ -51,7 +51,7 @@
     <p class="eyebrow"><a class="eyebrow-link" href="../lecture/06.%20Data%20Leakage.pdf">Data <span class="publication-lecture-tail">Leakage<span aria-hidden="true">↗</span></span></a></p>
     <h1 class="page-title">Raw Data Preparation</h1>
     <hr class="accent-rule">
-    <p class="page-subtitle">전처리는 원자료의 결측값, 값 범위, 범주를 모델이 계산할 수 있는 입력으로 바꾸는 처리다. 여러 행에서 계산하는 처리는 학습 자료에서 상태를 저장한다.</p>
+    <p class="page-subtitle">전처리(preprocessing)는 원자료의 결측값, 값 범위, 범주를 모델이 계산할 수 있는 입력으로 바꾸는 처리다. 여러 행에서 계산하는 처리는 학습 자료에서 상태를 저장한다.</p>
   </div>
 </section>
 
@@ -65,7 +65,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">원자료의 문제마다 필요한 처리가 다르다</h2><p class="lead">강조할 문제를 바꾸면 행렬에서 해당 칸과 처리 방향이 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">원자료의 문제마다 필요한 처리가 다르다</h2><p class="lead">결측값, 이상치, 다른 값 범위, 범주 값은 행렬에서 나타나는 칸과 필요한 처리가 서로 다르다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single">
         <div class="control-field"><label for="raw-issue-buttons">강조할 원자료 문제</label><select id="raw-issue-buttons"><option value="missing" selected>결측값</option><option value="outlier">이상치</option><option value="scale">다른 값 범위</option><option value="category">범주 값</option></select></div>
@@ -105,7 +105,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">열 종류와 처리에 따라 학습 자료에서 저장하는 상태가 다르다</h2><p class="lead">처리를 바꾸면 fit에서 저장하는 상태와 그 상태를 적용한 결과가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">열 종류와 처리에 따라 학습 자료에서 저장하는 상태가 다르다</h2><p class="lead">처리마다 fit에서 저장하는 상태와 그 상태를 적용한 결과가 다르다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single">
         <div class="control-field"><label for="fit-kind">처리</label><select id="fit-kind"><option value="num-impute">수치형 결측값 대체</option><option value="standardize">수치형 표준화</option><option value="cat-impute">범주형 결측값 대체</option></select></div>

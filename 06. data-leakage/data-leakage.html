@@ -43,7 +43,7 @@
   <div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Data Leakage</span><span class="nav-tag is-current" aria-current="page">Data Leakage</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div>
 </div></header>
 
-<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/06.%20Data%20Leakage.pdf">Data <span class="publication-lecture-tail">Leakage<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Data Leakage</h1><hr class="accent-rule"><p class="page-subtitle">데이터 누수는 예측할 때 사용할 수 없거나 평가에 남겨 둔 자료의 정보가 학습 과정에 들어가 최종 성능을 과대 추정할 수 있게 만드는 현상이다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/06.%20Data%20Leakage.pdf">Data <span class="publication-lecture-tail">Leakage<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Data Leakage</h1><hr class="accent-rule"><p class="page-subtitle">데이터 누수(data leakage)는 예측할 때 사용할 수 없거나 평가에 남겨 둔 자료의 정보가 학습 과정에 들어가 최종 성능이 과대 추정될 수 있는 현상이다.</p></div></section>
 
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid">
@@ -53,7 +53,7 @@
   </div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">여러 행을 보는 변환만 학습 자료에서 상태를 저장한다</h2><p class="lead">변환이 보는 범위를 바꾸면 저장 상태의 유무와 fit이 필요한지가 함께 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">여러 행을 보는 변환만 학습 자료에서 상태를 저장한다</h2><p class="lead">변환이 보는 범위에 따라 저장할 상태가 있는지와 fit이 필요한지가 정해진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="scope-buttons">변환이 보는 범위</label><select id="scope-buttons"><option value="value" selected>한 값</option><option value="row">한 행</option><option value="rows">여러 행</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame">
@@ -71,7 +71,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">전처리 상태는 분할 뒤 학습 자료로만 계산한다</h2><p class="lead">경로를 바꾸면 저장하는 평균이 μ_all과 μ_train 사이에서 바뀌고 테스트 정보가 상태에 들어가는지가 달라진다.</p></header>
+    <header class="example-header"><h2 class="section-title">전처리 상태는 분할 뒤 학습 자료로만 계산한다</h2><p class="lead">전체 자료로 fit한 뒤 분할하면 저장하는 평균 μ_all에 테스트 정보가 들어가고, 분할한 뒤 학습 자료로만 fit하면 μ_train을 저장한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="fit-order-buttons">강조할 경로</label><select id="fit-order-buttons"><option value="wrong">전체 fit → 분할</option><option value="correct" selected>분할 → 학습 fit</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame">
@@ -88,7 +88,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">예측이나 선택 뒤에 생기는 정보가 되돌아오면 누수다</h2><p class="lead">사례를 바꾸면 되돌아가는 정보, 그 정보가 생기는 시점, 들어가는 단계가 바뀐다. 학습·검증·테스트 자료 가운데 검증 자료는 선택에, 테스트 자료는 선택이 끝난 뒤의 최종 평가에 쓴다.</p></header>
+    <header class="example-header"><h2 class="section-title">예측이나 선택 뒤에 생기는 정보가 되돌아오면 누수다</h2><p class="lead">누수 사례마다 되돌아가는 정보, 그 정보가 생기는 시점, 들어가는 단계가 다르다. 검증 자료는 선택에, 테스트 자료는 선택이 끝난 뒤의 최종 평가에 쓴다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="timeline-buttons">누수 사례</label><select id="timeline-buttons"><option value="hospital" selected>입원 기간 예측 · 퇴원일</option><option value="purchase">구매액 예측 · 환불 여부</option><option value="feedback">테스트 성능으로 다시 선택</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame">

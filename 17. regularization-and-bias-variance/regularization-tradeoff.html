@@ -50,7 +50,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">편향의 제곱 증가보다 분산 감소가 클 때까지 예측 오차가 줄어든다</h2><p class="lead">같은 모의실험의 세 항을 λ마다 이어 그렸다. λ를 옮기면 현재 위치에서 두 항의 크기와, 한 칸 더 키웠을 때 각 항의 변화량이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">편향의 제곱 증가보다 분산 감소가 클 때까지 예측 오차가 줄어든다</h2><p class="lead">같은 모의실험에서 λ마다 편향의 제곱과 분산의 크기가 다르고, λ를 한 칸 더 키울 때 두 항이 변하는 양도 달라진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="li2">정규화 강도 λ <output id="li2-out" class="control-value" for="li2">0.01</output></label><input id="li2" type="range" min="0" max="10" step="1" value="4"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="curve-plot" class="topic-plot" viewBox="0 0 900 330" role="img" aria-labelledby="cv-title cv-desc"><title id="cv-title">λ에 따른 편향의 제곱, 분산, 기대 오차</title><desc id="cv-desc">세 곡선과 현재 λ</desc></svg></div><figcaption class="visual-caption">가로축은 λ 후보(0과 로그 간격), 세로축은 오차다. 짙은 파란 실선은 편향의 제곱, 초록 점선은 분산, 빨간 실선은 기대 제곱 예측 오차, 회색 점선은 잡음 분산 0.25이며 초록 세로선이 현재 λ다.</figcaption></figure>

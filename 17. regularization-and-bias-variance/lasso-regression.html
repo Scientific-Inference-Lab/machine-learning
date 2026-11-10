@@ -30,12 +30,12 @@
 <body class="visual-topic topic-lasso-regression">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Paying to Fit Less</span><span class="nav-tag is-current" aria-current="page">Lasso Regression</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/17.%20Paying%20to%20Fit%20Less.pdf">Paying to Fit <span class="publication-lecture-tail">Less<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Lasso Regression</h1><hr class="accent-rule"><p class="page-subtitle">lasso(ℓ1 penalty를 더한 선형 회귀)는 RSS에 계수 절댓값 합의 벌점 λΣ|βⱼ|를 더한다. 벌점의 모양 때문에 λ에 따라 일부 계수가 정확히 0이 되어, 그 특성은 예측식에 기여하지 않는다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/17.%20Paying%20to%20Fit%20Less.pdf">Paying to Fit <span class="publication-lecture-tail">Less<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Lasso Regression</h1><hr class="accent-rule"><p class="page-subtitle">lasso(ℓ1 벌점을 더한 선형 회귀)는 RSS에 계수 절댓값 합의 벌점 λΣ|βⱼ|를 더한다. 벌점의 모양 때문에 λ에 따라 일부 계수가 정확히 0이 되어, 그 특성은 예측식에 기여하지 않는다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>RSS + λΣ|βⱼ|</strong><span>ridge regression의 제곱합 벌점을 절댓값 합으로 바꾼 목적함수다.</span></article><article class="summary-card"><strong>variable selection</strong><span>계수가 0이 된 특성을 빼는 결과이며, 그 특성이 중요하지 않다는 뜻은 아니다.</span></article><article class="summary-card"><strong>제약 영역</strong><span>|β₁| + |β₂| ≤ s는 축 위에 모서리가 있는 마름모라 해가 모서리에 닿으면 한 계수가 0이다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">λ를 키우면 lasso는 일부 계수를 정확히 0으로 만들 수 있다</h2><p class="lead">관측 30개, 표준화한 특성 8개 자료(자료를 만들 때 쓴 특성은 x₁, x₄, x₇)에 두 방법을 적합했다. λ를 바꾸면 두 계수 막대와 정확히 0인 계수의 수가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">λ를 키우면 lasso는 일부 계수를 정확히 0으로 만들 수 있다</h2><p class="lead">관측 30개, 표준화한 특성 8개 자료(자료를 만들 때 쓴 특성은 x₁, x₄, x₇)에 ridge regression과 lasso를 적합했다. λ에 따라 두 방법의 계수와 정확히 0인 계수의 수가 달라진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="lam">정규화 강도 λ <output id="lam-out" class="control-value" for="lam">30</output></label><input id="lam" type="range" min="0" max="7" step="1" value="4"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="cmp-plot" class="topic-plot" viewBox="0 0 900 320" role="img" aria-labelledby="cp-title cp-desc"><title id="cp-title">ridge regression과 lasso의 계수</title><desc id="cp-desc">같은 λ에서 두 방법의 계수 막대</desc></svg></div><figcaption class="visual-caption">왼쪽은 ridge regression, 오른쪽은 lasso의 계수다. 빨간 점선 칸은 계수가 정확히 0인 특성이다. 특성 이름의 굵은 글씨는 자료를 만들 때 쓴 특성이다.</figcaption></figure>
@@ -45,7 +45,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">마름모 제약의 모서리에 닿으면 한 계수가 0이 된다</h2><p class="lead">두 계수 (β₁, β₂)의 RSS 등고선은 같고 제약의 크기 s만 바꾼다. s를 바꾸면 lasso 제약 |β₁| + |β₂| ≤ s와 ridge 제약 β₁² + β₂² ≤ s에서 RSS가 가장 작은 점이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">마름모 제약의 모서리에 닿으면 한 계수가 0이 된다</h2><p class="lead">두 계수 (β₁, β₂)의 RSS 등고선이 같을 때 제약의 크기 s에 따라 lasso 제약 |β₁| + |β₂| ≤ s와 ridge 제약 β₁² + β₂² ≤ s 안에서 RSS가 가장 작은 점이 달라진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="s">제약 크기 s <output id="s-out" class="control-value" for="s">1.00</output></label><input id="s" type="range" min="0.25" max="3" step="0.25" value="1"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="geo-plot" class="topic-plot" viewBox="0 0 900 360" role="img" aria-labelledby="gp-title gp-desc"><title id="gp-title">제약 영역과 RSS 등고선</title><desc id="gp-desc">lasso와 ridge 제약에서의 해</desc></svg></div><figcaption class="visual-caption">왼쪽 lasso, 오른쪽 ridge regression이다. 파란 영역이 제약(ridge regression 원의 반지름은 √s), 검은 점이 벌점 없는 최소제곱 해, 빨간 타원이 해를 지나는 RSS 등고선, 초록 점이 제약 안에서 RSS가 가장 작은 해다.</figcaption></figure>
@@ -55,7 +55,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">강하게 상관된 특성이 있으면 ridge regression은 계수를 나누고 lasso는 한쪽만 남길 수 있다</h2><p class="lead">상관계수 0.91인 두 특성 x₁, x₂로 관측값을 만든 자료다. λ를 바꾸면 두 방법이 두 계수를 나누는 방식이 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">강하게 상관된 특성이 있으면 ridge regression은 계수를 나누고 lasso는 한쪽만 남길 수 있다</h2><p class="lead">상관계수 0.91인 두 특성 x₁, x₂로 관측값을 만든 자료다. λ에 따라 ridge regression과 lasso가 두 계수를 나누는 방식이 달라진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="lc">정규화 강도 λ <output id="lc-out" class="control-value" for="lc">20</output></label><input id="lc" type="range" min="0" max="5" step="1" value="2"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="corr-plot" class="topic-plot" viewBox="0 0 900 260" role="img" aria-labelledby="cr-title cr-desc"><title id="cr-title">상관된 두 특성의 계수</title><desc id="cr-desc">ridge regression과 lasso의 두 계수</desc></svg></div><figcaption class="visual-caption">행이 방법, 막대가 두 계수다. 빨간 점선 칸은 계수가 정확히 0인 특성이다.</figcaption></figure>
