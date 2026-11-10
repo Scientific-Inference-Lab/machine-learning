@@ -59,6 +59,10 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/22.%20maximum-likelihood/likelihood-functions.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/22.%20maximum-likelihood/maximum-likelihood-estimation.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/22.%20maximum-likelihood/probability-model-factorization.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/23.%20nearest-neighbors-and-support-vectors/knn.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/23.%20nearest-neighbors-and-support-vectors/support-vector-machines.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/24.%20clustering-and-principal-components/k-means-clustering.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/24.%20clustering-and-principal-components/principal-component-analysis.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/00.%20Intro.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/01.%20Learning%20from%20Data.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/02.%20Labels%2C%20Structure%2C%20Rewards.pdf</loc></url>
@@ -82,7 +86,10 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/20.%20Knowing%20When%20to%20Stop.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/21.%20Turning%20the%20Question.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/22.%20What%20Makes%20the%20Data%20Likely.pdf</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/23.%20Deciding%20by%20Distance.pdf</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/24.%20Structure%20Without%20Answers.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/backpropagation.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/clustering-and-principal-components.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/cross-validation.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/data-and-learning-types.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/data-leakage.html</loc></url>
@@ -99,6 +106,7 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/maximum-likelihood.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/multilayer-perceptrons.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/naive-bayes.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/nearest-neighbors-and-support-vectors.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/perceptron.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/pruning-and-regression-trees.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/regularization.html</loc></url>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>kNN | Machine Learning | Pusan National University</title><meta name="description" content="K-nearest neighbors predicts a new observation from the values of its K nearest training observations."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/23.%20nearest-neighbors-and-support-vectors/knn.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="kNN | Machine Learning | Pusan National University"><meta property="og:description" content="K-nearest neighbors predicts a new observation from the values of its K nearest training observations."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/23.%20nearest-neighbors-and-support-vectors/knn.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css">
+  <link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic">
+  <a class="skip-link" href="#main-content">본문으로 이동</a>
+  <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Deciding by Distance</span><span class="nav-tag is-current" aria-current="page">kNN</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+  <section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/23.%20Deciding%20by%20Distance.pdf">Deciding by <span class="publication-lecture-tail">Distance<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">kNN</h1><hr class="accent-rule"><p class="page-subtitle">k-최근접 이웃(k-nearest neighbors, kNN)은 새 관측과 가까운 K개 학습 관측의 값으로 예측을 정한다.</p></div></section>
+  <main id="main-content" class="page-body container">
+    <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>새 관측과 이웃 투표</strong><span>새 관측과 가장 가까운 K개 학습 관측 가운데 가장 많은 범주가 예측 범주가 된다.</span></article><article class="summary-card"><strong>특성 척도와 거리</strong><span>값의 범위가 큰 특성일수록 거리에 크게 기여하므로 특성 척도를 맞추는지에 따라 이웃 구성이 달라진다.</span></article></div></section>
+    <section class="topic-example">
+      <header class="example-header"><h2 class="section-title">새 관측과 이웃 투표</h2><p class="lead">새 관측의 위치와 K에 따라 이웃 순위와 다수결로 정하는 예측 범주가 달라진다.</p></header>
+      <div class="visual-lab">
+        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-1">새 관측과 K</label><select id="state-1"><option value="0">왼쪽 관측, K = 3</option><option value="1">오른쪽 관측, K = 5</option></select></div></div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-1" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-1 plot-desc-1"><title id="plot-title-1">새 관측과 가까운 이웃</title><desc id="plot-desc-1">두 범주의 학습 관측, 새 관측, 선택된 가까운 이웃</desc></svg></div><figcaption class="visual-caption">점선 원 안의 점이 선택된 이웃이다. 선은 새 관측과 각 이웃을 잇고, 굵은 테두리는 다수결에 참여한 관측을 표시한다.</figcaption></figure>
+        <div class="visual-readouts" id="state-read-1" aria-live="polite"></div>
+        <p class="visual-note" id="state-result-1"></p>
+      </div>
+    </section>
+    <section class="topic-example">
+      <header class="example-header"><h2 class="section-title">특성 척도와 거리</h2><p class="lead">특성 척도를 바꾸면 거리와 이웃 구성이 바뀐다.</p></header>
+      <div class="visual-lab">
+        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-2">특성 척도</label><select id="state-2"><option value="0">같은 척도</option><option value="1">첫 특성 100배</option></select></div></div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-2" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-2 plot-desc-2"><title id="plot-title-2">특성 척도에 따른 거리 변화</title><desc id="plot-desc-2">첫 특성의 척도가 커질 때 새 관측과 가까운 이웃이 달라지는 모습</desc></svg></div><figcaption class="visual-caption">점의 위치는 원래 좌표로 고정했다. 선과 굵은 테두리는 현재 척도로 계산한 가까운 두 관측을 표시한다. 첫 특성을 100배 한 경우 화면의 선 길이가 계산 거리를 나타내지는 않는다.</figcaption></figure>
+        <div class="visual-readouts" id="state-read-2" aria-live="polite"></div>
+        <p class="visual-note" id="state-result-2"></p>
+      </div>
+    </section>
+    <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../22. maximum-likelihood/probability-model-factorization.html" rel="prev">이전 · Probability Model Factorization</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../23. nearest-neighbors-and-support-vectors/support-vector-machines.html" rel="next">다음 · Support Vector Machines</a></nav>
+  </main>
+  <footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  var states = [[["왼쪽 관측, K = 3", "가까운 세 관측 중 범주 A가 많아 A를 예측한다."], ["오른쪽 관측, K = 5", "가까운 다섯 관측 중 범주 B가 많아 B를 예측한다."]], [["같은 척도", "두 특성이 거리 계산에 비슷하게 기여한다."], ["첫 특성 100배", "첫 특성이 거리를 지배해 이웃 순위가 바뀐다."]]];
+  var blue = "#005baa", green = "#00a651", ink = "#1f2d3d", pale = "#f5f8fb";
+  function point(x, y, color, selected) {
+    return '<circle cx="' + x + '" cy="' + y + '" r="' + (selected ? 10 : 8) + '" fill="' + color + '" stroke="' + (selected ? ink : '#ffffff') + '" stroke-width="' + (selected ? 4 : 2) + '"/>';
+  }
+  function line(x1, y1, x2, y2) {
+    return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="#5c6c7c" stroke-width="2"/>';
+  }
+  function drawVote(index) {
+    var svg = document.getElementById("state-plot-1");
+    var pts = [[112,198,blue],[150,132,blue],[190,185,blue],[235,112,blue],[278,206,green],[330,132,green],[372,190,green],[420,112,green],[475,172,green]];
+    var q = index === 0 ? [180,160] : [385,158], k = index === 0 ? 3 : 5;
+    var nearest = pts.map(function (p, j) { return { id: j, distance: Math.hypot(p[0] - q[0], p[1] - q[1]) }; })
+      .sort(function (a, b) { return a.distance - b.distance; }).slice(0, k);
+    var chosen = nearest.map(function (p) { return p.id; });
+    var radius = Math.ceil(nearest[k - 1].distance) + 2;
+    var html = '<title id="plot-title-1">새 관측과 가까운 이웃</title><desc id="plot-desc-1">거리순으로 고른 ' + k + '개 이웃을 선과 굵은 테두리로 표시한다</desc><rect x="55" y="35" width="490" height="225" rx="12" fill="' + pale + '"/>';
+    chosen.forEach(function (j) { html += line(q[0], q[1], pts[j][0], pts[j][1]); });
+    html += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="' + radius + '" fill="none" stroke="#5c6c7c" stroke-width="2" stroke-dasharray="7 6"/>';
+    pts.forEach(function (p, j) { html += point(p[0], p[1], p[2], chosen.indexOf(j) >= 0); });
+    html += '<path d="M ' + (q[0]-9) + ' ' + (q[1]-9) + ' L ' + (q[0]+9) + ' ' + (q[1]+9) + ' M ' + (q[0]+9) + ' ' + (q[1]-9) + ' L ' + (q[0]-9) + ' ' + (q[1]+9) + '" stroke="' + ink + '" stroke-width="4"/>';
+    html += '<text x="72" y="62" fill="' + blue + '" font-size="15" font-weight="700">범주 A</text><text x="460" y="62" fill="' + green + '" font-size="15" font-weight="700">범주 B</text><text x="' + (q[0]+15) + '" y="' + (q[1]-14) + '" fill="' + ink + '" font-size="14" font-weight="700">새 관측</text>';
+    svg.innerHTML = html;
+    return nearest[k - 1].distance.toFixed(1);
+  }
+  function drawScale(index) {
+    var svg = document.getElementById("state-plot-2");
+    var pts = [[280,75,blue,"A1"],[230,155,blue,"A2"],[365,145,green,"B1"],[430,200,green,"B2"]];
+    var q = [300,150], scale = index === 0 ? 1 : 100;
+    var nearest = pts.map(function (p, j) { return { id: j, label: p[3], distance: Math.hypot(scale * (p[0] - q[0]), p[1] - q[1]) }; })
+      .sort(function (a, b) { return a.distance - b.distance; }).slice(0, 2);
+    var chosen = nearest.map(function (p) { return p.id; });
+    var html = '<title id="plot-title-2">특성 척도에 따른 거리 변화</title><desc id="plot-desc-2">현재 척도로 계산한 가장 가까운 두 관측은 ' + nearest.map(function (p) { return p.label; }).join(', ') + '이다</desc><rect x="55" y="35" width="490" height="225" rx="12" fill="' + pale + '"/>';
+    chosen.forEach(function (j) { html += line(q[0], q[1], pts[j][0], pts[j][1]); });
+    pts.forEach(function (p, j) { html += point(p[0], p[1], p[2], chosen.indexOf(j) >= 0) + '<text x="' + (p[0] + 12) + '" y="' + (p[1] - 10) + '" fill="' + ink + '" font-size="13" font-weight="700">' + p[3] + '</text>'; });
+    html += '<path d="M291 141 L309 159 M309 141 L291 159" stroke="' + ink + '" stroke-width="4"/><text x="315" y="140" fill="' + ink + '" font-size="14" font-weight="700">새 관측</text>';
+    html += '<line x1="70" y1="246" x2="530" y2="246" stroke="#5c6c7c" stroke-width="2"/><text x="430" y="276" fill="#5c6c7c" font-size="14">첫 특성</text><text x="22" y="70" fill="#5c6c7c" font-size="14" transform="rotate(-90 22 70)">둘째 특성</text>';
+    svg.innerHTML = html;
+    return nearest;
+  }
+  function readout(label, value) {
+    return '<div class="visual-readout"><span class="visual-readout-label">' + label + '</span><strong class="visual-readout-value">' + value + '</strong></div>';
+  }
+  states.forEach(function (options, i) {
+    var n = i + 1;
+    var select = document.getElementById("state-" + n);
+    function render() {
+      var index = Number(select.value);
+      var state = options[index];
+      if (n === 1) {
+        var kthDistance = drawVote(index);
+        document.getElementById("state-read-1").innerHTML = readout("선택한 조건", state[0]) + readout("K번째 거리", kthDistance);
+      } else {
+        var nearest = drawScale(index);
+        document.getElementById("state-read-2").innerHTML = readout("첫 특성의 배율", index === 0 ? "1배" : "100배") + readout("가까운 두 관측", nearest.map(function (p) { return p.label; }).join(" → ")) + readout("계산 거리", nearest.map(function (p) { return p.distance.toFixed(1); }).join(" · "));
+      }
+      document.getElementById("state-result-" + n).textContent = state[1];
+    }
+    select.addEventListener("change", render);
+    render();
+  });
+}());
+</script>
+</body>
+</html>

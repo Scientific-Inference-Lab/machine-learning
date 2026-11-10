@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Principal Component Analysis | Machine Learning | Pusan National University</title><meta name="description" content="Principal component analysis projects observations onto mutually orthogonal axes that preserve as much data variance as possible."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/24.%20clustering-and-principal-components/principal-component-analysis.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Principal Component Analysis | Machine Learning | Pusan National University"><meta property="og:description" content="Principal component analysis projects observations onto mutually orthogonal axes that preserve as much data variance as possible."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/24.%20clustering-and-principal-components/principal-component-analysis.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css">
+  <link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic">
+  <a class="skip-link" href="#main-content">본문으로 이동</a>
+  <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Structure Without Answers</span><span class="nav-tag is-current" aria-current="page">Principal Component Analysis</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+  <section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/24.%20Structure%20Without%20Answers.pdf">Structure Without <span class="publication-lecture-tail">Answers<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Principal Component Analysis</h1><hr class="accent-rule"><p class="page-subtitle">주성분분석(principal component analysis, PCA)은 자료의 분산을 가장 크게 보존하는 서로 직교한 축으로 관측을 투영한다.</p></div></section>
+  <main id="main-content" class="page-body container">
+    <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>특성 척도와 첫 주성분</strong><span>첫 주성분은 분산이 가장 큰 방향이라 특성 척도가 달라지면 그 방향과 적재량도 달라진다.</span></article><article class="summary-card"><strong>관측과 주성분 점수</strong><span>주성분 점수는 관측을 첫 주성분 축에 수직으로 내린 투영점의 축 위 위치다.</span></article></div></section>
+    <section class="topic-example">
+      <header class="example-header"><h2 class="section-title">특성 척도와 첫 주성분</h2><p class="lead">특성 척도를 바꾸면 첫 주성분 방향과 적재량이 바뀐다.</p></header>
+      <div class="visual-lab">
+        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-1">특성 척도</label><select id="state-1"><option value="0">같은 척도</option><option value="1">첫 특성 1.35배, 둘째 0.72배</option></select></div></div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-1" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-1 plot-desc-1"><title id="plot-title-1">특성 척도와 첫 주성분</title><desc id="plot-desc-1">특성 척도를 바꿀 때 자료의 분산이 큰 방향과 첫 주성분 축이 달라지는 모습</desc></svg></div><figcaption class="visual-caption">파란 점은 중심화한 관측, 초록 화살표는 첫 주성분 축의 양의 방향이다. 척도가 달라지면 분산이 큰 방향도 달라진다.</figcaption></figure>
+        <div class="visual-readouts" id="state-read-1" aria-live="polite"></div>
+        <p class="visual-note" id="state-result-1"></p>
+      </div>
+    </section>
+    <section class="topic-example">
+      <header class="example-header"><h2 class="section-title">관측과 주성분 점수</h2><p class="lead">관측마다 첫 주성분 축으로 내린 투영점과 주성분 점수가 다르다.</p></header>
+      <div class="visual-lab">
+        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-2">선택한 관측</label><select id="state-2"><option value="0">관측 A</option><option value="1">관측 B</option></select></div></div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-2" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-2 plot-desc-2"><title id="plot-title-2">관측과 주성분 점수</title><desc id="plot-desc-2">선택한 관측을 첫 주성분 축에 직교 투영한 위치</desc></svg></div><figcaption class="visual-caption">굵은 테두리 점이 선택한 관측, 점선은 첫 주성분 축으로 내린 수선이다. 축 위 초록 점의 위치가 이 관측의 주성분 점수다.</figcaption></figure>
+        <div class="visual-readouts" id="state-read-2" aria-live="polite"></div>
+        <p class="visual-note" id="state-result-2"></p>
+      </div>
+    </section>
+    <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../24. clustering-and-principal-components/k-means-clustering.html" rel="prev">이전 · K-means Clustering</a><a class="pager-link is-all" href="../index.html">전체</a></nav>
+  </main>
+  <footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  var states = [[["같은 척도", "두 특성의 공동 변동 방향이 첫 주성분이 된다."], ["첫 특성 1.35배, 둘째 0.72배", "첫 특성 방향의 적재량이 더 커진다."]], [["관측 A", "첫 주성분의 음의 방향에 투영된다."], ["관측 B", "첫 주성분의 양의 방향에 투영된다."]]];
+  var blue = "#005baa", green = "#00a651", ink = "#1f2d3d";
+  var base = [[145,220],[185,188],[220,205],[255,158],[285,170],[320,125],[350,140],[390,92],[425,104],[465,62]];
+  var mean = base.reduce(function(s,p){return [s[0]+p[0]/base.length,s[1]+p[1]/base.length];},[0,0]);
+  base = base.map(function(p){return [300+p[0]-mean[0],150+p[1]-mean[1]];});
+  function principalAxis(pts) {
+    var xx=0,xy=0,yy=0;
+    pts.forEach(function(p){var x=p[0]-300,y=p[1]-150;xx+=x*x;xy+=x*y;yy+=y*y;});
+    var angle=0.5*Math.atan2(2*xy,xx-yy);
+    return [Math.cos(angle),Math.sin(angle)];
+  }
+  function frame() { return '<rect x="55" y="35" width="490" height="225" rx="12" fill="#f5f8fb"/>'; }
+  function dot(x,y,strong) { return '<circle cx="'+x+'" cy="'+y+'" r="'+(strong?11:8)+'" fill="'+blue+'" stroke="'+(strong?ink:'#ffffff')+'" stroke-width="'+(strong?4:2)+'"/>'; }
+  function drawAxis(html, x1,y1,x2,y2) { return html + '<defs><marker id="pc-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="'+green+'"/></marker></defs><line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+green+'" stroke-width="4" marker-end="url(#pc-arrow)"/>'; }
+  function drawScale(index) {
+    var svg=document.getElementById("state-plot-1");
+    var pts=index===0?base:base.map(function(p){return [300+(p[0]-300)*1.35, 150+(p[1]-150)*0.72];});
+    var html=frame();
+    pts.forEach(function(p){html+=dot(p[0],p[1],false);});
+    var axis=principalAxis(pts);
+    html=drawAxis(html,300-230*axis[0],150-230*axis[1],300+230*axis[0],150+230*axis[1]);
+    html+='<text x="460" y="42" fill="'+green+'" font-size="14" font-weight="700">첫 주성분</text><line x1="300" y1="42" x2="300" y2="255" stroke="#d7e0e8" stroke-width="1"/><line x1="65" y1="150" x2="535" y2="150" stroke="#d7e0e8" stroke-width="1"/>';
+    svg.innerHTML=html;
+  }
+  function drawScore(index) {
+    var svg=document.getElementById("state-plot-2");
+    var chosen=index===0?2:8;
+    var axis=principalAxis(base),ux=axis[0],uy=axis[1],a0=[300-230*ux,150-230*uy],a1=[300+230*ux,150+230*uy];
+    var html=frame();
+    html=drawAxis(html,a0[0],a0[1],a1[0],a1[1]);
+    base.forEach(function(p,j){html+=dot(p[0],p[1],j===chosen);});
+    var p=base[chosen], t=(p[0]-300)*ux+(p[1]-150)*uy, q=[(300+t*ux).toFixed(1),(150+t*uy).toFixed(1)];
+    html+='<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+q[0]+'" y2="'+q[1]+'" stroke="#5c6c7c" stroke-width="3" stroke-dasharray="7 5"/><circle cx="'+q[0]+'" cy="'+q[1]+'" r="8" fill="'+green+'" stroke="#ffffff" stroke-width="2"/><text x="'+(p[0]+14)+'" y="'+(p[1]+26)+'" fill="'+ink+'" font-size="14" font-weight="700">관측 '+(index===0?'A':'B')+'</text>';
+    svg.innerHTML=html;
+  }
+  function readout(label, value) {
+    return '<div class="visual-readout"><span class="visual-readout-label">' + label + '</span><strong class="visual-readout-value">' + value + '</strong></div>';
+  }
+  states.forEach(function (options, i) {
+    var n = i + 1;
+    var select = document.getElementById("state-" + n);
+    function render() {
+      var index = Number(select.value);
+      var state = options[index];
+      if (n === 1) { drawScale(index); } else { drawScore(index); }
+      document.getElementById("state-read-" + n).innerHTML = readout("선택한 조건", state[0]) + readout("선택지", (index + 1) + " / " + options.length);
+      document.getElementById("state-result-" + n).textContent = state[1];
+    }
+    select.addEventListener("change", render);
+    render();
+  });
+}());
+</script>
+</body>
+</html>

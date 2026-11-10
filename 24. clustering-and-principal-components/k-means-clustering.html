@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>K-means Clustering | Machine Learning | Pusan National University</title><meta name="description" content="K-means clustering repeatedly assigns observations to their nearest centers and updates the cluster centers."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/24.%20clustering-and-principal-components/k-means-clustering.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="K-means Clustering | Machine Learning | Pusan National University"><meta property="og:description" content="K-means clustering repeatedly assigns observations to their nearest centers and updates the cluster centers."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/24.%20clustering-and-principal-components/k-means-clustering.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css">
+  <link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic">
+  <a class="skip-link" href="#main-content">본문으로 이동</a>
+  <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Structure Without Answers</span><span class="nav-tag is-current" aria-current="page">K-means Clustering</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+  <section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/24.%20Structure%20Without%20Answers.pdf">Structure Without <span class="publication-lecture-tail">Answers<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">K-means Clustering</h1><hr class="accent-rule"><p class="page-subtitle">K-평균 군집화(K-means clustering)는 관측을 가장 가까운 중심점에 배정하고 군집 중심을 반복 갱신한다.</p></div></section>
+  <main id="main-content" class="page-body container">
+    <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>두 군집 설정 비교</strong><span>K는 관측을 나눌 군집 수이며 K가 다르면 배정과 중심점도 달라진다.</span></article><article class="summary-card"><strong>배정과 중심점 갱신</strong><span>관측을 가장 가까운 중심점에 배정하고 중심점을 군집 평균으로 옮기는 두 단계는 군집 안 제곱합을 늘리지 않는다.</span></article></div></section>
+    <section class="topic-example">
+      <header class="example-header"><h2 class="section-title">두 군집 설정 비교</h2><p class="lead">같은 관측도 K = 2와 K = 3으로 묶으면 배정과 중심점이 달라진다.</p></header>
+      <div class="visual-lab">
+        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-1">군집 설정</label><select id="state-1"><option value="0">K = 2인 배정 예</option><option value="1">K = 3인 배정 예</option></select></div></div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-1" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-1 plot-desc-1"><title id="plot-title-1">두 군집 설정 비교</title><desc id="plot-desc-1">K = 2와 K = 3인 배정 예와 각 군집의 평균</desc></svg></div><figcaption class="visual-caption">색은 제시한 군집 배정, 큰 ×는 각 군집에 속한 관측의 평균이다.</figcaption></figure>
+        <div class="visual-readouts" id="state-read-1" aria-live="polite"></div>
+        <p class="visual-note" id="state-result-1"></p>
+      </div>
+    </section>
+    <section class="topic-example">
+      <header class="example-header"><h2 class="section-title">배정과 중심점 갱신</h2><p class="lead">중심점을 군집 평균으로 갱신하면 중심점의 위치와 군집 안 제곱합이 달라진다.</p></header>
+      <div class="visual-lab">
+        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-2">갱신 단계</label><select id="state-2"><option value="0">초기 배정</option><option value="1">중심점 갱신</option></select></div></div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-2" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-2 plot-desc-2"><title id="plot-title-2">배정과 중심점 갱신</title><desc id="plot-desc-2">관측을 배정한 뒤 중심점이 군집 평균으로 이동하는 모습</desc></svg></div><figcaption class="visual-caption">가는 선은 관측과 배정된 중심점을 잇는다. 화살표는 초기 중심점에서 군집 평균으로 이동하는 방향을 나타낸다.</figcaption></figure>
+        <div class="visual-readouts" id="state-read-2" aria-live="polite"></div>
+        <p class="visual-note" id="state-result-2"></p>
+      </div>
+    </section>
+    <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../23. nearest-neighbors-and-support-vectors/support-vector-machines.html" rel="prev">이전 · Support Vector Machines</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../24. clustering-and-principal-components/principal-component-analysis.html" rel="next">다음 · Principal Component Analysis</a></nav>
+  </main>
+  <footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  var states = [[["K = 2인 배정 예", "관측이 왼쪽과 오른쪽 두 군집으로 나뉜다."], ["K = 3인 배정 예", "관측이 대각선 방향의 세 군집으로 나뉜다."]], [["초기 배정", "초기 중심점에서 가까운 군집으로 관측이 배정된다."], ["중심점 갱신", "군집 평균으로 중심점이 이동하고 제곱합이 줄어든다."]]];
+  var colors = ["#005baa", "#00a651", "#b3261e"], ink = "#1f2d3d";
+  var points = [[110,205],[145,170],[180,215],[205,145],[265,170],[305,115],[340,150],[385,90],[420,125],[455,72],[480,112]];
+  function cross(x, y, color) { return '<path d="M' + (x-10) + ' ' + (y-10) + ' L' + (x+10) + ' ' + (y+10) + ' M' + (x+10) + ' ' + (y-10) + ' L' + (x-10) + ' ' + (y+10) + '" stroke="' + color + '" stroke-width="6"/>'; }
+  function dot(p, color) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="9" fill="' + color + '" stroke="#ffffff" stroke-width="2"/>'; }
+  function frame() { return '<rect x="55" y="35" width="490" height="225" rx="12" fill="#f5f8fb"/>'; }
+  function drawSetting(index) {
+    var svg = document.getElementById("state-plot-1");
+    var groups = index === 0 ? [0,0,0,0,0,1,1,1,1,1,1] : [0,0,0,0,1,1,1,2,2,2,2];
+    var centers = index === 0 ? [[181,181],[397.5,110.66666666666667]] : [[160,183.75],[303.3333333333333,145],[435,99.75]];
+    var html = frame();
+    points.forEach(function (p,j) { html += dot(p, colors[groups[j]]); });
+    centers.forEach(function (c,j) { html += cross(c[0],c[1],colors[j]); });
+    html += '<text x="72" y="62" fill="' + ink + '" font-size="14" font-weight="700">K = ' + centers.length + '</text>';
+    svg.innerHTML = html;
+  }
+  function drawUpdate(index) {
+    var svg = document.getElementById("state-plot-2");
+    var groups = [0,0,0,0,0,1,1,1,1,1,1];
+    var start = [[105,105],[495,150]], moved = [[181,181],[397.5,110.7]];
+    var centers = index === 0 ? start : moved;
+    var html = frame() + '<defs><marker id="move-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#5c6c7c"/></marker></defs>';
+    points.forEach(function (p,j) { var c=centers[groups[j]]; html += '<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+c[0]+'" y2="'+c[1]+'" stroke="#d7e0e8" stroke-width="1.5"/>'; });
+    points.forEach(function (p,j) { html += dot(p, colors[groups[j]]); });
+    if (index === 1) { start.forEach(function (c,j) { html += '<circle cx="'+c[0]+'" cy="'+c[1]+'" r="7" fill="none" stroke="#5c6c7c" stroke-width="2" stroke-dasharray="4 4"/><line x1="'+c[0]+'" y1="'+c[1]+'" x2="'+moved[j][0]+'" y2="'+moved[j][1]+'" stroke="#5c6c7c" stroke-width="3" marker-end="url(#move-arrow)"/>'; }); }
+    centers.forEach(function (c,j) { html += cross(c[0],c[1],colors[j]); });
+    svg.innerHTML = html;
+  }
+  function readout(label, value) {
+    return '<div class="visual-readout"><span class="visual-readout-label">' + label + '</span><strong class="visual-readout-value">' + value + '</strong></div>';
+  }
+  states.forEach(function (options, i) {
+    var n = i + 1;
+    var select = document.getElementById("state-" + n);
+    function render() {
+      var index = Number(select.value);
+      var state = options[index];
+      if (n === 1) { drawSetting(index); } else { drawUpdate(index); }
+      document.getElementById("state-read-" + n).innerHTML = readout("선택한 조건", state[0]) + readout("선택지", (index + 1) + " / " + options.length);
+      document.getElementById("state-result-" + n).textContent = state[1];
+    }
+    select.addEventListener("change", render);
+    render();
+  });
+}());
+</script>
+</body>
+</html>

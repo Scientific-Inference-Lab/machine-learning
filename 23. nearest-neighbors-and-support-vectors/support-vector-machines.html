@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Support Vector Machines | Machine Learning | Pusan National University</title><meta name="description" content="Support vector machines use a large-margin hyperplane as the decision boundary between two classes."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/23.%20nearest-neighbors-and-support-vectors/support-vector-machines.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Support Vector Machines | Machine Learning | Pusan National University"><meta property="og:description" content="Support vector machines use a large-margin hyperplane as the decision boundary between two classes."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/23.%20nearest-neighbors-and-support-vectors/support-vector-machines.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css">
+  <link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic">
+  <a class="skip-link" href="#main-content">본문으로 이동</a>
+  <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="현재 주제"><span class="nav-tag">Deciding by Distance</span><span class="nav-tag is-current" aria-current="page">Support Vector Machines</span></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+  <section class="hero topic-hero"><div class="container"><p class="eyebrow"><a class="eyebrow-link" href="../lecture/23.%20Deciding%20by%20Distance.pdf">Deciding by <span class="publication-lecture-tail">Distance<span aria-hidden="true">↗</span></span></a></p><h1 class="page-title">Support Vector Machines</h1><hr class="accent-rule"><p class="page-subtitle">서포트 벡터 머신(support vector machine, SVM)은 두 범주 사이의 마진(margin)을 크게 만드는 초평면을 결정 경계로 선택한다.</p></div></section>
+  <main id="main-content" class="page-body container">
+    <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>초평면과 마진</strong><span>마진은 결정 경계에서 가장 가까운 학습 관측까지의 거리다.</span></article><article class="summary-card"><strong>비용과 마진 위반</strong><span>C가 클수록 마진 위반을 크게 벌해 관측을 엄격하게 나누고 작을수록 일부 위반을 허용해 마진이 넓어진다.</span></article></div></section>
+    <section class="topic-example">
+      <header class="example-header"><h2 class="section-title">초평면과 마진</h2><p class="lead">후보 초평면마다 마진과 가장 가까운 학습 관측이 다르다.</p></header>
+      <div class="visual-lab">
+        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-1">초평면</label><select id="state-1"><option value="0">중앙 경계</option><option value="1">치우친 경계</option></select></div></div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-1" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-1 plot-desc-1"><title id="plot-title-1">초평면과 마진</title><desc id="plot-desc-1">두 범주를 나누는 경계와 가장 가까운 관측까지의 거리</desc></svg></div><figcaption class="visual-caption">실선은 후보 결정 경계, 점선은 마진의 양쪽 끝이다. 테두리가 굵은 점은 각 후보 경계에서 가장 가까운 학습 관측이다. 최대 마진 경계를 학습한 결과를 뜻하지는 않는다.</figcaption></figure>
+        <div class="visual-readouts" id="state-read-1" aria-live="polite"></div>
+        <p class="visual-note" id="state-result-1"></p>
+      </div>
+    </section>
+    <section class="topic-example">
+      <header class="example-header"><h2 class="section-title">비용과 마진 위반</h2><p class="lead">C를 바꾸면 마진 위반과 경계가 바뀐다.</p></header>
+      <div class="visual-lab">
+        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-2">비용 C</label><select id="state-2"><option value="0">작은 C</option><option value="1">큰 C</option></select></div></div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-2" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-2 plot-desc-2"><title id="plot-title-2">비용 C와 마진 위반</title><desc id="plot-desc-2">C가 달라질 때 마진과 위반 관측이 달라지는 모습</desc></svg></div><figcaption class="visual-caption">반투명 띠는 결정 경계에서 양쪽으로 마진 M만큼 떨어진 두 점선 사이의 띠이며 폭은 2M이다. 빨간 테두리는 마진 안쪽에 있거나 경계를 넘은 관측을 표시한다.</figcaption></figure>
+        <div class="visual-readouts" id="state-read-2" aria-live="polite"></div>
+        <p class="visual-note" id="state-result-2"></p>
+      </div>
+    </section>
+    <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../23. nearest-neighbors-and-support-vectors/knn.html" rel="prev">이전 · kNN</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../24. clustering-and-principal-components/k-means-clustering.html" rel="next">다음 · K-means Clustering</a></nav>
+  </main>
+  <footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  var states = [[["중앙 경계", "두 범주에서 가장 가까운 점까지의 거리가 균형을 이룬다."], ["치우친 경계", "한 범주의 점이 경계에 가까워져 마진이 줄어든다."]], [["작은 C", "일부 위반을 허용하고 넓은 마진을 만든다."], ["큰 C", "위반을 크게 벌해 관측을 더 엄격하게 나눈다."]]];
+  var blue = "#005baa", green = "#00a651", ink = "#1f2d3d", red = "#b3261e";
+  var pts = [[120,210,blue],[165,175,blue],[205,225,blue],[225,150,blue],[360,120,green],[395,165,green],[435,100,green],[480,145,green]];
+  function dot(p, strong, violation) {
+    return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="9" fill="' + p[2] + '" stroke="' + (violation ? red : strong ? ink : '#ffffff') + '" stroke-width="' + (violation || strong ? 4 : 2) + '"/>';
+  }
+  function basePlot() {
+    return '<rect x="55" y="35" width="490" height="225" rx="12" fill="#f5f8fb"/>';
+  }
+  function drawMargin(index) {
+    var svg = document.getElementById("state-plot-1");
+    var x = index === 0 ? 292.5 : 335;
+    var gap = index === 0 ? 67.5 : 25;
+    var html = basePlot() + '<rect x="' + (x-gap) + '" y="35" width="' + (gap*2) + '" height="225" fill="#d7e0e8" opacity="0.8"/>';
+    html += '<line x1="' + x + '" y1="35" x2="' + x + '" y2="260" stroke="' + ink + '" stroke-width="4"/><line x1="' + (x-gap) + '" y1="35" x2="' + (x-gap) + '" y2="260" stroke="#5c6c7c" stroke-width="2" stroke-dasharray="7 6"/><line x1="' + (x+gap) + '" y1="35" x2="' + (x+gap) + '" y2="260" stroke="#5c6c7c" stroke-width="2" stroke-dasharray="7 6"/>';
+    pts.forEach(function (p, j) { html += dot(p, index === 0 ? (j === 3 || j === 4) : (j === 4), false); });
+    html += '<text x="' + (x-20) + '" y="285" fill="' + ink + '" font-size="14" font-weight="700">결정 경계</text>';
+    svg.innerHTML = html;
+  }
+  function drawCost(index) {
+    var svg = document.getElementById("state-plot-2");
+    var x = index === 0 ? 300 : 323;
+    var gap = index === 0 ? 72 : 37;
+    var mixed = index === 0 ? [[270,170,green],[330,132,blue]] : [[270,170,green],[330,132,blue]];
+    var all = pts.concat(mixed);
+    var html = basePlot() + '<rect x="' + (x-gap) + '" y="35" width="' + (gap*2) + '" height="225" fill="#d7e0e8" opacity="0.8"/>';
+    html += '<line x1="' + x + '" y1="35" x2="' + x + '" y2="260" stroke="' + ink + '" stroke-width="4"/><line x1="' + (x-gap) + '" y1="35" x2="' + (x-gap) + '" y2="260" stroke="#5c6c7c" stroke-width="2" stroke-dasharray="7 6"/><line x1="' + (x+gap) + '" y1="35" x2="' + (x+gap) + '" y2="260" stroke="#5c6c7c" stroke-width="2" stroke-dasharray="7 6"/>';
+    all.forEach(function (p, j) { var violation = j >= pts.length || (p[0] > x-gap && p[0] < x+gap); html += dot(p, false, violation); });
+    html += '<text x="72" y="62" fill="' + blue + '" font-size="15" font-weight="700">범주 A</text><text x="458" y="62" fill="' + green + '" font-size="15" font-weight="700">범주 B</text>';
+    svg.innerHTML = html;
+  }
+  function readout(label, value) {
+    return '<div class="visual-readout"><span class="visual-readout-label">' + label + '</span><strong class="visual-readout-value">' + value + '</strong></div>';
+  }
+  states.forEach(function (options, i) {
+    var n = i + 1;
+    var select = document.getElementById("state-" + n);
+    function render() {
+      var index = Number(select.value);
+      var state = options[index];
+      if (n === 1) { drawMargin(index); } else { drawCost(index); }
+      document.getElementById("state-read-" + n).innerHTML = readout("선택한 조건", state[0]) + readout("선택지", (index + 1) + " / " + options.length);
+      document.getElementById("state-result-" + n).textContent = state[1];
+    }
+    select.addEventListener("change", render);
+    render();
+  });
+}());
+</script>
+</body>
+</html>
