@@ -1,4 +1,9 @@
-
+/*
+  PNU Lecture showcase design system.
+  Tokens mirror beamercolorthemePNULecture.sty and beamerfontthemePNULecture.sty
+  in development/_lecture_pnu_template_v5/ so these pages read as the same
+  deck as the slides, not a separate visual identity.
+*/
 
 @import url("./pnu-lecture-tokens.css");
 
@@ -62,9 +67,9 @@ a {
   clip-path: none;
 }
 
-
-
-
+/* ---------------------------------------------------------------------- */
+/* Site chrome                                                            */
+/* ---------------------------------------------------------------------- */
 
 .site-header {
   min-height: 72px;
@@ -169,6 +174,35 @@ a {
   background: var(--pnu-blue);
   border-color: var(--pnu-blue);
   color: var(--white);
+}
+
+/* One functional lecture PDF link replaces repeated header/hero labels. */
+.course-nav {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.lecture-pdf-link {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 40px;
+  max-width: 100%;
+  padding: 7px 12px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.lecture-pdf-link:hover {
+  color: var(--pnu-blue);
+  border-color: var(--pnu-blue);
+}
+
+.lecture-pdf-link:focus-visible {
+  outline: 2px solid var(--pnu-green);
+  outline-offset: 3px;
 }
 
 .site-footer {
@@ -298,9 +332,9 @@ a {
   }
 }
 
-
-
-
+/* ---------------------------------------------------------------------- */
+/* Typography / headline system                                          */
+/* ---------------------------------------------------------------------- */
 
 .eyebrow {
   display: inline-block;
@@ -407,9 +441,9 @@ section + section,
   margin-top: 40px;
 }
 
-
-
-
+/* ---------------------------------------------------------------------- */
+/* Cards                                                                  */
+/* ---------------------------------------------------------------------- */
 
 .card-grid {
   display: grid;
@@ -465,9 +499,9 @@ section + section,
   opacity: 0.92;
 }
 
-
-
-
+/* ---------------------------------------------------------------------- */
+/* Callout bands (takeaway / caution)                                    */
+/* ---------------------------------------------------------------------- */
 
 .callout {
   display: flex;
@@ -512,9 +546,9 @@ section + section,
   color: var(--pnu-blue-dark);
 }
 
-
-
-
+/* ---------------------------------------------------------------------- */
+/* Checkpoint (dark, full-bleed inside container)                        */
+/* ---------------------------------------------------------------------- */
 
 .checkpoint {
   background: var(--pnu-blue-dark);
@@ -573,9 +607,9 @@ section + section,
   max-width: 65ch;
 }
 
-
-
-
+/* ---------------------------------------------------------------------- */
+/* Buttons / controls                                                     */
+/* ---------------------------------------------------------------------- */
 
 .btn {
   display: inline-flex;
@@ -662,9 +696,9 @@ label {
   color: var(--ink-600);
 }
 
-
-
-
+/* ---------------------------------------------------------------------- */
+/* Tabs                                                                   */
+/* ---------------------------------------------------------------------- */
 
 .tabbar {
   display: flex;
@@ -683,9 +717,9 @@ label {
   display: none;
 }
 
-
-
-
+/* ---------------------------------------------------------------------- */
+/* Stage: bordered surface that hosts a visualization                    */
+/* ---------------------------------------------------------------------- */
 
 .stage {
   background: var(--surface-050);
@@ -712,9 +746,9 @@ label {
   margin-bottom: 16px;
 }
 
-
-
-
+/* ---------------------------------------------------------------------- */
+/* Tables                                                                 */
+/* ---------------------------------------------------------------------- */
 
 table.spec {
   width: 100%;
@@ -759,9 +793,9 @@ th.mono,
   font-size: 13px;
 }
 
-
-
-
+/* ---------------------------------------------------------------------- */
+/* Small utility chips / badges                                          */
+/* ---------------------------------------------------------------------- */
 
 .chip {
   display: inline-block;
@@ -792,9 +826,9 @@ th.mono,
   border: 1px solid var(--line-200);
 }
 
-
-
-
+/* ---------------------------------------------------------------------- */
+/* Gallery (index page)                                                  */
+/* ---------------------------------------------------------------------- */
 
 .gallery-grid {
   display: grid;
@@ -876,9 +910,9 @@ th.mono,
   min-height: 120px;
 }
 
-
-
-
+/* ---------------------------------------------------------------------- */
+/* Shared interactive components (week pages)                            */
+/* ---------------------------------------------------------------------- */
 
 .nav-link {
   text-decoration: none;
@@ -1112,7 +1146,7 @@ table.spec tr.is-focus td {
   background: var(--callout-bg);
 }
 
-
+/* SVG plots, trees and graphs */
 
 .plot {
   display: block;
@@ -1214,7 +1248,7 @@ table.spec tr.is-focus td {
   fill: var(--pnu-blue-dark);
 }
 
-
+/* Quiz */
 
 .quiz-grid {
   display: grid;
@@ -1292,9 +1326,9 @@ table.spec tr.is-focus td {
 }
 
 
-
-
-
+/* ---------------------------------------------------------------------- */
+/* Weekly topic organization                                              */
+/* ---------------------------------------------------------------------- */
 
 .week-section {
   padding: 24px 0 30px;
@@ -1501,7 +1535,7 @@ table.spec tr.is-focus td {
   }
 }
 
-
+/* Lecture PDF link in the hero eyebrow, the concept-check mark and visually hidden text (markup written by the public export tools). */
 .eyebrow-link {
   color: inherit;
   text-decoration: underline;
@@ -1547,7 +1581,7 @@ table.spec tr.is-focus td {
   white-space: nowrap;
 }
 
-
+/* The index arrow rule (.publication-lecture span) must not shrink the wrapped last word. */
 .publication-lecture .publication-lecture-tail {
   display: inline;
   margin-left: 0;
