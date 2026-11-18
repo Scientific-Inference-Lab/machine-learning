@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Random Forests | Machine Learning | Pusan National University</title><meta name="description" content="Random forests combine trees trained on bootstrap samples with randomly selected candidate features."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/25.%20ensemble-methods/random-forests.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Random Forests | Machine Learning | Pusan National University"><meta property="og:description" content="Random forests combine trees trained on bootstrap samples with randomly selected candidate features."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/25.%20ensemble-methods/random-forests.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css">
+  <link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic">
+  <a class="skip-link" href="#main-content">본문으로 이동</a>
+  <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/25.%20Ensemble%20Methods.pdf" aria-label="Ensemble Methods 강의 PDF">Ensemble Methods</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+  <section class="hero topic-hero"><div class="container"><h1 class="page-title">Random Forests</h1><hr class="accent-rule"><p class="page-subtitle">랜덤 포레스트(random forest)는 부트스트랩 표본과 무작위 후보 특성으로 만든 여러 나무의 예측을 결합한다.</p></div></section>
+  <main id="main-content" class="page-body container">
+    <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>후보 특성과 첫 분할</strong><span>분할 후보를 일부 특성으로 제한하면 강한 특성이 후보에 없는 나무는 다른 특성으로 첫 분할을 만들어 나무들이 서로 달라진다.</span></article><article class="summary-card"><strong>다수결과 확률 평균</strong><span>나무별 범주의 다수결과 확률 평균은 서로 다른 범주를 고를 수 있다.</span></article></div></section>
+    <section class="topic-example">
+      <header class="example-header"><h2 class="section-title">후보 특성과 첫 분할</h2><p class="lead">분할 후보를 일부 특성으로 제한하면 강한 특성이 후보에 없는 나무는 다른 특성으로 첫 분할을 만들어 나무들이 서로 달라진다.</p></header>
+      <div class="visual-lab">
+        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-1">후보 특성 수</label><select id="state-1"><option value="0">1개</option><option value="1">모든 특성</option></select></div></div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-1" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-1 plot-desc-1"><title id="plot-title-1">후보 특성과 첫 분할</title><desc id="plot-desc-1">나무별 후보 특성 집합과 선택된 첫 분할</desc></svg></div><figcaption class="visual-caption">각 칸은 서로 다른 나무의 첫 분할이다. 위쪽에는 검토한 후보 집합, 파란 원에는 그중 선택된 특성을 표시한다.</figcaption></figure>
+        <div class="visual-readouts" id="state-read-1" aria-live="polite"></div>
+        <p class="visual-note" id="state-result-1"></p>
+      </div>
+    </section>
+    <section class="topic-example">
+      <header class="example-header"><h2 class="section-title">다수결과 확률 평균은 서로 다른 답을 낼 수 있다</h2><p class="lead">나무 수가 바뀌면 같은 입력에서 나무들이 낸 범주별 표 수와 범주 A의 평균 확률도 바뀐다. scikit-learn은 나무별 확률을 평균해 범주를 고른다.</p></header>
+      <div class="visual-lab">
+        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-2">나무 수</label><select id="state-2"><option value="0">5그루</option><option value="1">9그루</option></select></div></div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-2" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-2 plot-desc-2"><title id="plot-title-2">다수결과 확률 평균</title><desc id="plot-desc-2">나무별 확률과 범주, 확률 평균으로 정한 예측</desc></svg></div><figcaption class="visual-caption">원 안의 수는 나무별 범주 A의 확률, 원 아래 글자는 각 나무가 고른 범주다. 아래 막대는 A(파랑)와 B(초록)의 평균 확률이다.</figcaption></figure>
+        <div class="visual-readouts" id="state-read-2" aria-live="polite"></div>
+        <p class="visual-note" id="state-result-2"></p>
+      </div>
+    </section>
+    <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../25. ensemble-methods/bagging.html" rel="prev">이전 · Bagging</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../26. gradient-boosting/residual-fitting.html" rel="next">다음 · Residual Fitting</a></nav>
+  </main>
+  <footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  var states = [[["1개", "각 나무가 서로 다른 제한된 특성으로 첫 분할을 만든다."], ["모든 특성", "강한 특성이 여러 나무의 첫 분할에 반복해 선택된다."]], [["5그루", ""], ["9그루", ""]]];
+  var blue="#005baa",green="#00a651",ink="#1f2d3d";
+  function frame(){return '<rect x="55" y="35" width="490" height="225" rx="12" fill="#f5f8fb"/>';}
+  function miniTree(x,label,candidates){
+    var s='<rect x="'+x+'" y="60" width="130" height="170" rx="9" fill="#fff" stroke="#d7e0e8"/><text x="'+(x+65)+'" y="85" text-anchor="middle" fill="'+ink+'" font-size="14" font-weight="700">후보 '+candidates+'</text>';
+    s+='<circle cx="'+(x+65)+'" cy="125" r="17" fill="'+blue+'"/><text x="'+(x+65)+'" y="130" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">'+label+'</text><line x1="'+(x+65)+'" y1="142" x2="'+(x+35)+'" y2="185" stroke="'+ink+'" stroke-width="4"/><line x1="'+(x+65)+'" y1="142" x2="'+(x+95)+'" y2="185" stroke="'+ink+'" stroke-width="4"/><circle cx="'+(x+35)+'" cy="190" r="10" fill="'+green+'"/><circle cx="'+(x+95)+'" cy="190" r="10" fill="'+green+'"/>';
+    return s;
+  }
+  function drawFeatures(index){
+    var svg=document.getElementById("state-plot-1"), labels=index===0?["X1","X2","X3"]:["X1","X1","X1"], cand=index===0?["{X1}","{X2}","{X3}"]:["{X1,X2,X3}","{X1,X2,X3}","{X1,X2,X3}"];
+    var html='<title id="plot-title-1">후보 특성과 첫 분할</title><desc id="plot-desc-1">나무별 후보 집합과 선택된 특성</desc>'+frame();for(var i=0;i<3;i++){html+=miniTree(78+i*155,labels[i],cand[i]);}svg.innerHTML=html;
+  }
+  function drawVotes(index){
+    var probabilities=[0.9,0.4,0.4,0.9,0.4,0.05,0.05,0.05,0.05].slice(0,index===0?5:9);
+    var total=probabilities.length,a=probabilities.filter(function(p){return p>0.5;}).length,b=total-a;
+    var mean=probabilities.reduce(function(sum,p){return sum+p;},0)/total;
+    var hard=a>b?'A':'B',soft=mean>0.5?'A':'B';
+    var html='<title id="plot-title-2">다수결과 확률 평균</title><desc id="plot-desc-2">나무별 확률과 범주, 확률 평균으로 정한 예측</desc>'+frame()+'<text x="75" y="65" fill="'+ink+'" font-size="14" font-weight="700">각 나무의 P(A)</text>';
+    probabilities.forEach(function(p,i){var x=105+i*48,label=p>0.5?'A':'B';html+='<circle cx="'+x+'" cy="110" r="20" fill="'+(label==='A'?blue:green)+'"/><text x="'+x+'" y="115" fill="#fff" font-size="12" text-anchor="middle">'+p.toFixed(2)+'</text><text x="'+x+'" y="146" fill="'+ink+'" font-size="14" text-anchor="middle">'+label+'</text>';});
+    html+='<rect x="85" y="175" width="430" height="38" rx="6" fill="'+green+'"/><rect x="85" y="175" width="'+(430*mean)+'" height="38" rx="6" fill="'+blue+'"/><text x="95" y="243" fill="'+blue+'" font-size="14">평균 P(A) '+mean.toFixed(3)+'</text><text x="355" y="243" fill="'+green+'" font-size="14">P(B) '+(1-mean).toFixed(3)+'</text><text x="300" y="278" text-anchor="middle" fill="'+ink+'" font-size="15" font-weight="700">다수결 '+hard+' / 확률 평균 '+soft+'</text>';
+    document.getElementById('state-plot-2').innerHTML=html;
+    return {a:a,b:b,mean:mean,hard:hard,soft:soft,total:total};
+  }
+  function readout(label, value) {
+    return '<div class="visual-readout"><span class="visual-readout-label">' + label + '</span><strong class="visual-readout-value">' + value + '</strong></div>';
+  }
+  states.forEach(function (options, i) {
+    var n = i + 1;
+    var select = document.getElementById("state-" + n);
+    function render() {
+      var index = Number(select.value);
+      var state = options[index];
+      if(n===1){drawFeatures(index);}else{
+        var result=drawVotes(index);
+        document.getElementById("state-read-2").innerHTML=readout("나무 수",result.total+"그루")+readout("다수결","A "+result.a+"표, B "+result.b+"표 → "+result.hard)+readout("평균 P(A)",result.mean.toFixed(3))+readout("확률 평균 예측",result.soft);
+        document.getElementById("state-result-2").textContent="나무별 범주는 A "+result.a+"표, B "+result.b+"표이므로 다수결은 "+result.hard+"다. 확률 평균은 P(A) = "+result.mean.toFixed(3)+"이므로 "+result.soft+"를 고른다. 나무가 고른 범주만 세면 각 나무의 확률 크기 차이는 반영되지 않는다.";
+        return;
+      }
+      document.getElementById("state-read-" + n).innerHTML = readout("선택한 조건", state[0]) + readout("선택지", (index + 1) + " / " + options.length);
+      document.getElementById("state-result-" + n).textContent = state[1];
+    }
+    select.addEventListener("change", render);
+    render();
+  });
+}());
+</script>
+</body>
+</html>

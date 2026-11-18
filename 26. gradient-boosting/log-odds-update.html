@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Log Odds Update | Machine Learning | Pusan National University</title><meta name="description" content="For binary classification, gradient boosting fits the negative log-loss gradient and adds tree leaf values on the log-odds scale."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/26.%20gradient-boosting/log-odds-update.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Log Odds Update | Machine Learning | Pusan National University"><meta property="og:description" content="For binary classification, gradient boosting fits the negative log-loss gradient and adds tree leaf values on the log-odds scale."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/26.%20gradient-boosting/log-odds-update.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
+  <style>
+    .topic-plot .bar{fill:var(--pnu-blue)}
+    .topic-plot .start{stroke:var(--ink-600);stroke-width:2;stroke-dasharray:6 5}
+    .topic-plot .target-1{fill:var(--pnu-green)}
+    .topic-plot .target-0{fill:var(--alert-700)}
+    .topic-plot .split{stroke:var(--ink-600);stroke-width:2;stroke-dasharray:3 4}
+    .topic-plot .curve{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .mean-line{fill:none;stroke:var(--ink-600);stroke-width:2.5;stroke-dasharray:7 5}
+    .topic-plot .cur{fill:var(--pnu-green)}
+    .topic-plot .cur-mean{fill:var(--pnu-blue-dark)}
+    .topic-plot .zero{stroke:var(--ink-600);stroke-width:1}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-log-odds-update">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/26.%20Gradient%20Boosting.pdf" aria-label="Gradient Boosting 강의 PDF">Gradient Boosting</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><h1 class="page-title">Log Odds Update</h1><hr class="accent-rule"><p class="page-subtitle">이진 분류의 그래디언트 부스팅은 확률 p가 아니라 로그 승산 f에 나무의 잎 값을 더하고, p = σ(f)로 되돌린다. 나무의 목표는 로그 손실의 음의 그래디언트 y − p다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>시작 로그 승산</strong><span>f₀ = log(ȳ / (1 − ȳ))이며 모든 관측이 같은 확률 ȳ에서 출발한다.</span></article><article class="summary-card"><strong>잔차 y − p</strong><span>로그 손실을 f로 미분한 값의 부호를 바꾼 것이며, 나무는 이 값의 제곱합으로 분할을 고른다.</span></article><article class="summary-card"><strong>잎 값 γ</strong><span>γ = Σ(y − p) / Σp(1 − p)이며 잔차 평균과 다르다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">나무를 더할수록 로그 손실이 줄지만, 같은 잎에 묶인 관측의 확률은 함께 움직인다</h2><p class="lead">관측 6개(x는 1부터 6, 정답 0, 0, 0, 1, 0, 1)에서 학습률 λ와 더한 나무 수 b에 따라 관측별 확률, 마지막 나무의 분할과 잎 값, 로그 손실이 달라진다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="lam">학습률 λ <output id="lam-out" class="control-value" for="lam">0.5</output></label><select id="lam"><option value="0.1">0.1</option><option value="0.5" selected>0.5</option><option value="1">1</option></select></div><div class="control-field"><label for="trees">더한 나무 수 b <output id="trees-out" class="control-value" for="trees">1</output></label><input id="trees" type="range" min="0" max="6" step="1" value="1"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="prob-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="prob-title prob-desc"><title id="prob-title">관측별 확률</title><desc id="prob-desc">확률 막대와 정답</desc></svg></div><figcaption class="visual-caption">파란 막대는 관측마다 현재 확률 p = σ(f)다. 초록 점은 정답 1(p = 1 높이), 빨간 점은 정답 0(p = 0 높이)을 나타내고, 회색 가로 점선은 시작 확률 1/3, 회색 세로 점선은 마지막 나무의 분할이다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">p가 0이나 1에 가까운 잎일수록 같은 잔차 합에서 잎 값의 절댓값이 커진다</h2><p class="lead">관측 3개가 든 잎의 값 γ는 잔차 합을 p(1 − p)의 합으로 나눈 값이다. 같은 잔차 평균이라도 현재 확률 p에 따라 분모가 달라지므로 잔차 평균과 γ는 같지 않을 수 있다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="leafp">현재 확률 p <output id="leafp-out" class="control-value" for="leafp">0.35</output></label><input id="leafp" type="range" min="0.05" max="0.95" step="0.05" value="0.35"></div><div class="control-field"><label for="ones">정답이 1인 관측 수 <output id="ones-out" class="control-value" for="ones">2</output></label><select id="ones"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="leaf-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="leaf-title leaf-desc"><title id="leaf-title">확률에 따른 잎 값</title><desc id="leaf-desc">잎 값 곡선과 잔차 평균</desc></svg></div><figcaption class="visual-caption">가로축은 세 관측의 공통 확률 p다. 파란 곡선은 이 정답 구성에서의 잎 값 γ, 회색 점선은 잔차 평균이고, 초록 점과 짙은 점은 현재 p에서 두 값이다. 세로축 밖의 값은 가장자리에 표시한다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" rel="prev" href="../26. gradient-boosting/residual-fitting.html">이전 · Residual Fitting</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" rel="next" href="../26. gradient-boosting/learning-rate-and-trees.html">다음 · Learning Rate and Trees</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  var r3 = function (v) { return neg((Math.round(v * 1000) / 1000).toFixed(3)); };
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; if (a === "으로") return t + (k === 1 ? "으로" : "로"); return t + (k ? a : b); }
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+  var sig = function (f) { return 1 / (1 + Math.exp(-f)); };
+
+  var X = [1, 2, 3, 4, 5, 6], Y = [0, 0, 0, 1, 0, 1], CUTS = [1.5, 2.5, 3.5, 4.5, 5.5], P0 = 1 / 3;
+  function logloss(p) { return -Y.reduce(function (s, y, i) { return s + (y ? Math.log(p[i]) : Math.log(1 - p[i])); }, 0) / Y.length; }
+  function run(lam, b) {
+    var f = Y.map(function () { return Math.log(P0 / (1 - P0)); }), last = null;
+    for (var k = 0; k < b; k++) {
+      var p = f.map(sig), r = Y.map(function (y, i) { return y - p[i]; }), best = null;
+      CUTS.forEach(function (t) {
+        var L = [], R = [];
+        X.forEach(function (x, i) { (x <= t ? L : R).push(i); });
+        var m = function (a) { return a.reduce(function (s, i) { return s + r[i]; }, 0) / a.length; };
+        var lm = m(L), rm = m(R), sse = 0;
+        L.forEach(function (i) { sse += (r[i] - lm) * (r[i] - lm); }); R.forEach(function (i) { sse += (r[i] - rm) * (r[i] - rm); });
+        if (!best || sse < best.sse - 1e-12) best = { t: t, sse: sse, L: L, R: R };
+      });
+      var g = function (a) { return a.reduce(function (s, i) { return s + r[i]; }, 0) / a.reduce(function (s, i) { return s + p[i] * (1 - p[i]); }, 0); };
+      last = { t: best.t, gl: g(best.L), gr: g(best.R) };
+      f = f.map(function (v, i) { return v + lam * (X[i] <= last.t ? last.gl : last.gr); });
+    }
+    var p2 = f.map(sig);
+    return { f: f, p: p2, last: last, ll: logloss(p2) };
+  }
+
+  var PX = function (x) { return 70 + (x - 0.5) * 80; }, PY = function (v) { return 262 - v * 230; };
+  function renderProb() {
+    var lam = Number($("lam").value), b = Number($("trees").value), m = run(lam, b);
+    $("lam-out").textContent = $("lam").value; $("trees-out").textContent = b;
+    var s = '<title id="prob-title">관측별 확률</title><desc id="prob-desc">λ = ' + lam + ', 나무 ' + b + '개, 로그 손실 ' + r3(m.ll) + '</desc>';
+    s += '<line class="axis" x1="' + PX(0.5) + '" y1="' + PY(0) + '" x2="' + PX(6.6) + '" y2="' + PY(0) + '"/><line class="axis" x1="' + PX(0.5) + '" y1="' + PY(0) + '" x2="' + PX(0.5) + '" y2="' + PY(1) + '"/>';
+    [0, 0.5, 1].forEach(function (v) { s += '<text class="small" x="' + (PX(0.5) - 8) + '" y="' + (PY(v) + 4) + '" text-anchor="end">' + v + '</text>'; });
+    s += '<text x="' + (PX(0.5) + 8) + '" y="24">p</text>';
+    s += '<line class="start" x1="' + PX(0.5) + '" y1="' + PY(P0) + '" x2="' + PX(6.6) + '" y2="' + PY(P0) + '"/>';
+    X.forEach(function (x, i) {
+      s += '<rect class="bar" x="' + (PX(x) - 18) + '" y="' + PY(m.p[i]).toFixed(1) + '" width="36" height="' + (PY(0) - PY(m.p[i])).toFixed(1) + '"/>';
+      s += '<circle class="target-' + Y[i] + '" cx="' + PX(x) + '" cy="' + PY(Y[i]) + '" r="7"/>';
+      s += '<text class="small" x="' + PX(x) + '" y="' + (PY(0) + 18) + '" text-anchor="middle">x = ' + x + ' · ' + r3(m.p[i]) + '</text>';
+    });
+    if (m.last) s += '<line class="split" x1="' + PX(m.last.t) + '" y1="' + PY(1.02) + '" x2="' + PX(m.last.t) + '" y2="' + PY(0) + '"/>';
+    $("prob-plot").innerHTML = s;
+    var p5 = m.p[4];
+    show(1, [["로그 손실", r3(logloss(Y.map(function () { return P0; }))) + " → " + r3(m.ll)], ["마지막 분할", m.last ? "x ≤ " + m.last.t : "없음"], ["마지막 잎 값 γ (왼쪽, 오른쪽)", m.last ? r3(m.last.gl) + ", " + r3(m.last.gr) : "없음"], ["x = 5의 확률", r3(p5)]],
+      b === 0 ? "시작 로그 승산은 log 0.5 ≈ −0.693이고 모든 관측의 확률이 1/3이다. 정답 1인 두 관측과 정답 0인 네 관측이 모두 같은 값에서 출발한다."
+        : "나무 " + b + "개를 λ = " + lam + "로 더해 로그 손실이 " + r3(logloss(Y.map(function () { return P0; }))) + "에서 " + kj(r3(m.ll), "으로") + " 줄었다. " +
+          (p5 > P0 + 1e-9 ? "정답이 0인 x = 5의 확률은 " + kj(r3(p5), "으로") + " 시작보다 높다. 깊이 1 나무는 분할 하나만 쓰므로, x = 5를 정답 1인 x = 4나 6과 같은 잎에 둔 단계에서 함께 올렸다."
+            : "x = 5의 확률은 " + kj(r3(p5), "으로") + " 시작보다 낮아졌다. 몇 단계를 거치며 x = 5가 정답 1인 관측과 다른 잎으로 나뉜 결과다."));
+  }
+
+  var LX = function (p) { return 70 + (p - 0.05) / 0.9 * 480; }, GMAX = 12, LY = function (v) { return 150 - Math.max(-GMAX, Math.min(GMAX, v)) * 10.5; };
+  function renderLeaf() {
+    var p = Number($("leafp").value), k = Number($("ones").value);
+    $("leafp-out").textContent = p.toFixed(2); $("ones-out").textContent = k;
+    var gamma = function (q) { return (k - 3 * q) / (3 * q * (1 - q)); }, meanR = function (q) { return (k - 3 * q) / 3; };
+    var s = '<title id="leaf-title">확률에 따른 잎 값</title><desc id="leaf-desc">정답 1 ' + k + '개, p = ' + p.toFixed(2) + ', γ = ' + r3(gamma(p)) + '</desc>';
+    s += '<line class="axis" x1="' + LX(0.05) + '" y1="' + LY(-GMAX) + '" x2="' + LX(0.05) + '" y2="' + LY(GMAX) + '"/><line class="zero" x1="' + LX(0.05) + '" y1="' + LY(0) + '" x2="' + LX(0.95) + '" y2="' + LY(0) + '"/>';
+    [-10, -5, 0, 5, 10].forEach(function (v) { s += '<text class="small" x="' + (LX(0.05) - 8) + '" y="' + (LY(v) + 4) + '" text-anchor="end">' + neg(v) + '</text>'; });
+    [0.05, 0.5, 0.95].forEach(function (v) { s += '<text class="small" x="' + LX(v) + '" y="' + (LY(-GMAX) + 16) + '" text-anchor="middle">' + v + '</text>'; });
+    s += '<text x="' + LX(0.95) + '" y="' + (LY(-GMAX) + 16) + '" text-anchor="end" dx="40">p</text>';
+    var c = [], d = [];
+    for (var q = 0.05; q <= 0.9501; q += 0.01) { c.push(LX(q).toFixed(1) + "," + LY(gamma(q)).toFixed(1)); d.push(LX(q).toFixed(1) + "," + LY(meanR(q)).toFixed(1)); }
+    s += '<polyline class="mean-line" points="' + d.join(" ") + '"/><polyline class="curve" points="' + c.join(" ") + '"/>';
+    s += '<circle class="cur-mean" cx="' + LX(p) + '" cy="' + LY(meanR(p)) + '" r="6"/><circle class="cur" cx="' + LX(p) + '" cy="' + LY(gamma(p)) + '" r="8"/>';
+    $("leaf-plot").innerHTML = s;
+    var sumR = k - 3 * p, sumH = 3 * p * (1 - p), g = sumR / sumH;
+    show(2, [["잔차 합 Σ(y − p)", r3(sumR)], ["Σp(1 − p)", r3(sumH)], ["잔차 평균", r3(sumR / 3)], ["잎 값 γ", r3(g)]],
+      Math.abs(sumR) < 1e-9 ? "정답 평균과 현재 확률이 같아 잔차 합이 0이고 γ도 0이다. 이 잎은 로그 승산을 옮기지 않는다."
+        : "p(1 − p)의 합이 " + kj(r3(sumH), "이라", "라") + " 잎 값은 잔차 평균 " + kj(r3(sumR / 3), "을", "를") + " p(1 − p) = " + kj(r3(p * (1 - p)), "으로") + " 나눈 " + kj(r3(g), "이다", "다") + ". p(1 − p)는 p = 0.5에서 0.25로 가장 크므로 이 배율은 4가 가장 작고, p가 0이나 1에 가까울수록 커진다.");
+  }
+  $("lam").addEventListener("change", renderProb); $("trees").addEventListener("input", renderProb);
+  $("leafp").addEventListener("input", renderLeaf); $("ones").addEventListener("change", renderLeaf);
+  renderProb(); renderLeaf();
+}());
+</script>
+</body>
+</html>

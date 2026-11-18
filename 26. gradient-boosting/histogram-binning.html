@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Histogram Binning | Machine Learning | Pusan National University</title><meta name="description" content="Histogram-based gradient boosting searches for splits at feature-bin boundaries and chooses which branch receives missing values."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/26.%20gradient-boosting/histogram-binning.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Histogram Binning | Machine Learning | Pusan National University"><meta property="og:description" content="Histogram-based gradient boosting searches for splits at feature-bin boundaries and chooses which branch receives missing values."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/26.%20gradient-boosting/histogram-binning.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
+  <style>
+    .topic-plot .hist{fill:var(--pnu-blue)}
+    .topic-plot .edge{stroke:var(--pnu-green);stroke-width:1.5}
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .miss{fill:var(--pnu-green)}
+    .topic-plot .mean{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .split{stroke:var(--ink-600);stroke-width:2;stroke-dasharray:6 5}
+    .topic-plot .zero{stroke:var(--ink-600);stroke-width:1}
+    .topic-plot .sep{stroke:var(--ink-600);stroke-width:1.5;stroke-dasharray:2 4}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-histogram-binning">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/26.%20Gradient%20Boosting.pdf" aria-label="Gradient Boosting 강의 PDF">Gradient Boosting</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><h1 class="page-title">Histogram Binning</h1><hr class="accent-rule"><p class="page-subtitle">히스토그램 기반 그래디언트 부스팅(histogram-based gradient boosting)은 특성을 구간화(binning)한 뒤 구간 경계에서만 분할을 찾고, 결측값은 분할마다 손실을 더 줄이는 쪽 가지로 보낸다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>분할 후보</strong><span>모든 값 사이를 검사하면 서로 다른 값의 수보다 하나 적은 경계를 본다.</span></article><article class="summary-card"><strong>구간화</strong><span>값을 분위수 경계로 나눈 구간 번호로 바꾼다. 최대 구간 수가 255이면 경계는 254개 이하다.</span></article><article class="summary-card"><strong>결측값 처리</strong><span>결측 관측을 왼쪽과 오른쪽에 각각 보내 보고 손실이 더 작은 쪽을 그 분할의 규칙으로 정한다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">구간화하면 검사할 경계 수가 관측 수가 아니라 구간 수로 정해진다</h2><p class="lead">서로 다른 값이 많아져도 구간 경계 수는 최대 구간 수가 정한 상한을 넘지 않는다. 대상은 한쪽으로 치우친 정수 특성(잔액과 비슷한 분포)이다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="nobs">관측 수 <output id="nobs-out" class="control-value" for="nobs">10,000</output></label><select id="nobs"><option value="100">100</option><option value="1000">1,000</option><option value="10000" selected>10,000</option><option value="100000">100,000</option></select></div><div class="control-field"><label for="bins">최대 구간 수 <output id="bins-out" class="control-value" for="bins">16</output></label><select id="bins"><option value="8">8</option><option value="16" selected>16</option><option value="64">64</option><option value="255">255</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="bin-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="bin-title bin-desc"><title id="bin-title">특성 분포와 구간 경계</title><desc id="bin-desc">히스토그램과 경계선</desc></svg></div><figcaption class="visual-caption">파란 막대는 특성 값의 분포(상위 1% 제외)이고, 초록 세로선은 분위수로 정한 구간 경계다. 경계선 사이의 관측 수는 대체로 비슷하다. 최대 구간 수가 255이면 경계가 너무 촘촘해 네 개마다 하나씩만 그렸다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">결측 관측은 분할마다 잔차 제곱합을 더 줄이는 쪽 가지로 간다</h2><p class="lead">특성 값이 있는 관측 6개와 비어 있는 관측 2개가 든 잎이다. 분할 위치와 결측 관측의 잔차에 따라 결측을 왼쪽에 보낼 때와 오른쪽에 보낼 때의 잔차 제곱합이 달라지고, 더 작은 쪽이 선택된다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="mcut">분할 위치 x ≤ <output id="mcut-out" class="control-value" for="mcut">3.5</output></label><input id="mcut" type="range" min="1.5" max="5.5" step="1" value="3.5"></div><div class="control-field"><label for="mres">결측 관측의 잔차 <output id="mres-out" class="control-value" for="mres">−1, 0.2</output></label><select id="mres"><option value="a">−2.5, −1.5</option><option value="b" selected>−1, 0.2</option><option value="c">1.5, 2.5</option></select></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="miss-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="miss-title miss-desc"><title id="miss-title">결측 관측의 가지 선택</title><desc id="miss-desc">관측 잔차와 결측 관측</desc></svg></div><figcaption class="visual-caption">짙은 점은 특성 값이 있는 관측의 잔차, 오른쪽 칸의 초록 점은 특성이 비어 있는 관측의 잔차다. 회색 점선은 분할 위치, 파란 가로선은 결측을 선택된 쪽에 넣었을 때 두 잎의 잔차 평균이다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" rel="prev" href="../26. gradient-boosting/learning-rate-and-trees.html">이전 · Learning Rate and Trees</a><a class="pager-link is-all" href="../index.html">전체</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  var r2 = function (v) { return neg((Math.round(v * 100) / 100).toFixed(2)); };
+  var fmt = function (n) { return n.toLocaleString("en-US"); };
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; if (a === "으로") return t + (k === 1 ? "으로" : "로"); return t + (k ? a : b); }
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+
+  function lcg(seed) { var s = seed >>> 0; return function () { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }; }
+  var rnd = lcg(14026), ALL = [];
+  for (var i = 0; i < 100000; i++) { var u = Math.max(rnd(), 1e-12), v = rnd(); ALL.push(Math.round(Math.exp(6.6 + 0.75 * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v)))); }
+  var CACHE = {};
+  function sample(n) {
+    if (CACHE[n]) return CACHE[n];
+    var a = ALL.slice(0, n).sort(function (x, y) { return x - y; }), d = [];
+    a.forEach(function (x, k) { if (k === 0 || x !== a[k - 1]) d.push(x); });
+    return (CACHE[n] = { sorted: a, distinct: d });
+  }
+  function edges(s, k) {
+    var d = s.distinct, out = [];
+    if (d.length <= k) { for (var j = 1; j < d.length; j++) out.push((d[j - 1] + d[j]) / 2); return out; }
+    var a = s.sorted;
+    for (var q = 1; q < k; q++) { var pos = q / k * (a.length - 1), lo = Math.floor(pos), hi = Math.ceil(pos); out.push(a[lo] + (a[hi] - a[lo]) * (pos - lo)); }
+    return out.filter(function (e, j) { return j === 0 || e > out[j - 1]; });
+  }
+
+  function renderBins() {
+    var n = Number($("nobs").value), k = Number($("bins").value), s = sample(n), e = edges(s, k);
+    $("nobs-out").textContent = fmt(n); $("bins-out").textContent = k;
+    var hiV = s.sorted[Math.floor(0.99 * (s.sorted.length - 1))], loV = s.sorted[0], NB = 50, w = (hiV - loV) / NB || 1, counts = [];
+    for (var b = 0; b < NB; b++) counts.push(0);
+    s.sorted.forEach(function (x) { if (x <= hiV) counts[Math.min(NB - 1, Math.floor((x - loV) / w))]++; });
+    var cmax = Math.max.apply(null, counts), PX = function (x) { return 60 + (x - loV) / (hiV - loV || 1) * 520; }, PY = function (c) { return 262 - c / cmax * 225; };
+    var svg = '<title id="bin-title">특성 분포와 구간 경계</title><desc id="bin-desc">관측 ' + fmt(n) + '개, 구간 경계 ' + e.length + '개</desc>';
+    svg += '<line class="axis" x1="60" y1="262" x2="580" y2="262"/>';
+    counts.forEach(function (c, b) { svg += '<rect class="hist" x="' + (60 + b * 520 / NB + 1).toFixed(1) + '" y="' + PY(c).toFixed(1) + '" width="' + (520 / NB - 2).toFixed(1) + '" height="' + (262 - PY(c)).toFixed(1) + '"/>'; });
+    var step = Math.ceil(e.length / 64);
+    e.forEach(function (x, i) { if (x <= hiV && i % step === step - 1) svg += '<line class="edge" x1="' + PX(x).toFixed(1) + '" y1="30" x2="' + PX(x).toFixed(1) + '" y2="262"/>'; });
+    svg += '<text class="small" x="60" y="280" text-anchor="middle">' + fmt(loV) + '</text><text class="small" x="580" y="280" text-anchor="middle">' + fmt(hiV) + '</text><text x="320" y="296" text-anchor="middle">특성 값</text><text x="66" y="22">관측 수</text>';
+    $("bin-plot").innerHTML = svg;
+    var exact = s.distinct.length - 1, hist = e.length;
+    show(1, [["서로 다른 값", fmt(s.distinct.length) + "개"], ["모든 값 사이 경계", fmt(exact) + "개"], ["구간 경계", fmt(hist) + "개"], ["경계 수 비율", hist === exact ? "같음" : "약 " + fmt(Math.round(exact / hist)) + "분의 1"]],
+      hist === exact ? "서로 다른 값이 " + s.distinct.length + "개로 최대 구간 수 " + k + "보다 적어, 구간화해도 모든 값 사이를 검사할 때와 경계 수가 같다. 관측이 적은 자료에서 두 방식의 비용 차이가 작은 이유다."
+        : "관측 " + fmt(n) + "개에 서로 다른 값이 " + fmt(s.distinct.length) + "개라 모든 값 사이를 검사하면 경계 " + fmt(exact) + "개를 보지만, 구간화하면 " + hist + "개만 본다. 관측을 늘려도 구간 경계 수는 최대 구간 수보다 하나 적은 값을 넘지 않는다.");
+  }
+
+  var XV = [1, 2, 3, 4, 5, 6], RV = [-4, -3, -2, 1, 2, 3], MISS = { a: [-2.5, -1.5], b: [-1, 0.2], c: [1.5, 2.5] };
+  function sse(a) { var m = a.reduce(function (s, v) { return s + v; }, 0) / a.length; return a.reduce(function (s, v) { return s + (v - m) * (v - m); }, 0); }
+  var avg = function (a) { return a.reduce(function (s, v) { return s + v; }, 0) / a.length; };
+  var MX = function (x) { return 60 + (x - 0.5) * 72; }, MY = function (v) { return 150 - v * 24; }, MISSX = [520, 560];
+  function renderMiss() {
+    var t = Number($("mcut").value), key = $("mres").value, M = MISS[key];
+    $("mcut-out").textContent = t; $("mres-out").textContent = M.map(neg).join(", ");
+    var L = [], R = [];
+    XV.forEach(function (x, i) { (x <= t ? L : R).push(RV[i]); });
+    var left = sse(L.concat(M)) + sse(R), right = sse(L) + sse(R.concat(M)), goLeft = left < right;
+    var LL = goLeft ? L.concat(M) : L, RR = goLeft ? R : R.concat(M);
+    var varies = [1.5, 2.5, 3.5, 4.5, 5.5].some(function (u) {
+      var L2 = [], R2 = []; XV.forEach(function (x, i) { (x <= u ? L2 : R2).push(RV[i]); });
+      return (sse(L2.concat(M)) + sse(R2) < sse(L2) + sse(R2.concat(M))) !== goLeft;
+    });
+    var s = '<title id="miss-title">결측 관측의 가지 선택</title><desc id="miss-desc">x ≤ ' + t + ', 결측은 ' + (goLeft ? "왼쪽" : "오른쪽") + '</desc>';
+    s += '<line class="axis" x1="' + MX(0.5) + '" y1="272" x2="' + MX(0.5) + '" y2="24"/><line class="zero" x1="' + MX(0.5) + '" y1="' + MY(0) + '" x2="580" y2="' + MY(0) + '"/>';
+    [-4, 0, 4].forEach(function (v) { s += '<text class="small" x="' + (MX(0.5) - 8) + '" y="' + (MY(v) + 4) + '" text-anchor="end">' + neg(v) + '</text>'; });
+    s += '<line class="sep" x1="495" y1="24" x2="495" y2="272"/><text class="small" x="540" y="288" text-anchor="middle">결측</text><text x="' + (MX(0.5) + 8) + '" y="22">잔차</text>';
+    XV.forEach(function (x, i) { s += '<circle class="pt" cx="' + MX(x) + '" cy="' + MY(RV[i]) + '" r="6"/><text class="small" x="' + MX(x) + '" y="288" text-anchor="middle">x = ' + x + '</text>'; });
+    M.forEach(function (v, j) { s += '<circle class="miss" cx="' + MISSX[j] + '" cy="' + MY(v) + '" r="7"/>'; });
+    s += '<line class="mean" x1="' + MX(0.55) + '" y1="' + MY(avg(LL)) + '" x2="' + MX(t) + '" y2="' + MY(avg(LL)) + '"/><line class="mean" x1="' + MX(t) + '" y1="' + MY(avg(RR)) + '" x2="' + MX(6.45) + '" y2="' + MY(avg(RR)) + '"/>';
+    s += '<line class="split" x1="' + MX(t) + '" y1="24" x2="' + MX(t) + '" y2="272"/>';
+    $("miss-plot").innerHTML = s;
+    show(2, [["결측을 왼쪽에 보낼 때", r2(left)], ["결측을 오른쪽에 보낼 때", r2(right)], ["선택한 쪽", goLeft ? "왼쪽 가지" : "오른쪽 가지"], ["두 잎의 잔차 평균", r2(avg(LL)) + ", " + r2(avg(RR))]],
+      "x ≤ " + t + "에서 결측 관측 두 개를 " + (goLeft ? "왼쪽" : "오른쪽") + "에 보내면 잔차 제곱합이 " + kj(r2(Math.min(left, right)), "으로") + " 반대쪽의 " + r2(Math.max(left, right)) + "보다 작아 그쪽을 고른다. " + (varies ? "이 결측 관측은 분할 위치에 따라 왼쪽으로도 오른쪽으로도 가므로, 결측을 보낼 쪽은 분할마다 따로 정해진다." : "이 결측 관측의 잔차는 한쪽 관측들과 비슷해 다섯 분할 위치 모두에서 같은 쪽으로 간다."));
+  }
+  $("nobs").addEventListener("change", renderBins); $("bins").addEventListener("change", renderBins);
+  $("mcut").addEventListener("input", renderMiss); $("mres").addEventListener("change", renderMiss);
+  renderBins(); renderMiss();
+}());
+</script>
+</body>
+</html>

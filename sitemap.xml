@@ -63,6 +63,12 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/23.%20nearest-neighbors-and-support-vectors/support-vector-machines.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/24.%20clustering-and-principal-components/k-means-clustering.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/24.%20clustering-and-principal-components/principal-component-analysis.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/25.%20ensemble-methods/bagging.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/25.%20ensemble-methods/random-forests.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/26.%20gradient-boosting/histogram-binning.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/26.%20gradient-boosting/learning-rate-and-trees.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/26.%20gradient-boosting/log-odds-update.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/26.%20gradient-boosting/residual-fitting.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/00.%20Course%20Goals%20and%20Structure.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/00.%20Intro.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/01.%20Definition%20and%20Types%20of%20Learning.pdf</loc></url>
@@ -109,6 +115,8 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/23.%20kNN%20and%20SVM.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/24.%20Clustering%20and%20PCA.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/24.%20Structure%20Without%20Answers.pdf</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/25.%20Ensemble%20Methods.pdf</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/lecture/26.%20Gradient%20Boosting.pdf</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/backpropagation.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/clustering-and-principal-components.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/cross-validation.html</loc></url>
@@ -116,7 +124,9 @@
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/data-leakage.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/decision-trees.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/derivatives-and-probability.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/ensemble-methods.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/evaluation-metrics.html</loc></url>
+  <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/gradient-boosting.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/gradient-descent.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/imbalanced-data.html</loc></url>
   <url><loc>https://scientific-inference-lab.github.io/machine-learning/practice/labels-structure-and-rewards.html</loc></url>

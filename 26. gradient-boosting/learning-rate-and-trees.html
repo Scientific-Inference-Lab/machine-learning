@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Learning Rate and Trees | Machine Learning | Pusan National University</title><meta name="description" content="Choose the learning rate and number of trees together by tracking how validation error changes as trees are added."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/26.%20gradient-boosting/learning-rate-and-trees.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Learning Rate and Trees | Machine Learning | Pusan National University"><meta property="og:description" content="Choose the learning rate and number of trees together by tracking how validation error changes as trees are added."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/26.%20gradient-boosting/learning-rate-and-trees.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
+  <style>
+    .topic-plot .train{fill:none;stroke:var(--pnu-blue);stroke-width:3}
+    .topic-plot .val{fill:none;stroke:var(--pnu-blue-dark);stroke-width:3;stroke-dasharray:8 5}
+    .topic-plot .now{stroke:var(--pnu-green);stroke-width:2.5}
+    .topic-plot .now-dot{fill:var(--pnu-green)}
+    .topic-plot .best{fill:var(--white);stroke:var(--pnu-blue-dark);stroke-width:3}
+    .topic-plot .stop{stroke:var(--alert-700);stroke-width:2.5;stroke-dasharray:4 4}
+    .topic-plot .stop-dot{fill:var(--alert-700)}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-learning-rate-and-trees">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/26.%20Gradient%20Boosting.pdf" aria-label="Gradient Boosting 강의 PDF">Gradient Boosting</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><h1 class="page-title">Learning Rate and Trees</h1><hr class="accent-rule"><p class="page-subtitle">나무를 더할수록 학습 오차는 계속 줄지만 검증 오차는 어느 지점부터 다시 오른다. 학습률을 줄이면 그 지점이 뒤로 밀리므로 학습률과 나무 수는 함께 정하고, 조기 종료(early stopping)로 멈출 시점을 검증 오차에서 찾는다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>검증 자료</strong><span>나무 수와 설정을 비교하는 데 쓰는 자료다. 최종 성능은 한 번도 쓰지 않은 테스트 자료로 보고한다.</span></article><article class="summary-card"><strong>검증 최소 나무 수</strong><span>검증 MSE가 가장 작은 단계다. 학습률이 작을수록 뒤에 나타난다.</span></article><article class="summary-card"><strong>조기 종료</strong><span>검증 오차가 정해진 횟수 동안 나아지지 않으면 나무 추가를 멈춘다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">학습률이 작을수록 검증 오차가 가장 작아지는 나무 수가 뒤로 밀린다</h2><p class="lead">같은 학습·검증 자료에서 깊이 1 나무를 최대 600그루까지 더했다. 학습률 λ와 나무 수 B에 따라 학습·검증 MSE가 달라지고, 검증 MSE가 가장 작은 나무 수는 λ에 따라 옮겨 간다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="lam1">학습률 λ <output id="lam1-out" class="control-value" for="lam1">0.1</output></label><select id="lam1"><option value="0.5">0.5</option><option value="0.1" selected>0.1</option><option value="0.03">0.03</option></select></div><div class="control-field"><label for="trees">나무 수 B <output id="trees-out" class="control-value" for="trees">300</output></label><input id="trees" type="range" min="1" max="600" step="1" value="300"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="curve-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="curve-title curve-desc"><title id="curve-title">학습·검증 MSE 곡선</title><desc id="curve-desc">나무 수에 따른 두 오차</desc></svg></div><figcaption class="visual-caption">파란 실선은 학습 MSE, 짙은 파란 점선은 검증 MSE다. 초록 세로선과 점은 현재 나무 수 B, 흰 원은 검증 MSE가 가장 작은 위치다. 자료는 곡선에 잡음을 더한 합성 자료(학습 60개, 검증 40개)다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">기다리는 횟수가 짧으면 아직 줄고 있는 곡선에서 일찍 멈출 수 있다</h2><p class="lead">조기 종료에서는 검증 MSE가 그때까지의 최솟값보다 나아지지 않는 단계가 정해진 횟수만큼 이어지면 멈춘다. 학습률과 기다리는 횟수가 멈추는 나무 수와 그때까지의 최소 검증 MSE를 정한다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="lam2">학습률 λ <output id="lam2-out" class="control-value" for="lam2">0.03</output></label><select id="lam2"><option value="0.5">0.5</option><option value="0.1">0.1</option><option value="0.03" selected>0.03</option></select></div><div class="control-field"><label for="patience">기다리는 횟수 <output id="patience-out" class="control-value" for="patience">5</output></label><input id="patience" type="range" min="1" max="40" step="1" value="5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="stop-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="stop-title stop-desc"><title id="stop-title">조기 종료 위치</title><desc id="stop-desc">검증 MSE 곡선과 멈춘 위치</desc></svg></div><figcaption class="visual-caption">짙은 파란 점선은 검증 MSE다. 빨간 세로 점선과 점은 조기 종료로 멈춘 나무 수, 흰 원은 600그루 전체에서 검증 MSE가 가장 작은 위치다. 멈춘 뒤의 곡선은 비교를 위해 함께 그렸다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" rel="prev" href="../26. gradient-boosting/log-odds-update.html">이전 · Log Odds Update</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" rel="next" href="../26. gradient-boosting/histogram-binning.html">다음 · Histogram Binning</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var r3 = function (v) { return (Math.round(v * 1000) / 1000).toFixed(3); };
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; if (a === "으로") return t + (k === 1 ? "으로" : "로"); return t + (k ? a : b); }
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+
+  var MAXB = 600;
+  function lcg(seed) { var s = seed >>> 0; return function () { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }; }
+  var rnd = lcg(20260917);
+  function gauss() { var u = Math.max(rnd(), 1e-12), v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function make(n) { var xs = [], ys = []; for (var i = 0; i < n; i++) { var x = rnd() * 10; xs.push(x); ys.push(3 * Math.sin(x / 1.6) + 0.3 * x + 1.2 * gauss()); } return { xs: xs, ys: ys }; }
+  var TR = make(60), VA = make(40);
+  function mse(y, p) { var s = 0; for (var i = 0; i < y.length; i++) s += (y[i] - p[i]) * (y[i] - p[i]); return s / y.length; }
+  function boost(lam) {
+    var n = TR.xs.length, idx = TR.xs.map(function (_, i) { return i; }).sort(function (a, b) { return TR.xs[a] - TR.xs[b]; });
+    var mean = TR.ys.reduce(function (a, b) { return a + b; }, 0) / n;
+    var f = TR.ys.map(function () { return mean; }), fv = VA.ys.map(function () { return mean; });
+    var train = [mse(TR.ys, f)], val = [mse(VA.ys, fv)];
+    for (var b = 1; b <= MAXB; b++) {
+      var r = idx.map(function (i) { return TR.ys[i] - f[i]; }), tot = r.reduce(function (a, c) { return a + c; }, 0), ls = 0, best = null;
+      for (var k = 1; k < n; k++) {
+        ls += r[k - 1];
+        var lm = ls / k, rm = (tot - ls) / (n - k), gain = k * lm * lm + (n - k) * rm * rm;
+        if (!best || gain > best.g) best = { g: gain, t: (TR.xs[idx[k - 1]] + TR.xs[idx[k]]) / 2, lm: lm, rm: rm };
+      }
+      for (var i = 0; i < n; i++) f[i] += lam * (TR.xs[i] <= best.t ? best.lm : best.rm);
+      for (var j = 0; j < VA.xs.length; j++) fv[j] += lam * (VA.xs[j] <= best.t ? best.lm : best.rm);
+      train.push(mse(TR.ys, f)); val.push(mse(VA.ys, fv));
+    }
+    var bi = 1; for (var q = 1; q <= MAXB; q++) if (val[q] < val[bi]) bi = q;
+    return { train: train, val: val, best: bi };
+  }
+  var CACHE = {};
+  function curves(lam) { return CACHE[lam] || (CACHE[lam] = boost(Number(lam))); }
+
+  var PX = function (b) { return 60 + b / MAXB * 510; }, YMAX = 4, PY = function (v) { return 262 - Math.min(v, YMAX) / YMAX * 232; };
+  function frame() {
+    var s = '<line class="axis" x1="' + PX(0) + '" y1="' + PY(0) + '" x2="' + PX(MAXB) + '" y2="' + PY(0) + '"/><line class="axis" x1="' + PX(0) + '" y1="' + PY(0) + '" x2="' + PX(0) + '" y2="' + PY(YMAX) + '"/>';
+    [0, 150, 300, 450, 600].forEach(function (t) { s += '<text class="small" x="' + PX(t) + '" y="' + (PY(0) + 18) + '" text-anchor="middle">' + t + '</text>'; });
+    [0, 1, 2, 3, 4].forEach(function (t) { s += '<text class="small" x="' + (PX(0) - 8) + '" y="' + (PY(t) + 4) + '" text-anchor="end">' + t + '</text>'; });
+    return s + '<text x="' + PX(MAXB) + '" y="' + (PY(0) + 34) + '" text-anchor="end">나무 수</text><text x="' + (PX(0) + 8) + '" y="24">MSE</text>';
+  }
+  function line(cls, arr, upto) { var p = []; for (var b = 0; b <= upto; b++) p.push(PX(b).toFixed(1) + "," + PY(arr[b]).toFixed(1)); return '<polyline class="' + cls + '" points="' + p.join(" ") + '"/>'; }
+
+  function renderCurve() {
+    var lam = $("lam1").value, B = Number($("trees").value), c = curves(lam);
+    $("lam1-out").textContent = lam; $("trees-out").textContent = B;
+    var s = '<title id="curve-title">학습·검증 MSE 곡선</title><desc id="curve-desc">λ = ' + lam + ', B = ' + B + ', 검증 최소 ' + c.best + '그루</desc>' + frame();
+    s += line("train", c.train, MAXB) + line("val", c.val, MAXB);
+    s += '<line class="now" x1="' + PX(B) + '" y1="' + PY(0) + '" x2="' + PX(B) + '" y2="' + PY(YMAX) + '"/><circle class="now-dot" cx="' + PX(B) + '" cy="' + PY(c.val[B]) + '" r="6"/>';
+    s += '<circle class="best" cx="' + PX(c.best) + '" cy="' + PY(c.val[c.best]) + '" r="7"/>';
+    $("curve-plot").innerHTML = s;
+    var gap = B - c.best;
+    show(1, [["학습 MSE (B그루)", r3(c.train[B])], ["검증 MSE (B그루)", r3(c.val[B])], ["검증 최소 나무 수", c.best + "그루"], ["최소 검증 MSE", r3(c.val[c.best])]],
+      (gap < 0 ? "B = " + kj(B, "은", "는") + " 검증 최소 " + c.best + "그루보다 앞이라 검증 MSE가 아직 " + r3(c.val[B] - c.val[c.best]) + "만큼 더 줄어들 여지가 있다. "
+        : gap === 0 ? "B가 검증 MSE가 가장 작은 위치와 같다. "
+        : "B = " + kj(B, "은", "는") + " 검증 최소 " + c.best + "그루보다 " + gap + "그루 뒤다. 학습 MSE는 그사이 " + r3(c.train[c.best] - c.train[B]) + " 더 줄었지만 검증 MSE는 " + r3(c.val[B] - c.val[c.best]) + " 커졌다. ") +
+      "검증 최소는 λ = 0.5에서 " + curves("0.5").best + "그루, λ = 0.1에서 " + curves("0.1").best + "그루, λ = 0.03에서 " + curves("0.03").best + "그루로 학습률이 작을수록 뒤에 오지만, 최소 검증 MSE는 " + r3(curves("0.5").val[curves("0.5").best]) + ", " + r3(curves("0.1").val[curves("0.1").best]) + ", " + kj(r3(curves("0.03").val[curves("0.03").best]), "으로") + " 비슷하다.");
+  }
+
+  function renderStop() {
+    var lam = $("lam2").value, P = Number($("patience").value), c = curves(lam), bestSoFar = 0, stop = MAXB;
+    $("lam2-out").textContent = lam; $("patience-out").textContent = P;
+    for (var b = 1; b <= MAXB; b++) { if (c.val[b] < c.val[bestSoFar] - 1e-12) bestSoFar = b; if (b - bestSoFar >= P) { stop = b; break; } }
+    var s = '<title id="stop-title">조기 종료 위치</title><desc id="stop-desc">λ = ' + lam + ', 기다리는 횟수 ' + P + ', ' + stop + '그루에서 멈춤</desc>' + frame();
+    s += line("val", c.val, MAXB);
+    s += '<line class="stop" x1="' + PX(stop) + '" y1="' + PY(0) + '" x2="' + PX(stop) + '" y2="' + PY(YMAX) + '"/><circle class="stop-dot" cx="' + PX(stop) + '" cy="' + PY(c.val[stop]) + '" r="6"/>';
+    s += '<circle class="best" cx="' + PX(c.best) + '" cy="' + PY(c.val[c.best]) + '" r="7"/>';
+    $("stop-plot").innerHTML = s;
+    var early = bestSoFar < c.best;
+    show(2, [["멈춘 나무 수", stop === MAXB && stop - bestSoFar < P ? "600그루 (끝까지)" : stop + "그루"], ["멈출 때까지 최소 위치", bestSoFar + "그루"], ["그때 검증 MSE", r3(c.val[bestSoFar])], ["600그루 전체의 최소", c.best + "그루, " + r3(c.val[c.best])]],
+      early ? "검증 MSE가 " + P + "단계 동안 " + bestSoFar + "그루의 값보다 나아지지 않아 " + stop + "그루에서 멈췄다. 곡선은 그 뒤에도 조금씩 내려가 " + c.best + "그루에서 " + r3(c.val[c.best]) + "까지 줄어든다. 기다리는 횟수를 너무 짧게 두면 검증 MSE가 잠시 제자리일 때 멈추며, 학습률이 작아 한 단계의 개선이 작을수록 이런 일이 생기기 쉽다."
+        : "멈출 때까지의 최소 위치가 600그루 전체의 최소 " + c.best + "그루와 같다. 검증 MSE가 그 뒤로 " + P + "단계 동안 나아지지 않아 " + stop + "그루에서 멈췄고, 필요 없는 나무를 더하지 않았다.");
+  }
+  $("lam1").addEventListener("change", renderCurve); $("trees").addEventListener("input", renderCurve);
+  $("lam2").addEventListener("change", renderStop); $("patience").addEventListener("input", renderStop);
+  renderCurve(); renderStop();
+}());
+</script>
+</body>
+</html>

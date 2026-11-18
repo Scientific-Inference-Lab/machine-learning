@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Bagging | Machine Learning | Pusan National University</title><meta name="description" content="Bagging trains models on bootstrap samples and combines their predictions by averaging or majority vote."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/25.%20ensemble-methods/bagging.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Bagging | Machine Learning | Pusan National University"><meta property="og:description" content="Bagging trains models on bootstrap samples and combines their predictions by averaging or majority vote."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/25.%20ensemble-methods/bagging.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css">
+  <link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic">
+  <a class="skip-link" href="#main-content">본문으로 이동</a>
+  <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/25.%20Ensemble%20Methods.pdf" aria-label="Ensemble Methods 강의 PDF">Ensemble Methods</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+  <section class="hero topic-hero"><div class="container"><h1 class="page-title">Bagging</h1><hr class="accent-rule"><p class="page-subtitle">배깅(bagging)은 여러 부트스트랩 표본(bootstrap sample)에서 학습한 모델의 예측을 평균하거나 다수결로 결합한다.</p></div></section>
+  <main id="main-content" class="page-body container">
+    <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>부트스트랩 표본과 나무</strong><span>부트스트랩 표본은 원자료에서 같은 크기로 복원추출한 표본이며 나무 한 그루가 표본 하나로 학습한다.</span></article><article class="summary-card"><strong>나무 수와 결합 예측</strong><span>결합 예측은 나무들의 예측을 평균하거나 다수결로 모은 값이며 나무가 많을수록 한 그루의 영향이 작아진다.</span></article></div></section>
+    <section class="topic-example">
+      <header class="example-header"><h2 class="section-title">부트스트랩 표본과 나무</h2><p class="lead">부트스트랩 표본마다 중복되거나 빠지는 관측이 다르고, 표본 하나로 나무 한 그루를 학습한다.</p></header>
+      <div class="visual-lab">
+        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-1">부트스트랩 표본</label><select id="state-1"><option value="0">표본 A</option><option value="1">표본 B</option></select></div></div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-1" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-1 plot-desc-1"><title id="plot-title-1">부트스트랩 표본과 나무</title><desc id="plot-desc-1">원자료에서 복원추출한 표본의 중복과 그 표본으로 학습한 나무</desc></svg></div><figcaption class="visual-caption">위는 원자료의 관측 번호, 아래는 복원추출한 같은 크기의 표본이다. 같은 번호는 여러 번 뽑힐 수 있고 일부 관측은 빠진다.</figcaption></figure>
+        <div class="visual-readouts" id="state-read-1" aria-live="polite"></div>
+        <p class="visual-note" id="state-result-1"></p>
+      </div>
+    </section>
+    <section class="topic-example">
+      <header class="example-header"><h2 class="section-title">나무 수와 결합 예측</h2><p class="lead">나무 수가 많을수록 나무 하나의 예측이 평균과 다수결 결과를 흔드는 정도가 작아진다.</p></header>
+      <div class="visual-lab">
+        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-2">나무 수</label><select id="state-2"><option value="0">3그루</option><option value="1">101그루</option></select></div></div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-2" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-2 plot-desc-2"><title id="plot-title-2">나무별 예측과 결합 결과</title><desc id="plot-desc-2">여러 나무의 범주 예측을 모아 다수결하는 모습</desc></svg></div><figcaption class="visual-caption">작은 원 하나가 나무 한 그루의 예측이다. 아래 막대는 범주별 투표 비율이며, 표가 많은 범주가 결합 예측이 된다.</figcaption></figure>
+        <div class="visual-readouts" id="state-read-2" aria-live="polite"></div>
+        <p class="visual-note" id="state-result-2"></p>
+      </div>
+    </section>
+    <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../24. clustering-and-principal-components/principal-component-analysis.html" rel="prev">이전 · Principal Component Analysis</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../25. ensemble-methods/random-forests.html" rel="next">다음 · Random Forests</a></nav>
+  </main>
+  <footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  var states = [[["표본 A", "관측 1과 5가 두 번씩 뽑혔고, 관측 3과 6은 빠졌다. 이 표본으로 나무 A를 학습한다."], ["표본 B", "관측 3과 6이 두 번씩 뽑혔고, 관측 1과 5는 빠졌다. 이 표본으로 나무 B를 학습한다."]], [["3그루", "적은 수의 예측이 평균과 다수결을 크게 흔든다."], ["101그루", "개별 나무의 변화가 결합 결과에 미치는 영향이 작아진다."]]];
+  var blue="#005baa", green="#00a651", ink="#1f2d3d";
+  function frame(){return '<rect x="55" y="35" width="490" height="225" rx="12" fill="#f5f8fb"/>';}
+  function numbered(x,y,n,repeat){return '<circle cx="'+x+'" cy="'+y+'" r="18" fill="'+(repeat?green:blue)+'"/><text x="'+x+'" y="'+(y+5)+'" fill="#fff" font-size="14" font-weight="700" text-anchor="middle">'+n+'</text>';}
+  function drawSample(index){
+    var svg=document.getElementById("state-plot-1"), sample=index===0?[1,1,2,4,5,5]:[2,3,3,4,6,6];
+    var html=frame()+'<defs><marker id="bag-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#5c6c7c"/></marker></defs><text x="75" y="70" fill="'+ink+'" font-size="14" font-weight="700">원자료</text>';
+    for(var i=1;i<=6;i++){html+=numbered(155+(i-1)*48,66,i,false);}
+    html+='<line x1="300" y1="92" x2="300" y2="123" stroke="#5c6c7c" stroke-width="3" marker-end="url(#bag-arrow)"/><text x="75" y="150" fill="'+ink+'" font-size="14" font-weight="700">복원추출</text>';
+    sample.forEach(function(n,j){html+=numbered(155+j*48,145,n,sample.indexOf(n)!==sample.lastIndexOf(n));});
+    html+='<line x1="430" y1="145" x2="485" y2="145" stroke="#5c6c7c" stroke-width="3" marker-end="url(#bag-arrow)"/><path d="M505 118 V145 M480 176 L505 145 L530 176" fill="none" stroke="'+blue+'" stroke-width="5"/><text x="475" y="210" fill="'+ink+'" font-size="14" font-weight="700">나무 '+(index===0?'A':'B')+'</text>';
+    svg.innerHTML=html;
+  }
+  function drawVotes(index){
+    var svg=document.getElementById("state-plot-2"), a=index===0?1:54, b=index===0?2:47, total=a+b;
+    var shown=index===0?3:21, html=frame()+'<text x="75" y="70" fill="'+ink+'" font-size="14" font-weight="700">나무별 예측</text>';
+    for(var i=0;i<shown;i++){var isA=index===0?i===0:i<11;html+='<circle cx="'+(125+(i%11)*38)+'" cy="'+(95+Math.floor(i/11)*38)+'" r="12" fill="'+(isA?blue:green)+'"/><text x="'+(125+(i%11)*38)+'" y="'+(100+Math.floor(i/11)*38)+'" fill="#fff" font-size="12" font-weight="700" text-anchor="middle">'+(isA?'A':'B')+'</text>';}
+    if(index===1){[495,506,517].forEach(function(cx){html+='<circle cx="'+cx+'" cy="127" r="3" fill="#5c6c7c"/>';});}
+    var split=430*a/total;
+    html+='<rect x="85" y="190" width="430" height="34" rx="6" fill="'+green+'"/><rect x="85" y="190" width="'+split+'" height="34" rx="6" fill="'+blue+'"/><text x="95" y="250" fill="'+blue+'" font-size="14" font-weight="700">A '+a+'표</text><text x="455" y="250" fill="'+green+'" font-size="14" font-weight="700">B '+b+'표</text>';
+    svg.innerHTML=html;
+  }
+  function readout(label, value) {
+    return '<div class="visual-readout"><span class="visual-readout-label">' + label + '</span><strong class="visual-readout-value">' + value + '</strong></div>';
+  }
+  states.forEach(function (options, i) {
+    var n = i + 1;
+    var select = document.getElementById("state-" + n);
+    function render() {
+      var index = Number(select.value);
+      var state = options[index];
+      if(n===1){drawSample(index);}else{drawVotes(index);}
+      document.getElementById("state-read-" + n).innerHTML = readout("선택한 조건", state[0]) + readout("선택지", (index + 1) + " / " + options.length);
+      document.getElementById("state-result-" + n).textContent = state[1];
+    }
+    select.addEventListener("change", render);
+    render();
+  });
+}());
+</script>
+</body>
+</html>

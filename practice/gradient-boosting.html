@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Gradient Boosting - Concept Check | Machine Learning | Pusan National University</title><meta name="description" content="Calculate one step of residual fitting and log-odds updating, then compare learning rates, tree settings, and implementations."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/practice/gradient-boosting.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Gradient Boosting - Concept Check | Machine Learning | Pusan National University"><meta property="og:description" content="Calculate one step of residual fitting and log-odds updating, then compare learning rates, tree settings, and implementations."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/practice/gradient-boosting.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css">
+  <link rel="stylesheet" href="../assets/problem-set-shell.css">
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "problem-set" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="problem-set-page">
+  <a class="skip-link" href="#main-content">본문으로 이동</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="../index.html" aria-label="기계학습개론 전체 자료">
+        <img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39">
+        <span class="brand-text">기계학습개론</span>
+      </a>
+      <div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/26.%20Gradient%20Boosting.pdf" aria-label="Gradient Boosting 강의 PDF">강의 PDF</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div>
+    </div>
+  </header>
+
+  <section class="hero topic-hero">
+    <div class="container">
+
+      <h1 class="page-title"><svg class="check-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 4h-2a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2M9 3h6v3H9zM8.5 13l2.5 2.5 4.5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="visually-hidden">개념 확인: </span>Gradient Boosting</h1>
+      <hr class="accent-rule">
+      <p class="page-subtitle">한 단계의 잔차 적합과 로그 승산 갱신을 직접 계산하고, 학습률·나무 수·깊이와 구현을 고르는 근거를 점검한다.</p>
+    </div>
+  </section>
+
+  <main id="main-content" class="page-body container">
+
+    <div class="problem-list">
+      <article class="problem-card" id="question-1">
+        <header class="problem-card-header">
+          <span class="problem-number">문제 1</span>
+          <h2>회귀의 첫 단계</h2>
+        </header>
+        <div class="problem-body">
+          <p>특성 <var>x</var> = 1, 2, 3, 4, 5, 6에 대한 목표값이 <var>y</var> = 1, 3, 8, 10, 12, 14다. 시작 예측 <var>f</var><sub>0</sub>은 학습 자료의 평균이고, 깊이 1 회귀 트리가 잔차를 목표로 분할 하나를 고른다. 학습률은 λ = 0.1이다.</p>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead><tr><th>분할</th><th>왼쪽 잔차 평균</th><th>오른쪽 잔차 평균</th><th>잔차 제곱합</th></tr></thead>
+              <tbody>
+                <tr><td><var>x</var> ≤ 1.5</td><td>−7</td><td>1.4</td><td>71.2</td></tr>
+                <tr><td><var>x</var> ≤ 2.5</td><td>(가)</td><td>(나)</td><td>(다)</td></tr>
+                <tr><td><var>x</var> ≤ 3.5</td><td>−4</td><td>4</td><td>34</td></tr>
+                <tr><td><var>x</var> ≤ 4.5</td><td>−2.5</td><td>5</td><td>55</td></tr>
+                <tr><td><var>x</var> ≤ 5.5</td><td>−1.2</td><td>6</td><td>86.8</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ol>
+            <li><var>f</var><sub>0</sub>과 여섯 관측의 잔차를 구한다.</li>
+            <li>표의 (가)·(나)·(다)를 채우고, 이 단계에서 고르는 분할을 적는다.</li>
+            <li><var>x</var> = 1과 <var>x</var> = 4의 새 예측 <var>f</var><sub>1</sub>을 구한다.</li>
+            <li>학습 MSE는 약 21.67에서 약 18.25로 줄었다. λ = 1이었다면 같은 분할로 더 크게 줄었을 텐데도 작은 학습률을 쓰는 까닭을 설명한다.</li>
+          </ol>
+        </div>
+        <details class="solution-panel">
+          <summary>해설 펼치기</summary>
+          <div class="solution-body">
+            <ol>
+              <li><var>f</var><sub>0</sub> = (1 + 3 + 8 + 10 + 12 + 14) / 6 = 8이고 잔차 <var>y</var> − <var>f</var><sub>0</sub>는 −7, −5, 0, 2, 4, 6이다.</li>
+              <li><var>x</var> ≤ 2.5의 왼쪽 잔차는 −7, −5라서 평균이 (가) −6, 오른쪽 잔차는 0, 2, 4, 6이라서 평균이 (나) 3이다. 잔차 제곱합은 (1 + 1) + (9 + 1 + 1 + 9) = (다) 22다. 다섯 분할 가운데 제곱합이 가장 작으므로 <var>x</var> ≤ 2.5를 고른다.</li>
+              <li>나무는 왼쪽에 −6, 오른쪽에 3을 예측한다. <var>x</var> = 1은 8 + 0.1 × (−6) = 7.4, <var>x</var> = 4는 8 + 0.1 × 3 = 8.3이다.</li>
+              <li>λ = 1이면 이 분할로 줄일 수 있는 만큼을 한 번에 줄인다. 작은 학습률은 한 나무의 수정량 가운데 일부만 반영하고 나머지를 다음 나무들이 조금씩 고치게 한다. 그만큼 나무가 더 필요하지만 한 나무의 분할에 과하게 끌려가지 않으며, 검증 오차를 보면서 멈출 단계를 고를 여지가 생긴다.</li>
+            </ol>
+            <p class="misconception"><strong>흔한 오답은</strong> 잎의 값을 잔차가 아니라 <var>y</var>의 평균(왼쪽 2, 오른쪽 11)으로 계산하는 것이다. 첫 나무 이후의 나무는 목표값이 아니라 현재 예측이 남긴 잔차를 맞춘다.</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="problem-card" id="question-2">
+        <header class="problem-card-header">
+          <span class="problem-number">문제 2</span>
+          <h2>분류의 첫 단계</h2>
+        </header>
+        <div class="problem-body">
+          <p>관측 4개의 정답이 <var>y</var> = 0, 1, 1, 1이다(<var>x</var> = 1, 2, 3, 4). 시작 로그 승산은 <var>f</var><sub>0</sub> = log(<var>ȳ</var> / (1 − <var>ȳ</var>))이고, 첫 나무는 분할 <var>x</var> ≤ 1.5를 골랐다. 학습률은 λ = 0.5다.</p>
+          <ol>
+            <li><var>f</var><sub>0</sub>과 모든 관측의 시작 확률 <var>p</var>, 그리고 나무가 목표로 삼는 <var>r</var> = <var>y</var> − <var>p</var>를 구한다.</li>
+            <li>잎의 값 γ = Σ<var>r</var> / Σ<var>p</var>(1 − <var>p</var>)를 왼쪽 잎과 오른쪽 잎에 대해 구한다.</li>
+            <li>두 구간의 <var>f</var><sub>1</sub> = <var>f</var><sub>0</sub> + λγ와 <var>p</var><sub>1</sub> = σ(<var>f</var><sub>1</sub>)을 소수 셋째 자리까지 구한다.</li>
+            <li>한 학생이 로그 승산 대신 확률에 직접 <var>p</var> + λγ를 더하자고 했다. 오른쪽 잎에서 이 방식이 어떤 문제를 만드는지 설명한다.</li>
+          </ol>
+        </div>
+        <details class="solution-panel">
+          <summary>해설 펼치기</summary>
+          <div class="solution-body">
+            <ol>
+              <li><var>ȳ</var> = 0.75이므로 <var>f</var><sub>0</sub> = log(0.75 / 0.25) = log 3 ≈ 1.099, 모든 관측의 <var>p</var> = 0.75다. <var>r</var>는 −0.75, 0.25, 0.25, 0.25다.</li>
+              <li>모든 관측에서 <var>p</var>(1 − <var>p</var>) = 0.1875다. 왼쪽 잎은 관측 하나라 γ = −0.75 / 0.1875 = −4, 오른쪽 잎은 γ = 0.75 / (3 × 0.1875) ≈ 1.333이다.</li>
+              <li>왼쪽은 <var>f</var><sub>1</sub> ≈ 1.099 + 0.5 × (−4) = −0.901, <var>p</var><sub>1</sub> ≈ 0.289다. 오른쪽은 <var>f</var><sub>1</sub> ≈ 1.099 + 0.5 × 1.333 = 1.765, <var>p</var><sub>1</sub> ≈ 0.854다. 정답이 0인 관측의 확률은 내려가고 정답이 1인 관측의 확률은 올라갔다.</li>
+              <li>오른쪽 잎에서 0.75 + 0.5 × 1.333 ≈ 1.417이 되어 확률의 범위를 벗어난다. 로그 승산 <var>f</var>는 어떤 실수여도 σ(<var>f</var>)가 0과 1 사이에 있으므로, 나무의 기여는 로그 승산에 더하고 마지막에 확률로 되돌린다.</li>
+            </ol>
+            <p class="misconception"><strong>흔한 오답은</strong> 잎의 값을 잔차 평균(왼쪽 −0.75, 오른쪽 0.25)으로 두는 것이다. 로그 손실에서는 잔차 합을 <var>p</var>(1 − <var>p</var>)의 합으로 나눈 값을 쓴다.</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="problem-card" id="question-3">
+        <header class="problem-card-header">
+          <span class="problem-number">문제 3</span>
+          <h2>학습률과 나무 수</h2>
+        </header>
+        <div class="problem-body">
+          <p>어떤 회귀 자료를 학습·검증·테스트 자료로 나누고, 깊이 3 나무를 최대 1000그루까지 더하며 단계마다 검증 MSE를 기록했다.</p>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead><tr><th>학습률</th><th>검증 MSE가 가장 작은 나무 수</th><th>최소 검증 MSE</th><th>1000그루에서의 검증 MSE</th></tr></thead>
+              <tbody>
+                <tr><td>0.3</td><td>35</td><td>12.4</td><td>14.1</td></tr>
+                <tr><td>0.05</td><td>240</td><td>11.9</td><td>12.5</td></tr>
+                <tr><td>0.01</td><td>1000</td><td>12.6</td><td>12.6</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ol>
+            <li>학습률과 필요한 나무 수 사이의 관계를 표에서 읽는다.</li>
+            <li>한 학생이 “학습률 0.01의 최소 검증 MSE가 가장 크므로 작은 학습률은 성능을 떨어뜨린다”고 결론 내렸다. 표에서 이 결론을 받아들이기 어려운 근거를 찾는다.</li>
+            <li>같은 학생이 학습률 0.05, 나무 240그루를 고른 뒤 11.9를 최종 성능으로 보고했다. 무엇이 잘못되었고 무엇을 보고해야 하는지 설명한다.</li>
+          </ol>
+        </div>
+        <details class="solution-panel">
+          <summary>해설 펼치기</summary>
+          <div class="solution-body">
+            <ol>
+              <li>학습률이 0.3에서 0.05, 0.01로 작아질수록 검증 MSE가 가장 작은 나무 수가 35, 240, 1000으로 늘었다. 한 번에 반영하는 수정량이 작으면 같은 오차에 이르는 데 단계가 더 필요하다.</li>
+              <li>학습률 0.01은 최솟값이 허용한 최대 나무 수 1000에서 나왔고 1000그루의 값과 최솟값이 같다. 검증 오차가 아직 줄고 있는 중에 멈췄을 가능성이 크므로, 나무 수를 늘려 보기 전에는 작은 학습률이 성능을 떨어뜨린다고 말할 수 없다. 학습률과 나무 수는 함께 정해야 한다.</li>
+              <li>240그루는 검증 자료로 고른 값이므로 11.9는 그 검증 자료에 유리하게 골라진 값이다. 설정을 모두 정한 뒤 한 번도 쓰지 않은 테스트 자료로 계산한 MSE를 최종 성능으로 보고한다.</li>
+            </ol>
+            <p class="misconception"><strong>흔한 오답은</strong> 가장 작은 최소 검증 MSE만 비교하고 그 값이 어느 나무 수에서 나왔는지는 보지 않는 것이다.</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="problem-card" id="question-4">
+        <header class="problem-card-header">
+          <span class="problem-number">문제 4</span>
+          <h2>깊이 비교와 무작위성</h2>
+        </header>
+        <div class="problem-body">
+          <p>검증 자료 60개로 깊이 2와 깊이 4를 비교했다. 다른 설정은 같다.</p>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead><tr><th>설정</th><th>최소 검증 MSE</th></tr></thead>
+              <tbody>
+                <tr><td>깊이 2, <code>random_state=0</code></td><td>9.84</td></tr>
+                <tr><td>깊이 4, <code>random_state=0</code></td><td>9.71</td></tr>
+                <tr><td>깊이 4, <code>subsample=0.5</code>, 시드 5개</td><td>9.3에서 10.4</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ol>
+            <li>깊이 4 나무 하나가 한 단계에서 표현할 수 있는 것을 깊이 2와 비교해 설명한다.</li>
+            <li><code>subsample=0.5</code>가 단계마다 하는 일을 적는다.</li>
+            <li>첫 두 행의 차이 0.13만으로 깊이 4가 낫다고 결론 내릴 수 있는지 판단하고 근거를 적는다.</li>
+          </ol>
+        </div>
+        <details class="solution-panel">
+          <summary>해설 펼치기</summary>
+          <div class="solution-body">
+            <ol>
+              <li>깊이 2 나무는 한 단계에서 분할을 두 번까지 거치므로 특성 둘까지의 조합을 표현한다. 깊이 4 나무는 특성 넷까지의 조합을 한 나무 안에서 표현한다.</li>
+              <li><code>subsample=0.5</code>는 단계마다 학습 자료의 절반을 비복원추출하고, 그 절반으로 다음 나무 하나를 학습한다. 계산은 줄지만 시드에 따라 결과가 달라진다.</li>
+              <li>결론 내리기 어렵다. 검증 자료가 60개뿐이고, 같은 깊이 4에서도 시드만 바꾸면 최소 검증 MSE가 9.3에서 10.4까지 1.1만큼 움직인다. 0.13은 이 흔들림보다 훨씬 작다. 시드나 분할을 바꿔 반복해도 차이가 같은 방향으로 유지되는지 확인해야 한다.</li>
+            </ol>
+            <p class="misconception"><strong>흔한 오답은</strong> 표의 숫자가 조금이라도 작은 설정을 항상 더 낫다고 보는 것이다.</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="problem-card" id="question-5">
+        <header class="problem-card-header">
+          <span class="problem-number">문제 5</span>
+          <h2>구현 고르기</h2>
+        </header>
+        <div class="problem-body">
+          <p>관측 300,000개로 분류 모델을 만든다. 특성 <code>income</code>에는 서로 다른 값이 180,000개 있고 일부 관측은 <code>income</code>이 비어 있다.</p>
+          <ol>
+            <li>비어 있지 않은 값만 볼 때, 모든 값 사이를 검사하는 구현과 <code>max_bins=255</code>로 구간화하는 히스토그램 기반 구현이 한 번의 분할 탐색에서 <code>income</code>에 대해 검사하는 경계 수를 각각 적는다.</li>
+            <li>그래디언트 부스팅 구현 가운데 결측값을 대체하지 않고 학습할 수 있는 구현을 고르고, 그 구현이 결측 관측을 분할에서 어떻게 처리하는지 설명한다.</li>
+            <li><code>HistGradientBoostingClassifier</code>를 기본 설정으로 쓰면 이 자료에서 조기 종료가 켜지는지 판단한다.</li>
+            <li>한 학생이 “구간화는 정보를 버리므로 결과가 항상 나빠진다”고 말했다. 이 주장을 어떻게 고쳐 말해야 하는지 설명한다.</li>
+          </ol>
+        </div>
+        <details class="solution-panel">
+          <summary>해설 펼치기</summary>
+          <div class="solution-body">
+            <ol>
+              <li>모든 값 사이를 검사하면 서로 다른 값 180,000개 사이의 경계 179,999개를 본다. <code>max_bins=255</code>로 구간화하면 구간 경계 254개 이하만 본다. 관측이 늘어나도 구간 수는 그대로다.</li>
+              <li><code>HistGradientBoostingClassifier</code>를 고른다. 결측값을 대체하지 않고 넣을 수 있고, 분할마다 결측 관측을 학습 중 손실을 더 줄이는 쪽 가지로 보낸다. <code>GradientBoostingClassifier</code>는 결측값을 먼저 대체해야 한다.</li>
+              <li>켜진다. 기본값 <code>early_stopping="auto"</code>는 관측이 10,000개를 넘으면 조기 종료를 사용한다.</li>
+              <li>구간화가 항상 결과를 나쁘게 만든다고 말할 수 없다. 어떤 설정과 자료에서는 모든 값 사이를 검사한 구현의 점수가 조금 높을 수 있지만, 그 차이의 방향과 크기는 자료와 설정에 따라 다르다. 큰 자료에서는 학습 시간이 크게 줄어드는 이점이 있으므로 검증 점수와 학습 시간을 함께 비교해 고른다.</li>
+            </ol>
+            <p class="misconception"><strong>흔한 오답은</strong> 결측값이 들어 있으면 항상 해당 관측을 버려야 한다고 판단하는 것이다.</p>
+          </div>
+        </details>
+      </article>
+    </div>
+
+    <nav class="problem-set-nav" aria-label="개념 확인 탐색">
+      <a href="../index.html">기계학습개론 전체 자료로 돌아가기</a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+</body>
+</html>

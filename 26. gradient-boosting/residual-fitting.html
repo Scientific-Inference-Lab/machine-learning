@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
+  <title>Residual Fitting | Machine Learning | Pusan National University</title><meta name="description" content="Gradient boosting fits a shallow tree to the current residuals and adds its predictions scaled by the learning rate."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/26.%20gradient-boosting/residual-fitting.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Residual Fitting | Machine Learning | Pusan National University"><meta property="og:description" content="Gradient boosting fits a shallow tree to the current residuals and adds its predictions scaled by the learning rate."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/26.%20gradient-boosting/residual-fitting.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/pnu-theme.css"><link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
+  <style>
+    .topic-plot .pt{fill:var(--pnu-blue-dark)}
+    .topic-plot .pred{fill:none;stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .res-pos{stroke:var(--pnu-green);stroke-width:3}
+    .topic-plot .res-neg{stroke:var(--alert-700);stroke-width:3;stroke-dasharray:5 3}
+    .topic-plot .split{stroke:var(--ink-600);stroke-width:2;stroke-dasharray:6 5}
+    .topic-plot .zero{stroke:var(--ink-600);stroke-width:1.5}
+    .topic-plot .bar-pos{fill:var(--pnu-green)}
+    .topic-plot .bar-neg{fill:var(--alert-700)}
+    .topic-plot .mean{stroke:var(--pnu-blue);stroke-width:3.5}
+    .topic-plot .small{font-size:12px;fill:var(--ink-600)}
+  </style>
+<script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', "G-H8EZQ381WH", { content_group: "machine-learning", page_type: "topic" });
+  const tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-H8EZQ381WH';
+  document.head.appendChild(tag);
+}</script>
+</head>
+<body class="visual-topic topic-residual-fitting">
+<a class="skip-link" href="#main-content">본문으로 이동</a>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/26.%20Gradient%20Boosting.pdf" aria-label="Gradient Boosting 강의 PDF">Gradient Boosting</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
+<section class="hero topic-hero"><div class="container"><h1 class="page-title">Residual Fitting</h1><hr class="accent-rule"><p class="page-subtitle">그래디언트 부스팅(gradient boosting)은 현재 예측이 남긴 잔차를 얕은 나무로 맞추고, 그 예측의 학습률 λ배만 더하기를 반복한다.</p></div></section>
+<main id="main-content" class="page-body container">
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>한 단계</strong><span>잔차 r = y − f를 계산하고, r을 목표로 깊이 1 나무를 학습해 f에 λ배를 더한다.</span></article><article class="summary-card"><strong>분할 선택</strong><span>후보마다 양쪽 잎에서 잔차 평균을 예측하고, 잔차 제곱합이 가장 작은 분할을 고른다.</span></article><article class="summary-card"><strong>학습률 λ</strong><span>나무가 찾은 수정량 가운데 반영할 비율이다. 작을수록 한 단계의 이동이 작다.</span></article></div></section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">나무 한 그루는 현재 잔차를 줄이는 쪽으로 예측을 λ배만큼 옮긴다</h2><p class="lead">관측 6개에서 학습률 λ와 더한 나무 수 b가 계단 모양 예측, 관측별 잔차, 학습 MSE, 다음 나무가 고를 분할을 정한다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="lam">학습률 λ <output id="lam-out" class="control-value" for="lam">0.5</output></label><select id="lam"><option value="0.1">0.1</option><option value="0.5" selected>0.5</option><option value="1">1</option></select></div><div class="control-field"><label for="trees">더한 나무 수 b <output id="trees-out" class="control-value" for="trees">1</output></label><input id="trees" type="range" min="0" max="8" step="1" value="1"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="fit-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="fit-title fit-desc"><title id="fit-title">단계별 예측과 잔차</title><desc id="fit-desc">관측 6개와 계단 모양 예측</desc></svg></div><figcaption class="visual-caption">짙은 점은 관측 y, 파란 계단은 나무 b개를 더한 예측 f, 초록 실선은 양의 잔차, 빨간 점선은 음의 잔차다. 회색 점선은 다음 나무가 고를 분할 위치다.</figcaption></figure>
+      <div id="read-1" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-1" class="visual-note"></p>
+    </div>
+  </section>
+
+  <section class="topic-example">
+    <header class="example-header"><h2 class="section-title">분할 후보마다 잔차 제곱합을 계산해 가장 작은 곳을 고른다</h2><p class="lead">학습률 0.5에서 나무 순서와 분할 후보 위치에 따라 양쪽 잔차 평균과 잔차 제곱합이 달라진다. 두 번째 나무는 첫 나무가 남긴 잔차를 목표로 한다.</p></header>
+    <div class="visual-lab">
+      <div class="visual-controls visual-controls--double"><div class="control-field"><label for="stage">나무 <output id="stage-out" class="control-value" for="stage">첫 번째</output></label><select id="stage"><option value="0" selected>첫 번째</option><option value="1">두 번째</option></select></div><div class="control-field"><label for="cut">분할 위치 x ≤ <output id="cut-out" class="control-value" for="cut">3.5</output></label><input id="cut" type="range" min="1.5" max="5.5" step="1" value="3.5"></div></div>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="split-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="split-title split-desc"><title id="split-title">분할 후보의 잔차 평균</title><desc id="split-desc">잔차 막대와 양쪽 평균</desc></svg></div><figcaption class="visual-caption">막대는 이 나무가 맞출 잔차다. 초록은 양수, 빨강은 음수다. 파란 가로선은 분할 양쪽의 잔차 평균, 즉 두 잎의 예측이고 회색 점선은 검사 중인 분할 위치다.</figcaption></figure>
+      <div id="read-2" class="visual-readouts" aria-live="polite"></div>
+      <p id="note-2" class="visual-note"></p>
+    </div>
+  </section>
+
+  <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" rel="prev" href="../25. ensemble-methods/random-forests.html">이전 · Random Forests</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" rel="next" href="../26. gradient-boosting/log-odds-update.html">다음 · Log Odds Update</a></nav>
+</main>
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-course-code">BX3600087-140 / DS3600087-140 / AB3600087-140</span>
+    <address class="footer-contact" aria-label="강의자 연락처">
+      <span class="footer-contact-label">Contact:</span>
+      <span class="footer-contact-name">YongKyung Oh</span>
+      <span class="footer-contact-email">(<a class="footer-email" href="mailto:yongkyung.oh@pusan.ac.kr">yongkyung.oh@pusan.ac.kr</a>)</span>
+    </address>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var neg = function (v) { return String(v).replace(/-/g, "−"); };
+  var r3 = function (v) { var t = Math.round(v * 1000) / 1000; return neg(Object.is(t, -0) ? 0 : t); };
+  var r2 = function (v) { return neg((Math.round(v * 100) / 100).toFixed(2)); };
+  var JONG = { "0": 1, "1": 2, "2": 0, "3": 1, "4": 0, "5": 0, "6": 1, "7": 2, "8": 2, "9": 0 };
+  function kj(v, a, b) { var t = String(v).replace(/[^0-9]+$/, ""), k = JONG[t.charAt(t.length - 1)]; if (a === "으로") return t + (k === 1 ? "으로" : "로"); return t + (k ? a : b); }
+  function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
+  function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
+
+  var X = [1, 2, 3, 4, 5, 6], Y = [1, 3, 5, 8, 9, 10], CUTS = [1.5, 2.5, 3.5, 4.5, 5.5];
+  var mean = function (a) { return a.reduce(function (s, v) { return s + v; }, 0) / a.length; };
+  function bestSplit(r) {
+    var best = null;
+    CUTS.forEach(function (t) { var s = scoreSplit(r, t); if (!best || s.sse < best.sse - 1e-12) best = s; });
+    return best;
+  }
+  function scoreSplit(r, t) {
+    var L = [], R = [];
+    X.forEach(function (x, i) { (x <= t ? L : R).push(r[i]); });
+    var lm = mean(L), rm = mean(R), sse = 0;
+    L.forEach(function (v) { sse += (v - lm) * (v - lm); }); R.forEach(function (v) { sse += (v - rm) * (v - rm); });
+    return { t: t, lm: lm, rm: rm, sse: sse };
+  }
+  function run(lam, b) {
+    var f = Y.map(function () { return mean(Y); }), splits = [];
+    for (var k = 0; k < b; k++) {
+      var r = Y.map(function (y, i) { return y - f[i]; }), s = bestSplit(r);
+      splits.push(s);
+      f = f.map(function (v, i) { return v + lam * (X[i] <= s.t ? s.lm : s.rm); });
+    }
+    var res = Y.map(function (y, i) { return y - f[i]; });
+    return { f: f, res: res, splits: splits, next: bestSplit(res), mse: mean(res.map(function (v) { return v * v; })) };
+  }
+
+  var PX = function (x) { return 70 + (x - 0.5) * 80; }, PY = function (v) { return 262 - v * 21; };
+  function axes(yTicks, ylab, yFn, y0) {
+    var s = '<line class="axis" x1="' + PX(0.5) + '" y1="' + yFn(y0) + '" x2="' + PX(6.6) + '" y2="' + yFn(y0) + '"/><line class="axis" x1="' + PX(0.5) + '" y1="' + yFn(y0) + '" x2="' + PX(0.5) + '" y2="22"/>';
+    X.forEach(function (x) { s += '<text class="small" x="' + PX(x) + '" y="' + (yFn(y0) + 18) + '" text-anchor="middle">' + x + '</text>'; });
+    yTicks.forEach(function (t) { s += '<text class="small" x="' + (PX(0.5) - 8) + '" y="' + (yFn(t) + 4) + '" text-anchor="end">' + neg(t) + '</text>'; });
+    s += '<text x="' + PX(6.6) + '" y="' + (yFn(y0) + 34) + '" text-anchor="end">x</text><text x="' + (PX(0.5) + 8) + '" y="30">' + ylab + '</text>';
+    return s;
+  }
+
+  function renderFit() {
+    var lam = Number($("lam").value), b = Number($("trees").value), m = run(lam, b), m0 = run(lam, 0);
+    $("lam-out").textContent = $("lam").value; $("trees-out").textContent = b;
+    var s = '<title id="fit-title">단계별 예측과 잔차</title><desc id="fit-desc">λ = ' + lam + ', 나무 ' + b + '개, 학습 MSE ' + r2(m.mse) + '</desc>';
+    s += axes([0, 5, 10], "y", PY, 0);
+    var pts = [];
+    X.forEach(function (x, i) { pts.push(PX(x - 0.5) + "," + PY(m.f[i]).toFixed(1)); pts.push(PX(x + 0.5) + "," + PY(m.f[i]).toFixed(1)); });
+    s += '<polyline class="pred" points="' + pts.join(" ") + '"/>';
+    X.forEach(function (x, i) {
+      if (Math.abs(m.res[i]) > 1e-9) s += '<line class="' + (m.res[i] > 0 ? "res-pos" : "res-neg") + '" x1="' + PX(x) + '" y1="' + PY(m.f[i]) + '" x2="' + PX(x) + '" y2="' + PY(Y[i]) + '"/>';
+      s += '<circle class="pt" cx="' + PX(x) + '" cy="' + PY(Y[i]) + '" r="6"/>';
+    });
+    s += '<line class="split" x1="' + PX(m.next.t) + '" y1="22" x2="' + PX(m.next.t) + '" y2="' + PY(0) + '"/>';
+    $("fit-plot").innerHTML = s;
+    var last = b ? "x ≤ " + m.splits[b - 1].t : "없음";
+    show(1, [["학습 MSE", r2(m0.mse) + " → " + r2(m.mse)], ["마지막 나무의 분할", last], ["다음 나무의 분할", "x ≤ " + m.next.t], ["예측 f", m.f.map(r3).join(", ")]],
+      b === 0 ? "시작 예측은 학습 자료의 평균 6이다. 잔차가 −5에서 4까지 퍼져 있고, 첫 나무는 잔차 제곱합이 가장 작은 x ≤ 3.5로 나눈다."
+        : "나무 " + b + "개를 더해 학습 MSE가 " + r2(m0.mse) + "에서 " + kj(r2(m.mse), "으로") + " 줄었다. " + (lam === 1 ? "λ = 1이면 나무가 찾은 잎 값을 그대로 더한다" : "λ = " + lam + "이면 나무가 찾은 잎 값의 " + lam + "배만 더한다") +
+          (lam === 1 ? ". 한 번에 다 반영하므로 적은 나무로 학습 MSE가 빠르게 줄지만, 각 나무의 분할에 그대로 끌려간다." : lam === 0.1 ? ". 한 단계의 이동이 작아 같은 나무 수에서도 잔차가 더 많이 남고, 줄이려면 나무가 더 필요하다." : ". 절반을 남긴 잔차는 다음 나무가 x ≤ " + m.next.t + "로 나누어 이어서 줄인다."));
+  }
+
+  var SY = function (v) { return 150 - v * 22; };
+  function renderSplit() {
+    var stage = Number($("stage").value), t = Number($("cut").value);
+    $("stage-out").textContent = stage ? "두 번째" : "첫 번째"; $("cut-out").textContent = t;
+    var r = run(0.5, stage).res, sc = scoreSplit(r, t), best = bestSplit(r);
+    var s = '<title id="split-title">분할 후보의 잔차 평균</title><desc id="split-desc">' + (stage ? "두 번째" : "첫 번째") + ' 나무, x ≤ ' + t + ', 잔차 제곱합 ' + r2(sc.sse) + '</desc>';
+    s += '<line class="axis" x1="' + PX(0.5) + '" y1="272" x2="' + PX(0.5) + '" y2="22"/>';
+    s += '<line class="zero" x1="' + PX(0.5) + '" y1="' + SY(0) + '" x2="' + PX(6.6) + '" y2="' + SY(0) + '"/>';
+    [-5, 0, 5].forEach(function (v) { s += '<text class="small" x="' + (PX(0.5) - 8) + '" y="' + (SY(v) + 4) + '" text-anchor="end">' + neg(v) + '</text>'; });
+    s += '<text x="' + (PX(0.5) + 8) + '" y="30">잔차 r</text>';
+    X.forEach(function (x, i) {
+      var top = Math.min(SY(r[i]), SY(0)), h = Math.abs(SY(r[i]) - SY(0));
+      s += '<rect class="' + (r[i] >= 0 ? "bar-pos" : "bar-neg") + '" x="' + (PX(x) - 16) + '" y="' + top.toFixed(1) + '" width="32" height="' + h.toFixed(1) + '"/>';
+      s += '<text class="small" x="' + PX(x) + '" y="288" text-anchor="middle">x = ' + x + ' · ' + r3(r[i]) + '</text>';
+    });
+    s += '<line class="mean" x1="' + PX(0.55) + '" y1="' + SY(sc.lm) + '" x2="' + PX(t) + '" y2="' + SY(sc.lm) + '"/><line class="mean" x1="' + PX(t) + '" y1="' + SY(sc.rm) + '" x2="' + PX(6.45) + '" y2="' + SY(sc.rm) + '"/>';
+    s += '<line class="split" x1="' + PX(t) + '" y1="22" x2="' + PX(t) + '" y2="272"/>';
+    $("split-plot").innerHTML = s;
+    var isBest = Math.abs(sc.sse - best.sse) < 1e-9;
+    show(2, [["왼쪽 잔차 평균", r3(sc.lm)], ["오른쪽 잔차 평균", r3(sc.rm)], ["잔차 제곱합", r2(sc.sse)], ["가장 작은 분할", "x ≤ " + best.t + " (" + r2(best.sse) + ")"]],
+      isBest ? "x ≤ " + t + "의 잔차 제곱합 " + kj(r2(sc.sse), "이", "가") + " 다섯 후보 가운데 가장 작아 이 나무는 이 분할을 고른다. 두 잎은 각각 " + kj(r3(sc.lm), "과", "와") + " " + kj(r3(sc.rm), "을", "를") + " 예측한다."
+        : "x ≤ " + t + "의 잔차 제곱합은 " + kj(r2(sc.sse), "으로") + ", 가장 작은 x ≤ " + best.t + "의 " + r2(best.sse) + "보다 크다. 한쪽 잎에 부호가 다른 잔차가 섞일수록 평균에서 멀어져 제곱합이 커진다.");
+  }
+  $("lam").addEventListener("change", renderFit); $("trees").addEventListener("input", renderFit);
+  $("stage").addEventListener("change", renderSplit); $("cut").addEventListener("input", renderSplit);
+  renderFit(); renderSplit();
+}());
+</script>
+</body>
+</html>
