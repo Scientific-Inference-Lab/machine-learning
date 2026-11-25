@@ -40,7 +40,7 @@
 <body class="visual-topic topic-xor">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/12.%20Linear%20Separability.pdf" aria-label="Linear Separability 강의 PDF">Linear Separability</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><h1 class="page-title">XOR</h1><hr class="accent-rule"><p class="page-subtitle">XOR 자료는 두 입력이 서로 다를 때만 +1이어서 같은 범주가 대각선에 놓인다. 네 부등식이 동시에 성립할 수 없으므로 어떤 직선으로도 분리되지 않지만, 곱 특성 x₁x₂를 더하면 선형 경계로 나눌 수 있다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><h1 class="page-title">XOR</h1><hr class="accent-rule"><p class="page-subtitle">XOR 자료는 두 입력이 서로 다를 때만 +1이어서 같은 범주가 대각선에 놓인다. 네 부등식이 동시에 성립할 수 없으므로 어떤 직선으로도 분리되지 않지만, 곱 특성 x₁x₂를 더하면 새 특성 공간의 평면으로 나눌 수 있다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>XOR</strong><span>(0, 1)과 (1, 0)은 +1, (0, 0)과 (1, 1)은 −1이다.</span></article><article class="summary-card"><strong>부등식의 모순</strong><span>b &lt; 0, w₁ + b &gt; 0, w₂ + b &gt; 0, w₁ + w₂ + b &lt; 0은 함께 성립하지 않는다.</span></article><article class="summary-card"><strong>특성 확장 φ(x)</strong><span>(x₁, x₂, x₁x₂)로 표현을 바꾸면 평면 하나로 가를 수 있다.</span></article></div></section>
 
@@ -158,7 +158,7 @@
     $("rep-plane").innerHTML = g + '<desc id="rp2-desc">' + (phi ? "확장 특성" : "원래 입력") + ', 올바른 분류 ' + ok + '/4</desc>';
     $("rep-table").innerHTML = '<thead><tr><th scope="col">관측</th><th scope="col">x₁x₂</th><th scope="col">점수 s</th><th scope="col">정답</th><th scope="col">예측</th></tr></thead><tbody>' + rows + "</tbody>";
     show(2, [["사용한 특성", phi ? "x₁, x₂, x₁x₂" : "x₁, x₂"], ["점수식", phi ? "s = x₁ + x₂ − 2x₁x₂ − 0.5" : "s = x₁ + x₂ − 0.5 (OR 경계)"], ["올바른 분류", ok + " / 4"]],
-      phi ? "x₁x₂는 (1, 1)에서만 1이라 이 관측만 점수에서 2를 뺀다. 확장한 3차원 특성 공간에서는 평면 하나로 네 점이 모두 맞고, 원래 평면에서는 s = −2(x₁ − 0.5)(x₂ − 0.5)이므로 경계가 두 직선 x₁ = 0.5와 x₂ = 0.5이고, 두 좌표 가운데 하나만 0.5보다 큰 영역이 +1이다. 이 경계는 직선 하나가 아니다."
+      phi ? "네 관측 중 (1, 1)에서만 x₁x₂ = 1이므로 이 점의 기존 점수에서만 2를 뺀다. 확장한 3차원 특성 공간에서는 평면 하나로 네 점이 모두 맞고, 원래 평면에서는 s = −2(x₁ − 0.5)(x₂ − 0.5)이므로 경계가 두 직선 x₁ = 0.5와 x₂ = 0.5이고, 한 좌표는 0.5보다 크고 다른 좌표는 0.5보다 작으면 s > 0이라 +1로 예측한다. 두 직선 위에서는 s = 0으로, 이 예에서는 +1로 표시한다."
         : "원래 입력의 직선으로는 OR 경계처럼 (0, 0)만 떼어 내도 (1, 1)이 +1 쪽에 남아 3개만 맞는다. x₁이 늘 때 정답이 바뀌는 방향이 x₂에 따라 반대라, 상수 계수 w₁ 하나로 두 변화를 함께 나타낼 수 없다.");
   }
   ["xw1", "xw2", "xb"].forEach(function (id) { on(id, renderIneq); }); on("rep", renderRep);

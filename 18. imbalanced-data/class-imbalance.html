@@ -36,7 +36,7 @@
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/18.%20Imbalanced%20Data.pdf" aria-label="Imbalanced Data 강의 PDF">Imbalanced Data</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
 <section class="hero topic-hero"><div class="container"><h1 class="page-title">Class Imbalance</h1><hr class="accent-rule"><p class="page-subtitle">class imbalance(범주 비율의 불균형)가 크면 다수 범주로만 답하는 기준모델도 정확도가 높다. 정확도는 범주별 재현율을 관측 수로 가중한 값이라, 드문 범주의 오류를 보려면 혼동행렬, 재현율, 정밀도, 균형 정확도를 함께 본다.</p></div></section>
 <main id="main-content" class="page-body container">
-  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>기준모델(baseline)</strong><span>다수 범주만 답하는 가장 단순한 모델이며, 같은 평가 자료에서 이보다 나은지부터 확인한다.</span></article><article class="summary-card"><strong>균형 정확도</strong><span>(TP/(TP + FN) + TN/(TN + FP)) / 2이며 한 범주만 예측하면 0.5다.</span></article><article class="summary-card"><strong>PR 곡선</strong><span>임계값을 바꾸며 재현율과 정밀도를 이은 곡선이며, 양성이 드물 때 정밀도의 낮음을 직접 보여 준다.</span></article></div></section>
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>기준모델(baseline)</strong><span>다수 범주만 답하는 가장 단순한 모델이며, 같은 평가 자료에서 이보다 나은지부터 확인한다.</span></article><article class="summary-card"><strong>균형 정확도</strong><span>(TP/(TP + FN) + TN/(TN + FP)) / 2이다. 실제 두 범주가 모두 있고 한 범주만 예측하면 0.5다.</span></article><article class="summary-card"><strong>PR 곡선</strong><span>임계값을 바꾸며 재현율과 정밀도를 이은 곡선이며, 양성이 드물 때도 재현율별 정밀도를 직접 읽을 수 있다.</span></article></div></section>
 
   <section class="topic-example">
     <header class="example-header"><h2 class="section-title">모두 정상이라 답해도 정확도는 99.83%지만 사기는 하나도 찾지 못한다</h2><p class="lead">사기 거래 102건, 정상 거래 59,708건인 검증 자료에서는 정상 거래가 훨씬 많다. 사기를 하나도 찾지 못하는 모델도 정확도가 높을 수 있으므로 사기 102건에서 찾아낸 건과 놓친 건을 함께 평가한다.</p></header>
@@ -121,9 +121,9 @@
     svg.innerHTML = h;
     svg.querySelector("desc").textContent = "사기 비율 " + (p * 100).toFixed(2) + "%, 정확도 " + acc.toFixed(4) + ", 균형 정확도 " + bal.toFixed(4);
     show(2, [["정확도", acc.toFixed(4)], ["기준모델의 정확도", (1 - p).toFixed(4)], ["균형 정확도", bal.toFixed(4)], ["기준모델의 균형 정확도", "0.5000"]],
-      p < 0.01 ? "사기가 0.17%뿐이면 정확도의 99.83%가 정상 재현율에서 나와, 사기 재현율 0.618은 정확도를 거의 움직이지 못한다. 기준모델도 0.9983이라 두 모델의 정확도 차이가 작아 보인다."
+      p < 0.01 ? "사기가 0.17%뿐이면 정상 재현율에는 99.83%, 사기 재현율에는 0.17%의 비중을 준다. 기준모델도 0.9983이라 두 모델의 정확도 차이가 작아 보인다."
         : p < 0.5 ? "사기 비율 " + Math.round(p * 100) + "%에서 정확도는 " + acc.toFixed(4) + ", 기준모델은 " + (1 - p).toFixed(4) + "이다. 사기가 많아질수록 놓친 사기의 몫이 정확도에 크게 반영된다."
-        : "두 범주가 절반씩이면 정확도가 두 재현율의 평균이 되어 균형 정확도 " + kj(bal.toFixed(4), "과", "와") + " 같고, 기준모델의 정확도도 0.5로 떨어진다. 균형 정확도는 사기 비율과 관계없이 이 값을 유지한다.");
+        : "두 범주가 절반씩이면 정확도가 두 재현율의 평균이 되어 균형 정확도 " + kj(bal.toFixed(4), "과", "와") + " 같고, 기준모델의 정확도도 0.5로 떨어진다. 두 재현율을 고정했기 때문에 사기 비율을 바꿔도 균형 정확도는 같다.");
   }
 
   function renderCurves() {
@@ -152,7 +152,7 @@
     show(3, [["TP · FP", k.tp + " · " + k.fp], ["재현율", rec.toFixed(2)], ["FPR", fpr.toFixed(3)], ["정밀도", prec === null ? "정의되지 않음" : prec.toFixed(2)]],
       prec === null ? "t = " + t.toFixed(2) + "에서는 양성으로 분류한 관측이 없어 정밀도가 정의되지 않는다."
         : k.fp === 0 ? "t = " + t.toFixed(2) + "에서는 양성으로 분류한 " + k.tp + "건이 모두 실제 양성이라 FP가 0이고 정밀도는 1.00이다. 대신 재현율이 " + rec.toFixed(2) + "에 그쳐 놓친 양성이 많다. 임계값을 낮추면 재현율이 오르는 대신 FP가 생기기 시작한다."
-        : "t = " + t.toFixed(2) + "에서 FPR은 " + jro(fpr.toFixed(3)) + " 작아 ROC 곡선의 점은 왼쪽 가장자리에 있지만, 음성이 양성보다 99배 많아 FP " + k.fp + "건이 TP " + k.tp + "건" + (k.fp > k.tp ? "보다 많고" : "과 비교되고") + " 정밀도는 " + prec.toFixed(2) + "이다. ROC AUC가 0.97이어도 양성 예측 가운데 실제 양성의 비율은 PR 곡선과 혼동행렬에서 확인한다.");
+        : "t = " + t.toFixed(2) + "에서 FPR은 " + fpr.toFixed(3) + "이다. 음성이 양성보다 99배 많은 이 자료에서 FP " + k.fp + "건이 TP " + k.tp + "건" + (k.fp > k.tp ? "보다 많다." : " 이하이다.") + " 정밀도는 " + prec.toFixed(2) + "이다. ROC AUC가 0.97이어도 양성 예측 가운데 실제 양성의 비율은 PR 곡선과 혼동행렬에서 확인한다.");
   }
 
   $("model").addEventListener("change", renderWaffle); $("rate").addEventListener("change", renderWeight); $("t").addEventListener("input", renderCurves);

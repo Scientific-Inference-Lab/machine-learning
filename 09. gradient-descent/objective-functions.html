@@ -35,7 +35,7 @@
 <body class="visual-topic topic-objective-functions">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/09.%20Gradient%20Descent.pdf" aria-label="Gradient Descent 강의 PDF">Gradient Descent</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><h1 class="page-title">Objective Functions</h1><hr class="accent-rule"><p class="page-subtitle">목적함수(objective function)는 관측별 손실을 평균해 매개변수 θ마다 값 하나를 정한다. 자료는 고정되고 θ만 바뀌므로, 학습은 J(θ)를 가장 작게 만드는 θ를 찾는 일이 된다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><h1 class="page-title">Objective Functions</h1><hr class="accent-rule"><p class="page-subtitle">이 예에서는 관측별 손실의 평균을 목적함수(objective function)로 쓴다. 자료는 고정되고 θ만 바뀌므로, 학습은 J(θ)를 가장 작게 만드는 θ를 찾는 일이 된다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>J(θ)</strong><span>(1/n)Σ𝓛(ŷᵢ(θ), yᵢ)이며 자료 전체의 평균 손실이다.</span></article><article class="summary-card"><strong>arg min과 min</strong><span>arg min은 최소화하는 θ, min은 그때의 목적함수 값이다.</span></article><article class="summary-card"><strong>닫힌 해</strong><span>명시적인 수식으로 나타낸 해이며 없으면 반복 최적화를 쓴다.</span></article></div></section>
 
@@ -53,7 +53,7 @@
     <header class="example-header"><h2 class="section-title">닫힌 해가 없으면 반복해서 해를 찾는다</h2><p class="lead">모델마다 목적함수를 최소화하는 θ를 수식 하나로 쓸 수 있는지가 다르다.</p></header>
     <div class="visual-lab">
       <figure class="visual-figure"><div class="visual-frame"><table class="topic-table" aria-label="모델별 닫힌 해와 계산 방법"><thead><tr><th scope="col">모델</th><th scope="col">닫힌 해</th><th scope="col">계산 방법</th></tr></thead><tbody><tr><th scope="row">최소제곱 선형 회귀</th><td class="is-y">있음</td><td>행렬 분해 등으로 계산</td></tr><tr><th scope="row">로지스틱 회귀</th><td>일반적으로 없음</td><td>반복 최적화</td></tr><tr><th scope="row">신경망</th><td>일반적으로 없음</td><td>반복 최적화</td></tr></tbody></table></div><figcaption class="visual-caption">행은 모델, 초록 칸은 닫힌 해가 있는 경우다.</figcaption></figure>
-      <p class="visual-note">닫힌 해가 없는 모델은 현재 θ에서 목적함수가 줄어드는 방향을 계산해 조금씩 움직인다. 그래디언트는 국소적으로 가장 가파르게 증가하는 방향이므로 그 반대 방향 −∇J(θ)로 갱신하며, 이것이 다음 주제의 경사하강법이다.</p>
+      <p class="visual-note">반복 최적화의 한 방법인 경사하강법은 −∇J(θ) 방향으로 갱신한다. 그래디언트가 0이 아니면 이 방향의 1차 감소율이 단위 방향 중 가장 크다.</p>
     </div>
   </section>
 
@@ -111,7 +111,7 @@
     c += '<circle class="cur" cx="' + CX(t) + '" cy="' + Math.max(8, CY(j)) + '" r="7"/>';
     $("obj-curve").innerHTML = c;
     show(1, [["관측별 손실", ls.map(function (l) { return l.toFixed(2); }).join(" · ")], ["J(θ)", "(" + ls.map(function (l) { return l.toFixed(2); }).join(" + ") + ") / 4 = " + j.toFixed(2)], ["arg min θ", "θ̂ ≈ " + th.toFixed(2)], ["min J", jmin.toFixed(2)]],
-      Math.abs(t - th) < 0.06 ? "θ가 θ̂ ≈ " + th.toFixed(2) + "에 가까워 J(θ)가 최솟값 근처다. 네 관측의 손실이 모두 작아진 상태이며, 이 θ가 학습이 찾는 값이다."
+      Math.abs(t - th) < 0.06 ? "θ가 θ̂ ≈ " + th.toFixed(2) + "에 가까워 J(θ)가 최솟값 근처다. 학습은 손실의 평균이 가장 작은 θ를 찾는다."
         : "θ = " + t.toFixed(1) + "에서는 관측 " + (big + 1) + "의 손실 " + kj(ls[big].toFixed(2), "이", "가") + " 가장 크다. 모든 관측에 같은 가중치 1/4을 곱해 평균하므로 손실이 큰 관측이 J에 크게 기여하고, θ를 θ̂ ≈ " + th.toFixed(2) + " 쪽으로 옮기면 J가 줄어든다.");
   }
   on("theta", render); render();

@@ -49,12 +49,12 @@
 <body class="visual-topic topic-forward-pass">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/13.%20Multilayer%20Perceptrons.pdf" aria-label="Multilayer Perceptrons 강의 PDF">Multilayer Perceptrons</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><h1 class="page-title">Forward Pass</h1><hr class="accent-rule"><p class="page-subtitle">순전파(forward pass)는 입력에서 시작해 각 층의 가중합과 활성화를 차례로 계산해 출력을 얻는 과정이다. 가중치 하나를 바꾸면 그 연결 뒤에 계산되는 값만 달라진다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><h1 class="page-title">Forward Pass</h1><hr class="accent-rule"><p class="page-subtitle">순전파(forward pass)는 입력에서 시작해 각 층의 계산을 차례로 수행해 출력을 얻는 과정이다. 가중치 하나를 바꾸면 그 연결 뒤에 계산되는 값만 달라진다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>순전파</strong><span>입력 → 은닉층 → 출력 순서로 값을 계산한다.</span></article><article class="summary-card"><strong>은닉 유닛 값</strong><span>hⱼ = ReLU(zⱼ)이며 다음 층의 입력이 된다.</span></article><article class="summary-card"><strong>출력 점수 s</strong><span>s = h₁ − 4h₂ − 0.5이며 부호로 범주를 예측한다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">입력을 넣으면 은닉 유닛과 출력이 차례로 계산된다</h2><p class="lead">입력 x₁, x₂에서 두 은닉 유닛의 가중합과 활성화 값을 구한 뒤, 이 값을 출력층의 입력으로 써 점수와 예측을 구한다.</p></header>
+    <header class="example-header"><h2 class="section-title">입력을 넣으면 은닉값을 계산한 뒤 출력 점수를 구한다</h2><p class="lead">입력 x₁, x₂에서 각 은닉 유닛의 가중합에 절편을 더하고 ReLU를 적용한다. 두 결과로 출력 점수와 예측을 구한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="fx1">x₁ <output id="fx1-out" class="control-value" for="fx1">1</output></label><input id="fx1" type="range" min="-1" max="2" step="0.25" value="1"></div><div class="control-field"><label for="fx2">x₂ <output id="fx2-out" class="control-value" for="fx2">0</output></label><input id="fx2" type="range" min="-1" max="2" step="0.25" value="0"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="fwd-net" class="topic-plot net" viewBox="0 0 580 250" role="img" aria-labelledby="fn-title fn-desc"><title id="fn-title">순전파 계산</title><desc id="fn-desc">입력, 은닉, 출력 값</desc></svg></div><figcaption class="visual-caption">원 안의 수가 각 노드의 값이고 선 위의 수가 가중치다. 초록 테두리는 0보다 큰 값을 내보낸 유닛, 회색 점선 테두리는 ReLU가 0으로 바꾼 유닛이다. 은닉 유닛 1의 절편은 0, 유닛 2의 절편은 −1, 출력 절편은 −0.5다.</figcaption></figure>
@@ -113,7 +113,7 @@
     g += node("x1", "x₁", fx(x[0])) + node("x2", "x₂", fx(x[1])) + node("h1", "h₁", fx(h1), h1 > 0 ? "is-on" : "is-zero") + node("h2", "h₂", fx(h2), h2 > 0 ? "is-on" : "is-zero") + node("s", "s", fx(s));
     $("fwd-net").innerHTML = g;
     show(1, [["z₁ = x₁ + x₂", fx(z1)], ["z₂ = x₁ + x₂ − 1", fx(z2)], ["h = ReLU(z)", "(" + fx(h1) + ", " + fx(h2) + ")"], ["s와 예측", fx(s) + " → " + (s >= 0 ? "+1" : "−1")]],
-      "먼저 두 은닉 유닛이 같은 입력에서 z₁ = " + fx(z1) + ", z₂ = " + pj(fx(z2), "을") + " 계산하고 ReLU를 적용한다." + (z2 <= 0 ? " z₂ ≤ 0이라 h₂ = 0이 되어 출력 가중치 −4가 점수에 작용하지 않는다." : " h₂ = " + pj(fx(h2), "이") + " 남아 출력에서 4배로 깎인다.") + " 그다음 출력 s = h₁ − 4h₂ − 0.5 = " + pj(fx(s), "을") + " 계산한다.");
+      "먼저 두 은닉 유닛이 같은 입력에서 z₁ = " + fx(z1) + ", z₂ = " + pj(fx(z2), "을") + " 계산하고 ReLU를 적용한다." + (z2 <= 0 ? " z₂ ≤ 0이라 h₂ = 0이 되어 출력 가중치 −4가 점수에 작용하지 않는다." : " h₂가 양수이므로 출력 점수에 −4h₂를 더한다.") + " 그다음 출력 s = h₁ − 4h₂ − 0.5 = " + pj(fx(s), "을") + " 계산한다.");
   }
   var X4 = [[0, 0], [0, 1], [1, 0], [1, 1]], lab = [-1, 1, 1, -1];
   function renderW() {
@@ -126,7 +126,7 @@
     });
     $("w-table").innerHTML = '<thead><tr><th scope="col">관측</th><th scope="col">은닉값 (h₁, h₂)</th><th scope="col">점수 s</th><th scope="col">정답</th><th scope="col">예측</th></tr></thead><tbody>' + rows + "</tbody>";
     var s11 = 2 + w - 0.5;
-    show(2, [["(1, 1)의 점수", "2 + " + neg(w) + " × 1 − 0.5 = " + fx(s11)], ["올바른 분류", ok + " / 4"], ["바뀌지 않은 값", "모든 관측의 h₁, h₂"]],
+    show(2, [["(1, 1)의 점수", "2 " + (w < 0 ? "− " : "+ ") + fx(Math.abs(w)) + " × 1 − 0.5 = " + fx(s11)], ["올바른 분류", ok + " / 4"], ["바뀌지 않은 값", "모든 관측의 h₁, h₂"]],
       "h₂는 (1, 1)에서만 1이고 나머지에서는 0이라, w는 (1, 1)의 점수만 바꾼다. " + (s11 < 0 ? "w < −1.5이면 (1, 1)의 점수가 음수가 되어 네 점이 모두 맞는다." : "w ≥ −1.5이면 (1, 1)의 점수가 0 이상이라 +1로 틀린다.") + " 가중치를 바꾸면 그 연결 뒤에서 계산되는 값만 다시 계산하면 된다.");
   }
   on("fx1", renderFwd); on("fx2", renderFwd); on("ow", renderW);

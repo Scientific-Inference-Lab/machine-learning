@@ -34,10 +34,10 @@
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/07.%20Linear%20Models.pdf" aria-label="Linear Models 강의 PDF">Linear Models</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
 <section class="hero topic-hero"><div class="container"><h1 class="page-title">Least Squares</h1><hr class="accent-rule"><p class="page-subtitle">잔차(residual)는 관측값에서 예측값을 뺀 값이다. 최소제곱법(least squares)은 잔차를 제곱해 더한 잔차 제곱합(RSS)이 가장 작은 계수를 고른다.</p></div></section>
 <main id="main-content" class="page-body container">
-  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>잔차 eᵢ</strong><span>yᵢ − ŷᵢ이며 양수면 과소 예측, 음수면 과대 예측이다.</span></article><article class="summary-card"><strong>제곱 손실</strong><span>eᵢ²이며 부호를 없애고 큰 오차를 더 무겁게 센다.</span></article><article class="summary-card"><strong>RSS(β₀, β₁)</strong><span>Σ(yᵢ − β₀ − β₁xᵢ)²이며 계수마다 값이 하나 정해진다.</span></article></div></section>
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>잔차 eᵢ</strong><span>yᵢ − ŷᵢ이며 양수면 과소 예측, 음수면 과대 예측이다.</span></article><article class="summary-card"><strong>제곱 손실</strong><span>eᵢ²이며 부호를 없애고 큰 오차를 더 무겁게 센다.</span></article><article class="summary-card"><strong>RSS(β₀, β₁)</strong><span>Σ(yᵢ − β₀ − β₁xᵢ)²이며 계수 쌍마다 값이 하나 정해진다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">계수를 바꾸면 모든 잔차와 RSS가 함께 바뀐다</h2><p class="lead">후보 계수 β₀, β₁이 직선을 정하고, 그 직선에서 관측별 잔차와 잔차 제곱합 RSS가 계산된다.</p></header>
+    <header class="example-header"><h2 class="section-title">후보 직선마다 잔차와 RSS를 계산한다</h2><p class="lead">후보 계수 β₀, β₁이 직선을 정하고, 그 직선에서 관측별 잔차와 잔차 제곱합 RSS가 계산된다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="c0">절편 β₀ <output id="c0-out" class="control-value" for="c0">2.5</output></label><input id="c0" type="range" min="-1" max="4" step="0.25" value="2.5"></div><div class="control-field"><label for="c1">계수 β₁ <output id="c1-out" class="control-value" for="c1">0.5</output></label><input id="c1" type="range" min="0" max="2" step="0.05" value="0.5"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div class="ls-pair"><svg id="fit-plot" class="topic-plot" viewBox="0 0 380 300" role="img" aria-labelledby="fit-title fit-desc"><title id="fit-title">후보 직선과 잔차</title><desc id="fit-desc">관측 6개와 후보 직선</desc></svg><svg id="rss-map" class="topic-plot" viewBox="0 0 300 300" role="img" aria-labelledby="map-title map-desc"><title id="map-title">RSS 지도</title><desc id="map-desc">계수 조합별 RSS</desc></svg></div></div><figcaption class="visual-caption">왼쪽: 점은 관측, 파란 직선은 후보 직선이다. 초록 실선은 양의 잔차(과소 예측), 빨간 점선은 음의 잔차(과대 예측)다. 오른쪽: 가로축 β₀, 세로축 β₁이며 칸이 짙을수록 RSS가 작다. 초록 점이 현재 후보, 빨간 십자가 RSS 최소 계수다.</figcaption></figure>
@@ -125,7 +125,7 @@
     $("rss-map").innerHTML = m;
     show(1, [["RSS(현재)", r.toFixed(2)], ["RSS 최소 계수", "β̂₀ = " + f2(hb0) + ", β̂₁ = " + f2(hb1)], ["RSS(최소)", hrss.toFixed(2)], ["가장 큰 잔차", "x = " + xs[bigi] + "에서 " + f2(big)]],
       r - hrss < 0.05 ? "현재 계수가 RSS 최소 계수에 거의 닿았다. 최소제곱법은 이처럼 후보 직선마다 RSS를 비교해 가장 작은 계수를 고른다."
-        : "현재 RSS는 최소값보다 " + (r - hrss).toFixed(2) + " 크다. 가장 크게 빗나간 x = " + xs[bigi] + "의 잔차 " + kj(f2(big), "은", "는") + " 제곱되어 " + (big * big).toFixed(2) + "만큼 RSS에 더해진다. 큰 잔차일수록 RSS에서 차지하는 몫이 커서, 그 잔차를 줄이는 쪽으로 계수를 옮기면 RSS가 크게 줄 수 있다.");
+        : "현재 RSS는 최소값보다 " + (r - hrss).toFixed(2) + " 크다. 가장 크게 빗나간 x = " + xs[bigi] + "의 잔차 " + kj(f2(big), "은", "는") + " 제곱되어 " + (big * big).toFixed(2) + "만큼 RSS에 더해진다. 계수를 바꾸면 다른 관측의 잔차도 달라지므로 RSS는 전체 잔차로 다시 계산한다.");
   }
   var LX = function (e) { return 300 + e * 80; }, LY = function (v) { return 230 - v * 22; };
   function renderLoss() {

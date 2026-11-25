@@ -33,7 +33,7 @@
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/26.%20Gradient%20Boosting.pdf" aria-label="Gradient Boosting 강의 PDF">Gradient Boosting</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
 <section class="hero topic-hero"><div class="container"><h1 class="page-title">Log Odds Update</h1><hr class="accent-rule"><p class="page-subtitle">이진 분류의 그래디언트 부스팅은 확률 p가 아니라 로그 승산 f에 나무의 잎 값을 더하고, p = σ(f)로 되돌린다. 나무의 목표는 로그 손실의 음의 그래디언트 y − p다.</p></div></section>
 <main id="main-content" class="page-body container">
-  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>시작 로그 승산</strong><span>f₀ = log(ȳ / (1 − ȳ))이며 모든 관측이 같은 확률 ȳ에서 출발한다.</span></article><article class="summary-card"><strong>잔차 y − p</strong><span>로그 손실을 f로 미분한 값의 부호를 바꾼 것이며, 나무는 이 값의 제곱합으로 분할을 고른다.</span></article><article class="summary-card"><strong>잎 값 γ</strong><span>γ = Σ(y − p) / Σp(1 − p)이며 잔차 평균과 다르다.</span></article></div></section>
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>시작 로그 승산</strong><span>f₀ = log(ȳ / (1 − ȳ))이며 모든 관측이 같은 확률 ȳ에서 출발한다.</span></article><article class="summary-card"><strong>잔차 y − p</strong><span>로그 손실을 f로 미분한 뒤 부호를 바꾼 값이다. 나무는 잔차 예측의 제곱오차 합이 가장 작은 분할을 고른다.</span></article><article class="summary-card"><strong>잎 값 γ</strong><span>γ = Σ(y − p) / Σp(1 − p)이며 잔차 평균과 다르다.</span></article></div></section>
 
   <section class="topic-example">
     <header class="example-header"><h2 class="section-title">나무를 더할수록 로그 손실이 줄지만, 같은 잎에 묶인 관측의 확률은 함께 움직인다</h2><p class="lead">관측 6개(x는 1부터 6, 정답 0, 0, 0, 1, 0, 1)에서 학습률 λ와 더한 나무 수 b에 따라 관측별 확률, 마지막 나무의 분할과 잎 값, 로그 손실이 달라진다.</p></header>
@@ -46,7 +46,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">p가 0이나 1에 가까운 잎일수록 같은 잔차 합에서 잎 값의 절댓값이 커진다</h2><p class="lead">관측 3개가 든 잎의 값 γ는 잔차 합을 p(1 − p)의 합으로 나눈 값이다. 같은 잔차 평균이라도 현재 확률 p에 따라 분모가 달라지므로 잔차 평균과 γ는 같지 않을 수 있다.</p></header>
+    <header class="example-header"><h2 class="section-title">같은 잔차 합이라면 p가 0이나 1에 가까울수록 잎 값의 절댓값이 커진다</h2><p class="lead">관측 3개가 든 잎의 값 γ는 잔차 합을 p(1 − p)의 합으로 나눈 값이다. 같은 잔차 평균이라도 현재 확률 p에 따라 분모가 달라지므로 잔차 평균과 γ는 같지 않을 수 있다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="leafp">현재 확률 p <output id="leafp-out" class="control-value" for="leafp">0.35</output></label><input id="leafp" type="range" min="0.05" max="0.95" step="0.05" value="0.35"></div><div class="control-field"><label for="ones">정답이 1인 관측 수 <output id="ones-out" class="control-value" for="ones">2</output></label><select id="ones"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="leaf-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="leaf-title leaf-desc"><title id="leaf-title">확률에 따른 잎 값</title><desc id="leaf-desc">잎 값 곡선과 잔차 평균</desc></svg></div><figcaption class="visual-caption">가로축은 세 관측의 공통 확률 p다. 파란 곡선은 이 정답 구성에서의 잎 값 γ, 회색 점선은 잔차 평균이고, 초록 점과 짙은 점은 현재 p에서 두 값이다. 세로축 밖의 값은 가장자리에 표시한다.</figcaption></figure>
@@ -143,7 +143,7 @@
     var sumR = k - 3 * p, sumH = 3 * p * (1 - p), g = sumR / sumH;
     show(2, [["잔차 합 Σ(y − p)", r3(sumR)], ["Σp(1 − p)", r3(sumH)], ["잔차 평균", r3(sumR / 3)], ["잎 값 γ", r3(g)]],
       Math.abs(sumR) < 1e-9 ? "정답 평균과 현재 확률이 같아 잔차 합이 0이고 γ도 0이다. 이 잎은 로그 승산을 옮기지 않는다."
-        : "p(1 − p)의 합이 " + kj(r3(sumH), "이라", "라") + " 잎 값은 잔차 평균 " + kj(r3(sumR / 3), "을", "를") + " p(1 − p) = " + kj(r3(p * (1 - p)), "으로") + " 나눈 " + kj(r3(g), "이다", "다") + ". p(1 − p)는 p = 0.5에서 0.25로 가장 크므로 이 배율은 4가 가장 작고, p가 0이나 1에 가까울수록 커진다.");
+        : "p(1 − p)의 합이 " + kj(r3(sumH), "이라", "라") + " 잎 값은 잔차 평균 " + kj(r3(sumR / 3), "을", "를") + " p(1 − p) = " + kj(r3(p * (1 - p)), "으로") + " 나눈 값이다. 반올림 전 값으로 계산한 γ는 " + kj(r3(g), "이다", "다") + ". p(1 − p)는 p = 0.5에서 0.25로 가장 크므로 이 배율은 4가 가장 작고, p가 0이나 1에 가까울수록 커진다.");
   }
   $("lam").addEventListener("change", renderProb); $("trees").addEventListener("input", renderProb);
   $("leafp").addEventListener("input", renderLeaf); $("ones").addEventListener("change", renderLeaf);

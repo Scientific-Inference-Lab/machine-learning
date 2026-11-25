@@ -48,7 +48,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">ROC 곡선은 모든 임계값의 (FPR, TPR)을 한 그림에 놓는다</h2><p class="lead">임계값마다 FPR과 TPR이 정해져 ROC 곡선 위의 한 점이 되고, 점수를 매기는 방식이 달라지면 곡선 전체와 AUC가 달라진다.</p></header>
+    <header class="example-header"><h2 class="section-title">ROC 곡선은 모든 임계값의 (FPR, TPR)을 한 그림에 놓는다</h2><p class="lead">임계값마다 FPR과 TPR이 정해져 ROC 곡선 위의 한 점이 되고, 점수의 순위나 동점이 달라지면 ROC 곡선과 AUC도 달라질 수 있다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double">
         <div class="control-field"><label for="scorer">점수 방식</label><select id="scorer"><option value="model">위 절의 모델</option><option value="perfect">양성을 모두 더 높게 매긴 점수</option><option value="random">순위가 무작위인 점수</option></select></div>
@@ -167,7 +167,7 @@
     h += '<path class="curve" d="' + d + '"/>';
     h += '<circle class="cur" cx="' + PX(c.fp / 980).toFixed(1) + '" cy="' + PY(c.tp / 20).toFixed(1) + '" r="9"/>';
     $("roc-plot").innerHTML = h;
-    var note = key === "model" ? "이 모델의 AUC는 " + kj(a.toFixed(3), "이다", "다") + ". t = " + t.toFixed(2) + "의 점은 FPR " + (c.fp / 980).toFixed(3) + ", TPR " + (c.tp / 20).toFixed(2) + "이며, 임계값을 낮출수록 점이 오른쪽 위로 이동한다. 곡선은 임계값 하나의 혼동행렬이 아니라 모든 임계값의 결과를 요약한다."
+    var note = key === "model" ? "이 모델의 AUC는 " + kj(a.toFixed(3), "이다", "다") + ". t = " + t.toFixed(2) + "의 점은 FPR " + (c.fp / 980).toFixed(3) + ", TPR " + (c.tp / 20).toFixed(2) + "이며, 임계값을 낮추면 FPR과 TPR은 각각 늘거나 같다. 곡선은 임계값 하나의 혼동행렬이 아니라 모든 임계값의 결과를 요약한다."
       : key === "perfect" ? "모든 양성의 점수가 모든 음성보다 높으면 AUC = 1.000이다. 곡선이 왼쪽 위 모서리 (0, 1)을 지나므로 FPR 0에서 TPR 1인 임계값이 있다."
       : "양성의 점수를 음성 점수 분포와 같은 순위에 두면 AUC는 " + a.toFixed(3) + "이고 ROC 곡선은 대각선에 가깝다. 양성·음성 쌍의 평균 순위 성능이 무작위 수준이라는 뜻이며, 이것만으로 모델이 아무것도 학습하지 않았다고 단정하지는 않는다.";
     show(2, [["AUC", a.toFixed(3)], ["현재 FPR", (c.fp / 980).toFixed(3)], ["현재 TPR", (c.tp / 20).toFixed(2)], ["TP · FP", c.tp + " · " + c.fp]], note);

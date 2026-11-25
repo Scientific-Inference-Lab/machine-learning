@@ -33,7 +33,7 @@
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/05.%20Learning%20and%20Generalization.pdf" aria-label="Learning and Generalization 강의 PDF">Learning and Generalization</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
 <section class="hero topic-hero"><div class="container"><h1 class="page-title">Training and Test Data</h1><hr class="accent-rule"><p class="page-subtitle">같은 모델도 평가하는 관측이 달라지면 평균제곱오차(mean squared error, MSE)와 선택 결과가 달라진다. 테스트 자료는 모델 결정에 쓰이지 않을 때만 독립된 평가가 된다.</p></div></section>
 <main id="main-content" class="page-body container">
-  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>학습 MSE</strong><span>적합에 사용한 관측의 평균제곱오차다.</span></article><article class="summary-card"><strong>테스트 MSE</strong><span>학습에 쓰지 않은 관측의 평균제곱오차다.</span></article><article class="summary-card"><strong>평가 독립성</strong><span>테스트 결과가 모델 결정으로 되돌아가지 않는 성질이다.</span></article></div></section>
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>학습 MSE</strong><span>적합에 사용한 관측의 평균제곱오차다.</span></article><article class="summary-card"><strong>테스트 MSE</strong><span>학습과 모델 선택이 끝난 뒤 따로 남겨 둔 관측의 평균제곱오차다.</span></article><article class="summary-card"><strong>평가 독립성</strong><span>테스트 결과가 모델 결정으로 되돌아가지 않는 성질이다.</span></article></div></section>
 
   <section class="topic-example">
     <header class="example-header"><h2 class="section-title">학습 MSE가 작은 모델과 테스트 MSE가 작은 모델이 다를 수 있다</h2><p class="lead">같은 두 모델도 평가에 쓰는 자료가 바뀌면 제곱 오차와 MSE가 달라지고, MSE가 더 작은 모델도 바뀐다.</p></header>
@@ -81,7 +81,7 @@
       var a = sq(row.y, row.a), b = sq(row.y, row.b), on = i === k;
       return '<tr class="' + (on ? "is-on" : "is-off") + '"><th scope="row">' + row.set + "</th><td>" + row.y.join(", ") + "</td><td>" + row.a.join(", ") + "</td><td>" + row.b.join(", ") + '</td><td class="' + (on && best === "A" ? "is-best" : "") + '">' + a.join(", ") + '</td><td class="' + (on && best === "B" ? "is-best" : "") + '">' + b.join(", ") + "</td></tr>";
     }).join("");
-    $("mse-read").innerHTML = rd("모델 A " + r.set + " MSE", "(" + ea.join(" + ") + ") / " + ea.length + " = " + ma.toFixed(2)) + rd("모델 B " + r.set + " MSE", "(" + eb.join(" + ") + ") / " + eb.length + " = " + mb.toFixed(2)) + rd("더 작은 모델", "모델 " + best);
+    $("mse-read").innerHTML = rd("모델 A " + r.set + " MSE", "(" + ea.join(" + ") + ") / " + ea.length + " = " + ma.toFixed(2)) + rd("모델 B " + r.set + " MSE", "(" + eb.join(" + ") + ") / " + eb.length + " = " + mb.toFixed(2)) + rd("MSE가 더 작은 모델", "모델 " + best);
     $("mse-note").textContent = k === 0
       ? "학습 관측에서는 A가 세 점을 정확히 맞춰 MSE 0.00으로 B의 0.67보다 작다. 적합에 쓴 관측의 오차만 보면 A를 고르게 된다."
       : "테스트 관측에서는 A의 MSE가 4.00, B가 0.00이다. 학습 관측을 정확히 맞춘 A가 새 관측에서는 벗어나므로, 일반화 성능은 학습에 쓰지 않은 관측으로 따로 계산해야 한다.";
@@ -96,7 +96,7 @@
     $("flow-read").innerHTML = rd("테스트 자료의 역할", sel ? "평가와 모델 선택" : "최종 평가만") + rd("평가 독립성", sel ? "깨짐" : "유지");
     $("flow-note").textContent = sel
       ? "테스트 MSE가 B 선택에 들어갔으므로 같은 자료의 0.00은 선택 결과에 맞춰진 값이다. 선택 뒤의 성능을 보고하려면 결정에 쓰지 않은 새 자료가 필요하다."
-      : "모델을 확정할 때까지 테스트 자료를 보지 않았으므로, 마지막에 한 번 계산한 테스트 MSE는 결정과 독립된 새 관측의 오차다.";
+      : "모델을 확정할 때까지 테스트 자료를 보지 않았으므로, 선택에 쓰이지 않은 테스트 자료로 새 관측에서의 성능을 추정한다.";
   }
   $("eval-set").addEventListener("change", renderMse);
   $("test-use").addEventListener("change", renderFlow);

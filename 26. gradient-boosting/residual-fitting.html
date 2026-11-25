@@ -30,12 +30,12 @@
 <body class="visual-topic topic-residual-fitting">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/26.%20Gradient%20Boosting.pdf" aria-label="Gradient Boosting 강의 PDF">Gradient Boosting</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><h1 class="page-title">Residual Fitting</h1><hr class="accent-rule"><p class="page-subtitle">그래디언트 부스팅(gradient boosting)은 현재 예측이 남긴 잔차를 얕은 나무로 맞추고, 그 예측의 학습률 λ배만 더하기를 반복한다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><h1 class="page-title">Residual Fitting</h1><hr class="accent-rule"><p class="page-subtitle">그래디언트 부스팅(gradient boosting)은 현재 예측이 남긴 잔차를 얕은 나무로 맞추고, 그 나무의 예측에 학습률 λ를 곱해 현재 예측에 더한다.</p></div></section>
 <main id="main-content" class="page-body container">
-  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>한 단계</strong><span>잔차 r = y − f를 계산하고, r을 목표로 깊이 1 나무를 학습해 f에 λ배를 더한다.</span></article><article class="summary-card"><strong>분할 선택</strong><span>후보마다 양쪽 잎에서 잔차 평균을 예측하고, 잔차 제곱합이 가장 작은 분할을 고른다.</span></article><article class="summary-card"><strong>학습률 λ</strong><span>나무가 찾은 수정량 가운데 반영할 비율이다. 작을수록 한 단계의 이동이 작다.</span></article></div></section>
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>한 단계</strong><span>잔차 r = y − f를 계산하고, r을 목표로 깊이 1 나무를 학습한다. 그 나무의 예측에 λ를 곱해 f에 더한다.</span></article><article class="summary-card"><strong>분할 선택</strong><span>후보마다 양쪽 잎에서 잔차 평균을 예측하고, 잔차 예측의 제곱오차 합이 가장 작은 분할을 고른다.</span></article><article class="summary-card"><strong>학습률 λ</strong><span>나무가 찾은 수정량 가운데 반영할 비율이다. 작을수록 한 단계의 이동이 작다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">나무 한 그루는 현재 잔차를 줄이는 쪽으로 예측을 λ배만큼 옮긴다</h2><p class="lead">관측 6개에서 학습률 λ와 더한 나무 수 b가 계단 모양 예측, 관측별 잔차, 학습 MSE, 다음 나무가 고를 분할을 정한다.</p></header>
+    <header class="example-header"><h2 class="section-title">잔차에 맞춘 나무의 예측에 학습률을 곱해 더한다</h2><p class="lead">관측 6개에서 학습률 λ와 더한 나무 수 b가 계단 모양 예측, 관측별 잔차, 학습 MSE, 다음 나무가 고를 분할을 정한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="lam">학습률 λ <output id="lam-out" class="control-value" for="lam">0.5</output></label><select id="lam"><option value="0.1">0.1</option><option value="0.5" selected>0.5</option><option value="1">1</option></select></div><div class="control-field"><label for="trees">더한 나무 수 b <output id="trees-out" class="control-value" for="trees">1</output></label><input id="trees" type="range" min="0" max="8" step="1" value="1"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="fit-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="fit-title fit-desc"><title id="fit-title">단계별 예측과 잔차</title><desc id="fit-desc">관측 6개와 계단 모양 예측</desc></svg></div><figcaption class="visual-caption">짙은 점은 관측 y, 파란 계단은 나무 b개를 더한 예측 f, 초록 실선은 양의 잔차, 빨간 점선은 음의 잔차다. 회색 점선은 다음 나무가 고를 분할 위치다.</figcaption></figure>
@@ -45,7 +45,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">분할 후보마다 잔차 제곱합을 계산해 가장 작은 곳을 고른다</h2><p class="lead">학습률 0.5에서 나무 순서와 분할 후보 위치에 따라 양쪽 잔차 평균과 잔차 제곱합이 달라진다. 두 번째 나무는 첫 나무가 남긴 잔차를 목표로 한다.</p></header>
+    <header class="example-header"><h2 class="section-title">분할 후보마다 잔차 예측의 제곱오차 합을 계산해 가장 작은 곳을 고른다</h2><p class="lead">학습률 0.5에서 나무 순서와 분할 후보 위치에 따라 양쪽 잔차 평균과 잔차 예측의 제곱오차 합이 달라진다. 두 번째 나무는 첫 나무가 남긴 잔차를 목표로 한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="stage">나무 <output id="stage-out" class="control-value" for="stage">첫 번째</output></label><select id="stage"><option value="0" selected>첫 번째</option><option value="1">두 번째</option></select></div><div class="control-field"><label for="cut">분할 위치 x ≤ <output id="cut-out" class="control-value" for="cut">3.5</output></label><input id="cut" type="range" min="1.5" max="5.5" step="1" value="3.5"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="split-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="split-title split-desc"><title id="split-title">분할 후보의 잔차 평균</title><desc id="split-desc">잔차 막대와 양쪽 평균</desc></svg></div><figcaption class="visual-caption">막대는 이 나무가 맞출 잔차다. 초록은 양수, 빨강은 음수다. 파란 가로선은 분할 양쪽의 잔차 평균, 즉 두 잎의 예측이고 회색 점선은 검사 중인 분할 위치다.</figcaption></figure>
@@ -128,7 +128,7 @@
     $("fit-plot").innerHTML = s;
     var last = b ? "x ≤ " + m.splits[b - 1].t : "없음";
     show(1, [["학습 MSE", r2(m0.mse) + " → " + r2(m.mse)], ["마지막 나무의 분할", last], ["다음 나무의 분할", "x ≤ " + m.next.t], ["예측 f", m.f.map(r3).join(", ")]],
-      b === 0 ? "시작 예측은 학습 자료의 평균 6이다. 잔차가 −5에서 4까지 퍼져 있고, 첫 나무는 잔차 제곱합이 가장 작은 x ≤ 3.5로 나눈다."
+      b === 0 ? "시작 예측은 학습 자료의 평균 6이다. 잔차가 −5에서 4까지 퍼져 있고, 첫 나무는 잔차 예측의 제곱오차 합이 가장 작은 x ≤ 3.5로 나눈다."
         : "나무 " + b + "개를 더해 학습 MSE가 " + r2(m0.mse) + "에서 " + kj(r2(m.mse), "으로") + " 줄었다. " + (lam === 1 ? "λ = 1이면 나무가 찾은 잎 값을 그대로 더한다" : "λ = " + lam + "이면 나무가 찾은 잎 값의 " + lam + "배만 더한다") +
           (lam === 1 ? ". 한 번에 다 반영하므로 적은 나무로 학습 MSE가 빠르게 줄지만, 각 나무의 분할에 그대로 끌려간다." : lam === 0.1 ? ". 한 단계의 이동이 작아 같은 나무 수에서도 잔차가 더 많이 남고, 줄이려면 나무가 더 필요하다." : ". 절반을 남긴 잔차는 다음 나무가 x ≤ " + m.next.t + "로 나누어 이어서 줄인다."));
   }
@@ -138,7 +138,7 @@
     var stage = Number($("stage").value), t = Number($("cut").value);
     $("stage-out").textContent = stage ? "두 번째" : "첫 번째"; $("cut-out").textContent = t;
     var r = run(0.5, stage).res, sc = scoreSplit(r, t), best = bestSplit(r);
-    var s = '<title id="split-title">분할 후보의 잔차 평균</title><desc id="split-desc">' + (stage ? "두 번째" : "첫 번째") + ' 나무, x ≤ ' + t + ', 잔차 제곱합 ' + r2(sc.sse) + '</desc>';
+    var s = '<title id="split-title">분할 후보의 잔차 평균</title><desc id="split-desc">' + (stage ? "두 번째" : "첫 번째") + ' 나무, x ≤ ' + t + ', 잔차 예측의 제곱오차 합 ' + r2(sc.sse) + '</desc>';
     s += '<line class="axis" x1="' + PX(0.5) + '" y1="272" x2="' + PX(0.5) + '" y2="22"/>';
     s += '<line class="zero" x1="' + PX(0.5) + '" y1="' + SY(0) + '" x2="' + PX(6.6) + '" y2="' + SY(0) + '"/>';
     [-5, 0, 5].forEach(function (v) { s += '<text class="small" x="' + (PX(0.5) - 8) + '" y="' + (SY(v) + 4) + '" text-anchor="end">' + neg(v) + '</text>'; });
@@ -152,9 +152,9 @@
     s += '<line class="split" x1="' + PX(t) + '" y1="22" x2="' + PX(t) + '" y2="272"/>';
     $("split-plot").innerHTML = s;
     var isBest = Math.abs(sc.sse - best.sse) < 1e-9;
-    show(2, [["왼쪽 잔차 평균", r3(sc.lm)], ["오른쪽 잔차 평균", r3(sc.rm)], ["잔차 제곱합", r2(sc.sse)], ["가장 작은 분할", "x ≤ " + best.t + " (" + r2(best.sse) + ")"]],
-      isBest ? "x ≤ " + t + "의 잔차 제곱합 " + kj(r2(sc.sse), "이", "가") + " 다섯 후보 가운데 가장 작아 이 나무는 이 분할을 고른다. 두 잎은 각각 " + kj(r3(sc.lm), "과", "와") + " " + kj(r3(sc.rm), "을", "를") + " 예측한다."
-        : "x ≤ " + t + "의 잔차 제곱합은 " + kj(r2(sc.sse), "으로") + ", 가장 작은 x ≤ " + best.t + "의 " + r2(best.sse) + "보다 크다. 한쪽 잎에 부호가 다른 잔차가 섞일수록 평균에서 멀어져 제곱합이 커진다.");
+    show(2, [["왼쪽 잔차 평균", r3(sc.lm)], ["오른쪽 잔차 평균", r3(sc.rm)], ["잔차 예측의 제곱오차 합", r2(sc.sse)], ["가장 작은 분할", "x ≤ " + best.t + " (" + r2(best.sse) + ")"]],
+      isBest ? "x ≤ " + t + "의 잔차 예측의 제곱오차 합 " + kj(r2(sc.sse), "이", "가") + " 다섯 후보 가운데 가장 작아 이 나무는 이 분할을 고른다. 두 잎은 각각 " + kj(r3(sc.lm), "과", "와") + " " + kj(r3(sc.rm), "을", "를") + " 예측한다."
+        : "x ≤ " + t + "의 잔차 예측의 제곱오차 합은 " + kj(r2(sc.sse), "으로") + ", 가장 작은 x ≤ " + best.t + "의 " + r2(best.sse) + "보다 크다. 분할마다 각 관측의 잔차와 그 잎의 평균 사이의 제곱편차를 합해 비교한다.");
   }
   $("lam").addEventListener("change", renderFit); $("trees").addEventListener("input", renderFit);
   $("stage").addEventListener("change", renderSplit); $("cut").addEventListener("input", renderSplit);

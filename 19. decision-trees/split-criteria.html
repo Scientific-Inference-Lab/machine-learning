@@ -51,7 +51,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">불순도 감소량은 부모 불순도에서 자식 구역의 가중평균을 뺀 값이다</h2><p class="lead">두 범주가 50개씩 섞인 구역을 둘로 나누면 부모의 불순도는 그대로다. 왼쪽에 보낸 관측의 나머지가 오른쪽을 이루며, 두 자식 구역의 크기와 범주 비율로 분할 뒤 가중 불순도를 계산한다.</p></header>
+    <header class="example-header"><h2 class="section-title">불순도 감소량은 부모 불순도에서 자식 불순도의 가중평균을 뺀 값이다</h2><p class="lead">두 범주가 50개씩 섞인 구역을 둘로 나누면 부모의 불순도는 그대로다. 왼쪽에 보낸 관측의 나머지가 오른쪽을 이루며, 두 자식 구역의 크기와 범주 비율로 분할 뒤 가중 불순도를 계산한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="a2">왼쪽 구역의 범주 1 수 <output id="a2-out" class="control-value" for="a2">40</output></label><input id="a2" type="range" min="0" max="50" step="1" value="40"></div><div class="control-field"><label for="b2">왼쪽 구역의 범주 0 수 <output id="b2-out" class="control-value" for="b2">10</output></label><input id="b2" type="range" min="0" max="50" step="1" value="10"></div></div>
       <p id="reason-2" class="control-reason" hidden></p>
@@ -179,7 +179,7 @@
     var label = { err: "오분류 수", gini: "가중 지니 지수", ent: "가중 엔트로피" }[crit];
     svg.querySelector("desc").textContent = label + ": 분할 전 " + (crit === "err" ? vals[0] : vals[0].toFixed(3)) + ", A " + (crit === "err" ? vals[1] : vals[1].toFixed(3)) + ", B " + (crit === "err" ? vals[2] : vals[2].toFixed(3));
     var note = crit === "err"
-      ? "두 후보 모두 다수 범주로 예측하면 200개를 틀려 오분류 수로는 구별되지 않는다. 오분류 수는 구역마다 다수 범주가 몇 개 앞서는지만 보므로 B의 오른쪽처럼 완전히 순수한 구역이 생긴 것을 반영하지 못한다."
+      ? "두 후보 모두 다수 범주로 예측하면 200개를 틀려 오분류 수로는 구별되지 않는다. 전체 오분류 수는 각 구역에서 다수 범주에 속하지 않는 관측 수를 더한 값이다. 여기서는 B의 오른쪽 구역에 한 범주만 남았어도 전체 합은 같다."
       : label + "는 A " + m.A[crit].toFixed(3) + ", B " + jro(m.B[crit].toFixed(3)) + " B가 더 작다. B는 오른쪽에 범주 1만 200개 있는 순수한 구역을 만들어 그쪽 불순도가 0이기 때문이다. 오분류 수가 같아도 불순도 척도는 범주 구성의 차이를 반영해 B를 고른다.";
     show(3, [["기준", label], ["후보 A", crit === "err" ? m.A.err + "개" : m.A[crit].toFixed(3)], ["후보 B", crit === "err" ? m.B.err + "개" : m.B[crit].toFixed(3)], ["고르는 후보", bestAB === "같음" ? "구별 못함" : "후보 " + bestAB]], note);
   }

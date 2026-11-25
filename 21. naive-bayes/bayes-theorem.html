@@ -41,7 +41,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>P(Y = k | x) = π_k f_k(x) / Σ π_l f_l(x)</strong><span>분자는 범주마다 계산하고, 분모는 모든 범주의 분자를 더한 값이라 사후확률의 합이 1이 된다.</span></article><article class="summary-card"><strong>사전확률과 사후확률</strong><span>사전확률은 x를 보기 전의 범주 확률, 사후확률은 x를 관측한 뒤의 범주 확률이다.</span></article><article class="summary-card"><strong>방향이 다른 두 확률</strong><span>P(+ | 질환)은 질환이 있을 때 양성일 확률, P(질환 | +)는 양성일 때 질환이 있을 확률이다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">민감도가 높아도 질환이 드물면 양성 가운데 질환자는 적다</h2><p class="lead">가상의 검사를 10,000명에게 한다. 질환의 사전확률, 민감도 P(+ | 질환), 거짓 양성률 P(+ | 질환 없음)에 따라 질환 유무와 검사 결과로 나눈 기대 인원과 양성일 때 질환이 있을 사후확률이 달라진다.</p></header>
+    <header class="example-header"><h2 class="section-title">질환의 빈도에 따라 양성일 때의 사후확률이 달라진다</h2><p class="lead">가상의 검사를 10,000명에게 한다. 질환의 사전확률, 민감도 P(+ | 질환), 거짓 양성률 P(+ | 질환 없음)에 따라 질환 유무와 검사 결과로 나눈 기대 인원과 양성일 때 질환이 있을 사후확률이 달라진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--triple"><div class="control-field"><label for="pr">질환의 사전확률 <output id="pr-out" class="control-value" for="pr">0.010</output></label><input id="pr" type="range" min="0.001" max="0.3" step="0.001" value="0.01"></div><div class="control-field"><label for="se">민감도 <output id="se-out" class="control-value" for="se">0.90</output></label><input id="se" type="range" min="0.5" max="1" step="0.01" value="0.9"></div><div class="control-field"><label for="fp">거짓 양성률 <output id="fp-out" class="control-value" for="fp">0.05</output></label><input id="fp" type="range" min="0.01" max="0.3" step="0.01" value="0.05"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="tree-plot" class="topic-plot" viewBox="0 0 900 330" role="img" aria-labelledby="tr-title tr-desc"><title id="tr-title">10,000명의 기대 인원</title><desc id="tr-desc">질환 여부와 검사 결과로 나눈 기대 인원</desc></svg></div><figcaption class="visual-caption">왼쪽 상자에서 10,000명이 질환 있음(초록)과 없음(파랑)으로 나뉘고, 다시 양성(진한 색)과 음성(옅은 색)으로 나뉜다. 오른쪽 막대는 양성인 사람만 모은 것이며 초록 부분의 비율이 P(질환 | +)다.</figcaption></figure>
@@ -92,7 +92,7 @@
   function rd(l, v) { return '<div class="visual-readout"><span class="visual-readout-label">' + l + '</span><strong class="visual-readout-value">' + v + '</strong></div>'; }
   function show(n, rows, note) { $("read-" + n).innerHTML = rows.map(function (r) { return rd(r[0], r[1]); }).join(""); $("note-" + n).textContent = note; }
   function head(svg) { return svg.querySelector("title").outerHTML + svg.querySelector("desc").outerHTML; }
-  function fmt(v) { return Math.round(v).toLocaleString("en-US"); }
+  function fmt(v) { return v.toLocaleString("en-US", { maximumFractionDigits: 2 }); }
   function pct(v) { return (v * 100).toFixed(1) + "%"; }
 
   function renderTree() {
@@ -112,7 +112,7 @@
     h += '<path class="link" d="M' + (x0 + W + 6) + " " + (y0 + 20) + " C 555 " + (y0 + 20) + " 555 " + (by + 30) + " " + (bx - 6) + " " + (by + 30) + '"/>';
     svg.innerHTML = h;
     svg.querySelector("desc").textContent = "사전확률 " + pr + ", 민감도 " + se + ", 거짓 양성률 " + fp + ", 양성 " + fmt(TP + FP) + "명 중 질환 " + fmt(TP) + "명";
-    var note = "10,000명 가운데 질환이 있는 " + fmt(D) + "명에서 양성이 " + fmt(TP) + "명, 질환이 없는 " + fmt(H) + "명에서도 거짓 양성이 " + fmt(FP) + "명 나온다. 양성 " + fmt(TP + FP) + "명 가운데 질환이 있는 사람은 " + pct(post) + (post < 0.5 ? "뿐이다. 질환 없는 사람이 " + fmt(H) + "명으로 훨씬 많아서, 거짓 양성률 " + fp.toFixed(2) + "만으로도 그쪽에서 나온 양성이 양성의 대부분을 차지한다. 민감도 " + kj(se.toFixed(2), "은", "는") + " 질환이 있을 때 양성일 확률일 뿐 이 비율을 직접 알려 주지 않는다." : "이다. 사전확률이 크거나 거짓 양성률이 작아 질환 없는 사람에서 나온 양성이 상대적으로 적다.");
+    var note = "기대 인원으로 계산하면 10,000명 가운데 질환이 있는 " + fmt(D) + "명에서 양성이 " + fmt(TP) + "명, 질환이 없는 " + fmt(H) + "명에서 거짓 양성이 " + fmt(FP) + "명으로 예상된다. 양성 기대 인원 " + fmt(TP + FP) + "명 가운데 질환이 있는 사람은 " + pct(post) + (Math.abs(post - 0.5) < 1e-12 ? "로, 두 집단에서 양성이 나올 기대 인원이 같다." : post < 0.5 ? "뿐이다. 질환 없는 사람이 " + fmt(H) + "명으로 훨씬 많아서, 거짓 양성률 " + fp.toFixed(2) + "만으로도 그쪽에서 나온 양성이 양성의 대부분을 차지한다. 민감도 " + kj(se.toFixed(2), "은", "는") + " 질환이 있을 때 양성일 확률일 뿐 이 비율을 직접 알려 주지 않는다." : "이다. 사전확률이 크거나 거짓 양성률이 작아 질환 없는 사람에서 나온 양성이 상대적으로 적다.");
     show(1, [["양성 기대 인원", fmt(TP + FP) + "명"], ["그중 질환 있음", fmt(TP) + "명"], ["P(+)", (TP + FP) / N < 0.001 ? ((TP + FP) / N).toFixed(5) : ((TP + FP) / N).toFixed(4)], ["P(질환 | +)", pct(post)]], note);
   }
 
@@ -133,7 +133,7 @@
     h += '<text class="lab" x="600" y="280">사후확률 = 비 / (1 + 비)</text><text class="big" x="600" y="306">' + pct(p) + "</text>";
     svg.innerHTML = h;
     svg.querySelector("desc").textContent = "사전확률 " + pr.toFixed(4) + ", 거짓 양성률 " + fp + ", 사후확률 " + pct(p);
-    var note = "사전확률비 " + priorOdds.toFixed(4) + "에 조건부 분포의 비 " + (Math.round(lr * 100) / 100) + "를 곱하면 사후확률비 " + postOdds.toFixed(4) + "이다. " + (postOdds < 1 ? "비가 1보다 작으니 같은 오분류 비용이라면 질환 없음을 고른다. 검사의 비가 커도 질환이 드물면 사전확률비가 작아 곱이 1을 넘지 못한다." : "비가 1보다 크니 같은 오분류 비용이라면 질환 있음을 고른다.") + (Math.abs(pr - 0.01) < 0.0006 && fp === 0.05 ? " 강의 예제의 (0.01/0.99)(0.90/0.05) = 2/11이 이 상태다." : "");
+    var note = "사전확률비 " + priorOdds.toFixed(4) + "에 조건부 분포의 비 " + (Math.round(lr * 100) / 100) + "를 곱하면 사후확률비 " + postOdds.toFixed(4) + "이다. " + (Math.abs(postOdds - 1) < 1e-12 ? "비가 1로 두 사후확률이 같다. 같은 오분류 비용에서는 미리 정한 동률 규칙으로 처리한다." : postOdds < 1 ? "비가 1보다 작으니 같은 오분류 비용이라면 질환 없음을 고른다. 검사의 비가 커도 질환이 드물면 사전확률비가 작아 곱이 1을 넘지 못한다." : "비가 1보다 크니 같은 오분류 비용이라면 질환 있음을 고른다.") + (Math.abs(pr - 0.01) < 0.0006 && fp === 0.05 ? " 강의 예제의 (0.01/0.99)(0.90/0.05) = 2/11이 이 상태다." : "");
     note = note.replace("의 비 " + (Math.round(lr * 100) / 100) + "를", "의 비 " + kj(Math.round(lr * 100) / 100, "을", "를")).replace("사후확률비 " + postOdds.toFixed(4) + "이다", "사후확률비 " + postOdds.toFixed(4) + "이다");
     show(2, [["사전확률비", priorOdds.toFixed(4)], ["조건부 분포의 비", String(Math.round(lr * 100) / 100)], ["사후확률비", postOdds.toFixed(4)], ["P(질환 | +)", pct(p)]], note);
   }

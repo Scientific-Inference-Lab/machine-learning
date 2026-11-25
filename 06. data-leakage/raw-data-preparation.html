@@ -48,7 +48,7 @@
 
 <section class="hero topic-hero">
   <div class="container">
-    
+
     <h1 class="page-title">Raw Data Preparation</h1>
     <hr class="accent-rule">
     <p class="page-subtitle">전처리(preprocessing)는 원자료의 결측값, 값 범위, 범주를 모델이 계산할 수 있는 입력으로 바꾸는 처리다. 여러 행에서 계산하는 처리는 학습 자료에서 상태를 저장한다.</p>
@@ -69,7 +69,7 @@
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single">
         <div class="control-field"><label for="raw-issue-buttons">강조할 원자료 문제</label><select id="raw-issue-buttons"><option value="missing" selected>결측값</option><option value="outlier">이상치</option><option value="scale">다른 값 범위</option><option value="category">범주 값</option></select></div>
-        
+
       </div>
       <figure class="visual-figure">
         <div class="visual-frame">
@@ -105,11 +105,11 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">열 종류와 처리에 따라 학습 자료에서 저장하는 상태가 다르다</h2><p class="lead">처리마다 fit에서 저장하는 상태와 그 상태를 적용한 결과가 다르다.</p></header>
+    <header class="example-header"><h2 class="section-title">열 종류와 처리에 따라 학습 자료에서 저장하는 상태가 다르다</h2><p class="lead">표준화 예시는 학습 자료의 표준편차가 0보다 큰 열을 사용한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single">
         <div class="control-field"><label for="fit-kind">처리</label><select id="fit-kind"><option value="num-impute">수치형 결측값 대체</option><option value="standardize">수치형 표준화</option><option value="cat-impute">범주형 결측값 대체</option></select></div>
-        
+
       </div>
       <figure class="visual-figure"><div class="visual-frame">
         <svg class="visual-svg prep-svg" viewBox="0 0 760 330" role="img" aria-labelledby="missing-title missing-desc">
@@ -129,7 +129,7 @@
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single">
         <div class="control-field"><label for="encoding-buttons">부호화 관계</label><select id="encoding-buttons"><option value="ordinal" selected>순서형</option><option value="onehot">one-hot</option><option value="unknown">학습에 없던 범주</option></select></div>
-        
+
       </div>
       <figure class="visual-figure"><div class="visual-frame">
         <svg class="visual-svg prep-svg" viewBox="0 0 760 305" role="img" aria-labelledby="encoding-title encoding-desc">
@@ -137,7 +137,7 @@
           <g id="encoding-ordinal"><rect class="primary" x="25" y="55" width="220" height="230" rx="12"></rect><text class="strong" x="135" y="88" text-anchor="middle">순서형 부호화</text><text x="70" y="135">낮음</text><text class="strong" x="195" y="135">0</text><text x="70" y="180">중간</text><text class="strong" x="195" y="180">1</text><text x="70" y="225">높음</text><text class="strong" x="195" y="225">2</text><path class="arrow" d="M220 145 V205"></path><text class="small" x="135" y="265" text-anchor="middle">0 &lt; 1 &lt; 2</text></g>
           <g id="encoding-onehot" class="muted"><rect class="reference" x="270" y="55" width="220" height="230" rx="12"></rect><text class="strong" x="380" y="88" text-anchor="middle">one-hot encoding</text><text x="310" y="145">서울</text><text class="strong" x="420" y="145">(1,0)</text><text x="310" y="205">부산</text><text class="strong" x="420" y="205">(0,1)</text><text class="small" x="380" y="265" text-anchor="middle">범주 사이 순서 없음</text></g>
           <g id="encoding-unknown" class="muted"><rect class="problem" x="515" y="55" width="220" height="230" rx="12"></rect><text class="strong" x="625" y="88" text-anchor="middle">학습에 없던 범주</text><text x="550" y="135">새 범주 가</text><text class="strong" x="680" y="135">(0,0)</text><text x="550" y="185">새 범주 나</text><text class="strong" x="680" y="185">(0,0)</text><path class="red-arrow" d="M570 220 H680"></path><text class="small" x="625" y="265" text-anchor="middle">서로 다른 범주가 같은 표현</text></g>
-          
+
         </svg>
       </div><figcaption class="visual-caption">세 상자는 순서형 부호화, one-hot encoding, 학습에 없던 새 범주다. 흐리지 않은 상자가 고른 관계이고, 빨간 상자는 표현 충돌이다.</figcaption></figure>
       <div id="read-3" class="visual-readouts" aria-live="polite"></div>
@@ -166,14 +166,14 @@ function rd(l,v){return '<div class="visual-readout"><span class="visual-readout
 (function(){var el=document.getElementById("raw-issue-buttons");
 var T={missing:{r:[["강조한 문제","결측값"],["위치","관측 2 · 수치 A"],["처리 방향","지우거나 값을 채움"]],t:"계산할 값이 없음 → 지우거나 값을 채움",n:"관측 2의 수치 A에는 계산할 값이 없다. 행을 지우거나 학습 자료에서 정한 값으로 채워야 모델이 계산할 수 있다."},
 outlier:{r:[["강조한 문제","이상치"],["위치","관측 3 · 수치 B"],["처리 방향","원인 확인 뒤 기준 결정"]],t:"다른 관측과 크게 떨어짐 → 원인과 기준",n:"관측 3의 수치 B는 다른 관측과 크게 떨어져 있다. 입력 오류인지 실제 값인지 원인을 확인한 뒤 처리 기준을 정한다."},
-scale:{r:[["강조한 문제","다른 값 범위"],["위치","수치 A와 수치 B 열"],["처리 방향","중심과 퍼짐 조정"]],t:"특성마다 다른 값 범위 → 중심과 퍼짐",n:"수치 A와 수치 B는 값의 범위가 달라 거리나 계수 계산에서 범위가 넓은 열이 더 크게 작용한다. 척도 조정으로 중심과 퍼짐을 맞춘다."},
+scale:{r:[["강조한 문제","다른 값 범위"],["위치","수치 A와 수치 B 열"],["처리 방향","중심과 퍼짐 조정"]],t:"특성마다 다른 값 범위 → 중심과 퍼짐",n:"척도를 맞추지 않으면 두 관측의 값 차이가 큰 열이 거리에 더 크게 기여한다. 표준화는 열마다 중심을 옮기고 퍼짐을 맞춘다."},
 category:{r:[["강조한 문제","범주 값"],["위치","등급과 도시 열"],["처리 방향","부호화"]],t:"수치 연산의 입력이 아님 → 부호화",n:"등급과 도시는 수치 연산의 입력이 아니다. 범주 사이에 순서가 있는지에 따라 다른 부호화를 고른다."}};
 function render(){var v=el.value,t=T[v];document.querySelectorAll("#raw-matrix [data-kind]").forEach(function(g){g.classList.toggle("focus",g.dataset.kind===v);g.classList.toggle("muted",g.dataset.kind!==v);});document.getElementById("raw-focus-text").textContent=t.t;
 document.getElementById("read-1").innerHTML=t.r.map(function(p){return rd(p[0],p[1]);}).join("");document.getElementById("note-1").textContent=t.n;}
 el.addEventListener("change",render);render();}());
 (function(){var el=document.getElementById("fit-kind");
 var T={"num-impute":{r:[["열 종류","수치형 열"],["fit에서 저장","평균 또는 중앙값"],["적용 결과","결측 칸에 저장한 수치"]],n:"수치형 열의 결측값은 학습 자료에서 계산한 평균이나 중앙값으로 채운다. 새 자료의 결측 칸에도 같은 저장 값을 쓴다."},
-standardize:{r:[["열 종류","수치형 열"],["fit에서 저장","μⱼ · σⱼ"],["적용 결과","zᵢⱼ = (xᵢⱼ − μⱼ) / σⱼ"]],n:"표준화는 학습 자료에서 열마다 평균 μⱼ와 표준편차 σⱼ를 저장하고 zᵢⱼ = (xᵢⱼ − μⱼ) / σⱼ를 적용한다. 학습 자료의 변환 결과는 평균 0, 표준편차 1이다."},
+standardize:{r:[["열 종류","수치형 열"],["fit에서 저장","μⱼ · σⱼ"],["적용 결과","zᵢⱼ = (xᵢⱼ − μⱼ) / σⱼ"]],n:"표준화는 학습 자료에서 열마다 평균 μⱼ와 표준편차 σⱼ를 저장하고 zᵢⱼ = (xᵢⱼ − μⱼ) / σⱼ를 적용한다. σⱼ가 0보다 크면 변환한 학습 열의 평균은 0, 표준편차는 1이다."},
 "cat-impute":{r:[["열 종류","범주형 열"],["fit에서 저장","가장 자주 나온 범주"],["적용 결과","결측 칸에 저장한 범주"]],n:"범주형 열에는 평균을 계산할 수 없으므로 학습 자료에서 가장 자주 나온 범주를 저장해 결측 칸을 채운다."}};
 function render(){var v=el.value,t=T[v];["num-impute","standardize","cat-impute"].forEach(function(k){document.getElementById("lane-"+k).classList.toggle("muted",k!==v);});
 document.getElementById("read-2").innerHTML=t.r.map(function(p){return rd(p[0],p[1]);}).join("");document.getElementById("note-2").textContent=t.n;}

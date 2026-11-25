@@ -61,7 +61,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">양성 클래스에 따라 정밀도와 재현율이 달라진다</h2><p class="lead">질환 검사 결과 TP = 12, FP = 3, FN = 8, TN = 977을 그대로 두고 양성 클래스를 바꾸면 네 칸의 이름과 정밀도·재현율이 바뀌고 정확도는 그대로다.</p></header>
+    <header class="example-header"><h2 class="section-title">양성 클래스에 따라 정밀도와 재현율이 달라진다</h2><p class="lead">질환 있음·없음의 실제 범주와 예측 결과를 그대로 두고 양성 클래스만 바꾼다. 표의 건수는 그대로이고 각 칸의 TP·FP·FN·TN 표기와 정밀도·재현율이 바뀐다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="posclass">양성 클래스</label><select id="posclass"><option value="sick">질환 있음</option><option value="healthy">질환 없음</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><table id="cm2" class="topic-table" aria-label="양성 범주에 따른 혼동행렬"></table></div><figcaption class="visual-caption">행은 예측, 열은 실제 범주다. 칸마다 관측 수와 현재 양성 기준의 이름을 적었다. 초록 칸이 맞힌 관측이다.</figcaption></figure>
@@ -109,17 +109,17 @@
     var tp = Number($("tp").value), fp = Number($("fp").value), focus = $("focus").value;
     $("tp-out").textContent = tp; $("fp-out").textContent = fp;
     var fn = 20 - tp, tn = 980 - fp;
-    var acc = (tp + tn) / 1000, prec = ratio(tp, tp + fp), rec = tp / 20, F = f1(prec, rec);
+    var acc = (tp + tn) / 1000, prec = ratio(tp, tp + fp), rec = tp / 20, F = ratio(2 * tp, 2 * tp + fp + fn);
     var num = { acc: ["tp", "fp", "fn", "tn"], prec: ["tp", "fp"], rec: ["tp", "fn"] }[focus];
     function cell(key, v, label, hit) { return '<td class="' + (hit ? "is-hit" : "is-miss") + (num.indexOf(key) >= 0 ? " is-num" : "") + '"><strong>' + v + "</strong><span>" + label + "</span></td>"; }
     $("cm").innerHTML = '<thead><tr><th scope="col">예측 \\ 실제</th><th scope="col">양성</th><th scope="col">음성</th></tr></thead><tbody><tr><th scope="row">양성</th>' + cell("tp", tp, "TP", true) + cell("fp", fp, "FP", false) + '</tr><tr><th scope="row">음성</th>' + cell("fn", fn, "FN", false) + cell("tn", tn, "TN", true) + "</tr></tbody>";
     function bar(name, v, sub, cls) { return '<div class="rate ' + (cls || "") + '"><span>' + name + '</span><span class="track"><span class="fill" style="--w:' + (v === null ? 0 : v * 100).toFixed(1) + '%"></span></span><b>' + (v === null ? "없음" : v.toFixed(2)) + "</b><small>" + sub + "</small></div>"; }
-    $("rates").innerHTML = bar("정확도", acc, "(TP + TN) / 1,000") + bar("정밀도", prec, "TP / (TP + FP)") + bar("재현율", rec, "TP / (TP + FN)") + bar("F₁", F, "2PR / (P + R)", "is-f1");
+    $("rates").innerHTML = bar("정확도", acc, "(TP + TN) / 1,000") + bar("정밀도", prec, "TP / (TP + FP)") + bar("재현율", rec, "TP / (TP + FN)") + bar("F₁", F, "2TP / (2TP + FP + FN)", "is-f1");
     $("rates").setAttribute("aria-label", "정확도 " + acc.toFixed(3) + ", 정밀도 " + fmt(prec) + ", 재현율 " + rec.toFixed(3) + ", F₁ " + fmt(F));
     $("reason-1").hidden = tp + fp > 0;
     $("reason-1").textContent = "양성으로 예측한 관측이 하나도 없어 정밀도의 분모 TP + FP가 0이다. 이때는 별도의 처리 규칙이 필요하다.";
     var note;
-    if (tp + fp === 0) note = "양성을 하나도 예측하지 않으면 정확도는 980/1,000 = 0.980으로 높지만 재현율은 0이다. 정확도는 FP와 FN의 비용 차이를 반영하지 않는다.";
+    if (tp + fp === 0) note = "양성을 하나도 예측하지 않으면 정확도는 980/1,000 = 0.980이지만 실제 양성 20개를 모두 놓쳐 재현율과 F₁은 0이다. 정확도는 FP와 FN의 비용 차이를 반영하지 않는다.";
     else if (tp === 0) note = "TP = 0이면 양성으로 예측한 " + fp + "개가 모두 실제 음성이라 정밀도와 재현율이 모두 0이고, F₁ = 2TP / (2TP + FP + FN)도 0이다. 그래도 정확도는 " + kj(acc.toFixed(3), "이라", "라") + " 높아 보일 수 있다.";
     else if (focus === "acc") note = "정확도는 대각선 TP + TN = " + kj(tp + tn, "을", "를") + " 전체 1,000으로 나눈 " + acc.toFixed(3) + "이다. 실제 양성이 20개뿐이라 양성을 모두 놓쳐도 FN이 정확도를 낮추는 몫은 0.020을 넘지 않는다. 정확도만으로는 FP와 FN이 각각 몇 건 발생했는지 알 수 없다.";
     else if (focus === "prec") note = "정밀도는 양성 예측 행 TP + FP = " + (tp + fp) + "개 가운데 실제 양성 " + tp + "개의 비율 " + prec.toFixed(3) + "이다. FP를 늘리면 정밀도는 내려가지만 재현율 " + kj(rec.toFixed(2), "은", "는") + " 바뀌지 않는다.";
@@ -152,8 +152,8 @@
     });
     h += '<line class="am" x1="200" y1="' + (by - A * H).toFixed(1) + '" x2="740" y2="' + (by - A * H).toFixed(1) + '"/><text class="small" x="750" y="' + (by - A * H + 4).toFixed(1) + '">산술평균 ' + A.toFixed(2) + "</text>";
     $("f1-plot").innerHTML = h;
-    var note = k === "all" ? "모두 양성으로 예측하면 재현율은 1.00이지만 양성 예측 1,000개 가운데 실제 양성이 20개라 정밀도는 0.02다. 산술평균은 0.51이지만 F₁은 0.04로 낮아 FP 980개를 드러낸다."
-      : k === "one" ? "확실한 양성 1개만 양성으로 예측하면 정밀도는 1.00이지만 재현율은 1/20 = 0.05다. F₁은 0.10으로, 한쪽이 1이어도 놓친 양성 19개를 드러낸다."
+    var note = k === "all" ? "모두 양성으로 예측하면 재현율은 1.00이지만 양성 예측 1,000개 가운데 실제 양성이 20개라 정밀도는 0.02다. 산술평균은 0.51이지만 F₁은 0.04로 낮다. FP 980건은 혼동행렬에서 확인할 수 있다."
+      : k === "one" ? "확실한 양성 1개만 양성으로 예측하면 정밀도는 1.00이지만 재현율은 1/20 = 0.05다. F₁은 0.10이다. 놓친 양성은 19개다."
       : k === "cm" ? "정밀도 0.80, 재현율 0.60이면 F₁ = 2 × 0.80 × 0.60 / 1.40 = 24/35 ≈ 0.69로 산술평균 0.70보다 조금 작다. 두 값이 불균형할수록 F₁은 산술평균보다 작아진다."
       : "TP 16, FP 4, FN 4이면 정밀도와 재현율이 모두 0.80이라 F₁도 0.80으로 산술평균과 같다. 두 값이 같을 때만 조화평균과 산술평균이 일치한다.";
     show(3, [["TP · FP · FN", q.tp + " · " + q.fp + " · " + (20 - q.tp)], ["정밀도 · 재현율", P.toFixed(2) + " · " + R.toFixed(2)], ["산술평균", A.toFixed(2)], ["F₁", F.toFixed(2)]], note);

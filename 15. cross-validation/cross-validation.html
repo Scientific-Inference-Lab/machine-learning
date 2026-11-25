@@ -161,8 +161,8 @@
     if (i === k) rows.push(["CV(" + k + ")", f1(cv)]);
     var note;
     if (i < k) note = "반복 " + i + "에서는 fold " + i + "의 " + nv + "개로 검증하고 나머지 " + (20 - nv) + "개로 모델을 새로 학습한다. 반복을 끝까지 옮기면 모든 관측이 검증에 한 번씩 쓰이고, 각 관측은 학습에 " + (k - 1) + "번 쓰인다.";
-    else if (k === 2) note = "두 반복을 평균한 CV(2) = " + kj(f1(cv), "이다", "다") + ". 매번 관측 10개로만 학습해 2차 모델의 계수가 불안정하므로, 같은 자료의 CV(5) = " + f1(foldMse(5).reduce(function (s, v) { return s + v; }, 0) / 5) + "보다 오차를 높게 추정한다.";
-    else if (k === 20) note = "k = n인 LOOCV라 관측 하나씩 20번 검증했다. 반복별 검증 MSE는 " + f1(Math.min.apply(null, ms)) + "에서 " + jro(f1(Math.max.apply(null, ms))) + " 크게 흩어지지만 평균 CV(20)은 " + kj(f1(cv), "이다", "다") + ". 학습 자료가 거의 같은 모델들을 평균하므로 추정의 분산이 반드시 작아지지는 않는다.";
+    else if (k === 2) note = "두 반복을 평균한 CV(2) = " + kj(f1(cv), "이다", "다") + ". 2-fold에서는 모델마다 10개로 학습한다. 이 예의 CV(2)는 같은 자료의 CV(5) = " + f1(foldMse(5).reduce(function (s, v) { return s + v; }, 0) / 5) + "보다 크다.";
+    else if (k === 20) note = "k = n인 LOOCV라 관측 하나씩 20번 검증했다. 반복별 검증 MSE는 " + f1(Math.min.apply(null, ms)) + "에서 " + jro(f1(Math.max.apply(null, ms))) + " 크게 흩어지지만 평균 CV(20)은 " + kj(f1(cv), "이다", "다") + ". 학습 자료가 많이 겹치면 검증 오차가 서로 상관될 수 있어 추정 분산이 더 작다고 단정할 수 없다.";
     else note = k + "번의 검증 MSE를 평균한 CV(" + k + ") = " + kj(f1(cv), "이다", "다") + ". 반복별 값은 " + f1(Math.min.apply(null, ms)) + "에서 " + jro(f1(Math.max.apply(null, ms))) + " 달라지므로 평균과 함께 fold별 변동을 본다.";
     show(1, rows, note);
   }

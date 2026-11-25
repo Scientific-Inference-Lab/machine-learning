@@ -51,9 +51,9 @@
 <body class="visual-topic topic-hidden-layers">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/13.%20Multilayer%20Perceptrons.pdf" aria-label="Multilayer Perceptrons 강의 PDF">Multilayer Perceptrons</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><h1 class="page-title">Hidden Layers</h1><hr class="accent-rule"><p class="page-subtitle">은닉층(hidden layer)은 입력의 가중합에 활성함수를 적용해 새로운 중간값 h = g(W₁x + b₁)를 만든다. 은닉 좌표에서는 입력 공간에서 직선으로 나뉘지 않던 관측도 직선으로 나뉠 수 있다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><h1 class="page-title">Hidden Layers</h1><hr class="accent-rule"><p class="page-subtitle">은닉층(hidden layer)은 입력의 가중합에 절편을 더한 뒤 활성함수를 적용해 중간값 h = g(W₁x + b₁)를 만든다. 은닉 좌표에서는 입력 공간에서 직선으로 나뉘지 않던 관측도 직선으로 나뉠 수 있다.</p></div></section>
 <main id="main-content" class="page-body container">
-  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>은닉 유닛</strong><span>가중합 z = wᵀx + b에 활성함수를 적용해 h = g(z)를 출력하는 계산 단위다.</span></article><article class="summary-card"><strong>W₁의 모양</strong><span>K × p이며 행 하나가 은닉 유닛 하나의 가중치 벡터다.</span></article><article class="summary-card"><strong>구조 하이퍼파라미터</strong><span>층 수와 유닛 수는 학습 전에 정하고 검증 성능으로 고른다.</span></article></div></section>
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>은닉 유닛</strong><span>z = wᵀx + b에 활성함수를 적용해 h = g(z)를 출력하는 계산 단위다.</span></article><article class="summary-card"><strong>W₁의 모양</strong><span>K × p이며 행 하나가 은닉 유닛 하나의 가중치 벡터다.</span></article><article class="summary-card"><strong>구조 하이퍼파라미터</strong><span>층 수와 유닛 수는 학습 전에 정하고 검증 성능으로 고른다.</span></article></div></section>
 
   <section class="topic-example">
     <header class="example-header"><h2 class="section-title">은닉층을 지나면 XOR 관측이 직선으로 나뉘는 좌표로 옮겨진다</h2><p class="lead">h₁ = ReLU(x₁ + x₂), h₂ = ReLU(x₁ + x₂ − 1)은 XOR 관측을 입력 좌표에서 은닉 좌표로 옮기고, 출력 점수는 은닉 좌표에서 계산된다.</p></header>
@@ -149,7 +149,7 @@
     $("h-space").innerHTML = b;
     show(1, [["입력 x", "(" + x.join(", ") + ")"], ["z = (z₁, z₂)", "(" + z1 + ", " + neg(z2) + ")"], ["h = ReLU(z)", "(" + h.join(", ") + ")"], ["s와 예측", neg(s) + " → " + (s >= 0 ? "+1" : "−1")]],
       k === 1 || k === 2 ? "(0, 1)과 (1, 0)은 입력에서 서로 떨어져 있지만 은닉층을 지나면 같은 점 (1, 0)으로 모인다. 그래서 은닉 좌표에서는 +1 두 점과 −1 두 점을 직선 하나로 가를 수 있다."
-        : k === 3 ? "(1, 1)은 z₂ = 1이 양수라 h₂ = 1이 남아 은닉 좌표 (2, 1)로 간다. 출력 가중치 −4가 이 h₂를 크게 깎아 s = −2.5가 된다."
+        : k === 3 ? "(1, 1)은 z₂ = 1이 양수라 h₂ = 1이 남아 은닉 좌표 (2, 1)로 간다. 출력 점수는 2 − 4 × 1 − 0.5 = −2.5다."
         : "(0, 0)은 z₂ = −1이지만 ReLU가 0으로 바꿔 은닉 좌표 (0, 0)에 머문다. 이 점은 출력 경계의 −1 쪽에 있다.");
   }
   function renderSize() {

@@ -28,7 +28,7 @@
 <body class="visual-topic topic-linear-regression">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/07.%20Linear%20Models.pdf" aria-label="Linear Models 강의 PDF">Linear Models</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><h1 class="page-title">Linear Regression</h1><hr class="accent-rule"><p class="page-subtitle">선형 회귀(linear regression)는 설명변수의 가중합 β₀ + β₁x를 수치 예측값 ŷ로 쓴다. 학습 자료로 계수를 추정한 뒤, 새 입력에 그 계수를 적용해 예측한다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><h1 class="page-title">Linear Regression</h1><hr class="accent-rule"><p class="page-subtitle">선형 회귀(linear regression)는 절편에 설명변수의 가중합을 더한 β₀ + β₁x를 수치 예측값 ŷ로 쓴다. 학습 자료로 계수를 추정한 뒤, 새 입력에 그 계수를 적용해 예측한다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>절편 β₀</strong><span>x = 0일 때의 예측값이며 직선이 세로축과 만나는 높이다.</span></article><article class="summary-card"><strong>계수 β₁</strong><span>x가 1 증가할 때의 예측값 변화량이며 직선의 기울기다.</span></article><article class="summary-card"><strong>추정과 예측</strong><span>추정은 학습 자료에서 계수를, 예측은 새 입력에서 ŷ를 얻는다.</span></article></div></section>
 
@@ -36,7 +36,7 @@
     <header class="example-header"><h2 class="section-title">절편은 직선의 높이를, 계수는 기울기를 정한다</h2><p class="lead">β₀과 β₁이 회귀선의 위치와 기울기, x = 0과 x = 4의 예측값을 정한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="b0">절편 β₀ <output id="b0-out" class="control-value" for="b0">2</output></label><input id="b0" type="range" min="-2" max="6" step="0.5" value="2"></div><div class="control-field"><label for="b1">계수 β₁ <output id="b1-out" class="control-value" for="b1">0.5</output></label><input id="b1" type="range" min="-1" max="1.5" step="0.25" value="0.5"></div></div>
-      <figure class="visual-figure"><div class="visual-frame"><svg id="line-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="line-title line-desc"><title id="line-title">회귀선</title><desc id="line-desc">절편과 계수로 정해진 직선</desc></svg></div><figcaption class="visual-caption">파란 직선은 ŷ = β₀ + β₁x다. 점선은 x = 0에서의 높이 β₀과 x가 3에서 4로 1 늘 때의 예측값 변화 β₁을 표시한다.</figcaption></figure>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="line-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="line-title line-desc"><title id="line-title">회귀선</title><desc id="line-desc">절편과 계수로 정해진 직선</desc></svg></div><figcaption class="visual-caption">파란 직선은 ŷ = β₀ + β₁x다. 표시 범위 안에서 점은 x = 0의 예측값 β₀을, 점선은 x가 3에서 4로 늘 때의 예측값 변화 β₁을 나타낸다.</figcaption></figure>
       <div id="read-1" class="visual-readouts" aria-live="polite"></div>
       <p id="note-1" class="visual-note"></p>
     </div>
@@ -53,7 +53,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">설명변수의 단위가 바뀌면 같은 관계라도 계수의 크기가 달라진다</h2><p class="lead">키의 단위와 키 증가량을 바꾸면 계수와 입력 변화량은 달라지지만 예측값 변화는 같다.</p></header>
+    <header class="example-header"><h2 class="section-title">설명변수의 단위가 바뀌면 같은 관계라도 계수의 크기가 달라진다</h2><p class="lead">같은 키 증가량을 cm와 m로 나타내면 계수와 입력 변화량은 달라져도 예측값 변화는 같다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="unit">키의 단위</label><select id="unit"><option value="cm">cm</option><option value="m">m</option></select></div><div class="control-field"><label for="dh">키 증가량 <output id="dh-out" class="control-value" for="dh">10 cm</output></label><input id="dh" type="range" min="0" max="30" step="5" value="10"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><table id="unit-table" class="topic-table" aria-label="단위별 계수와 예측값 변화"></table></div><figcaption class="visual-caption">두 행은 같은 관계를 cm와 m로 나타낸 모델이다. 초록 테두리 행이 고른 단위다.</figcaption></figure>
@@ -102,14 +102,14 @@
     $("b0-out").textContent = neg(b0); $("b1-out").textContent = neg(b1);
     var s = '<title id="line-title">회귀선</title><desc id="line-desc">절편 ' + b0 + ', 기울기 ' + b1 + '인 직선</desc>';
     s += axes(X, Y, [0, 2, 4, 6, 8, 10], [0, 2, 4, 6, 8], "x", "ŷ", 0, 10, 0, 9);
-    var ya = b0, yb = b0 + b1 * 10, clip = function (v) { return Math.max(-0.5, Math.min(9.5, v)); };
+    var ya = b0, yb = b0 + b1 * 10, slopeTerm = (b1 < 0 ? " − " : " + ") + Math.abs(b1);
     s += '<clipPath id="lp-clip"><rect x="' + X(0) + '" y="' + Y(9.5) + '" width="' + (X(10) - X(0)) + '" height="' + (Y(0) - Y(9.5)) + '"/></clipPath>';
     s += '<line class="fit" clip-path="url(#lp-clip)" x1="' + X(0) + '" y1="' + Y(ya) + '" x2="' + X(10) + '" y2="' + Y(yb) + '"/>';
     if (b0 >= 0) s += '<circle class="cur" cx="' + X(0) + '" cy="' + Y(b0) + '" r="6"/><text x="' + (X(0) + 10) + '" y="' + (Y(b0) - 8) + '">β₀</text>';
     var y3 = b0 + 3 * b1, y4 = b0 + 4 * b1;
     if (y3 >= 0 && y4 >= 0 && y3 <= 9 && y4 <= 9) s += '<line class="guide" x1="' + X(3) + '" y1="' + Y(y3) + '" x2="' + X(4) + '" y2="' + Y(y3) + '"/><line class="guide" x1="' + X(4) + '" y1="' + Y(y3) + '" x2="' + X(4) + '" y2="' + Y(y4) + '"/><text x="' + (X(4) + 8) + '" y="' + ((Y(y3) + Y(y4)) / 2 + 4) + '">β₁</text>';
     $("line-plot").innerHTML = s;
-    show(1, [["회귀선", "ŷ = " + neg(b0) + " + " + neg(b1) + "x"], ["x = 0에서 ŷ", neg(b0) + " (절편)"], ["x = 4에서 ŷ", neg(b0) + " + " + neg(b1) + " × 4 = " + f1(b0 + 4 * b1)], ["x가 1 늘 때", (b1 > 0 ? "+" : "") + neg(b1)]],
+    show(1, [["회귀선", "ŷ = " + neg(b0) + slopeTerm + "x"], ["x = 0에서 ŷ", neg(b0) + " (절편)"], ["x = 4에서 ŷ", neg(b0) + slopeTerm + " × 4 = " + f1(b0 + 4 * b1)], ["x가 1 늘 때", (b1 > 0 ? "+" : "") + neg(b1)]],
       "β₀ = " + kj(neg(b0), "은", "는") + " 직선을 위아래로 옮길 뿐 기울기를 바꾸지 않는다. β₁ = " + kj(neg(b1), "은", "는") + " x가 1 늘 때마다 ŷ가 " + (b1 === 0 ? "변하지 않게" : Math.abs(b1) + "씩 " + (b1 > 0 ? "커지게" : "작아지게")) + " 한다.");
   }
   function renderPredict() {

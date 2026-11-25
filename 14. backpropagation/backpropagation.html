@@ -57,7 +57,7 @@
     <header class="example-header"><h2 class="section-title">출력의 오차 신호가 출력 가중치를 거쳐 은닉층으로 전달된다</h2><p class="lead">XOR 관측마다 순전파 값과 손실이 다르고, 출력에서 은닉층을 거쳐 입력 쪽 가중치로 돌아가는 미분값도 달라진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="bobs">관측 (x, y)</label><select id="bobs"><option value="0">(0, 0), y = −1</option><option value="1">(0, 1), y = +1</option><option value="2">(1, 0), y = +1</option><option value="3" selected>(1, 1), y = −1</option></select></div></div>
-      <figure class="visual-figure"><div class="visual-frame"><svg id="bp-net" class="topic-plot net" viewBox="0 0 700 260" role="img" aria-labelledby="bp-title bp-desc"><title id="bp-title">역전파 미분값</title><desc id="bp-desc">노드 값과 연결별 미분</desc></svg></div><figcaption class="visual-caption">원 안의 수는 순전파 값, 선 위 회색 수는 가중치, 선 아래 빨간 수는 그 가중치에 대한 손실의 미분이다. 회색 점선 테두리는 z ≤ 0이라 ReLU가 미분을 막은 은닉 유닛이다.</figcaption></figure>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="bp-net" class="topic-plot net" viewBox="0 0 700 260" role="img" aria-labelledby="bp-title bp-desc"><title id="bp-title">역전파 미분값</title><desc id="bp-desc">노드 값과 연결별 미분</desc></svg></div><figcaption class="visual-caption">원 안의 수는 순전파 값이다. 가중치가 붙은 연결의 회색 수는 가중치, 빨간 수는 그 가중치로 미분한 값이다. 출력 점수 s에서 손실 L로 가는 마지막 연결의 빨간 수는 ∂L/∂s이다. 회색 점선은 역전파에서 ReLU의 미분값을 0으로 쓰는 유닛을 표시한다. z = 0에서는 계산 규약으로 0을 쓴다.</figcaption></figure>
       <div id="read-1" class="visual-readouts" aria-live="polite"></div>
       <p id="note-1" class="visual-note"></p>
     </div>

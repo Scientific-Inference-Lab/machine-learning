@@ -29,9 +29,9 @@
 <body class="visual-topic topic-gradients">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/04.%20Derivatives%20and%20Probability.pdf" aria-label="Derivatives and Probability 강의 PDF">Derivatives and Probability</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><h1 class="page-title">Gradients</h1><hr class="accent-rule"><p class="page-subtitle">그래디언트(gradient)는 각 변수에 대한 편미분을 모은 벡터다. 그래디언트와 이동 방향의 내적이 그 방향으로 조금 움직일 때 함수의 1차 변화를 정한다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><h1 class="page-title">Gradients</h1><hr class="accent-rule"><p class="page-subtitle">그래디언트(gradient)는 각 변수에 대한 편미분을 모은 벡터다. 그래디언트와 작은 이동 벡터의 내적은 함수값 변화의 1차 근사다.</p></div></section>
 <main id="main-content" class="page-body container">
-  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>그래디언트 ∇J</strong><span>(∂J/∂θ₁, ∂J/∂θ₂)이며 함수가 가장 빠르게 커지는 방향을 가리킨다.</span></article><article class="summary-card"><strong>방향 변화 ∇J·d</strong><span>방향 d로 조금 움직일 때 J의 1차 변화다.</span></article><article class="summary-card"><strong>접선 방향</strong><span>∇J와 내적이 0인 방향은 1차 변화가 없다.</span></article></div></section>
+  <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>그래디언트 ∇J</strong><span>(∂J/∂θ₁, ∂J/∂θ₂)이며 영벡터가 아니면 함수가 가장 빠르게 커지는 방향을 가리킨다.</span></article><article class="summary-card"><strong>방향에 따른 변화율 ∇J·d</strong><span>작은 이동이 εd이면 함수값 변화의 1차 근사는 ε(∇J·d)다.</span></article><article class="summary-card"><strong>접선 방향</strong><span>∇J와 내적이 0인 방향은 1차 변화가 없다.</span></article></div></section>
 
   <section class="topic-example">
     <header class="example-header"><h2 class="section-title">같은 점에서 방향에 따라 1차 변화가 달라진다</h2><p class="lead">J(θ₁, θ₂) = θ₁² + 2θ₂²에서 점과 이동 방향에 따라 그래디언트와 방향 벡터의 내적이 달라지고, 그 부호가 J의 1차 변화 방향을 정한다.</p></header>
@@ -48,7 +48,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">1차 변화가 0이어도 실제 변화는 남을 수 있다</h2><p class="lead">점 (1, 1)에서 그래디언트 (2, 4)와 직교하는 방향 d = (2, −1)로 0.1만큼 움직인다.</p></header>
+    <header class="example-header"><h2 class="section-title">1차 변화가 0이어도 실제 변화는 남을 수 있다</h2><p class="lead">점 (1, 1)에서 그래디언트 (2, 4)와 직교하는 벡터 d = (2, −1)의 0.1배만큼 움직인다.</p></header>
     <div class="visual-lab">
       <figure class="visual-figure"><div class="visual-frame"><div class="vector-board"><div class="vector-card"><strong>시작</strong>(1, 1), J = 3</div><div class="vector-card"><strong>작은 이동</strong>0.1 × (2, −1)</div><div class="vector-card"><strong>도착</strong>(1.2, 0.9), J = 3.06</div></div></div><figcaption class="visual-caption">세 카드는 시작점, 이동량, 도착점과 각 점의 함수값이다.</figcaption></figure>
       <p class="visual-note">1차 근사는 0.1 × ∇J·d = 0.1 × (2·2 + 4·(−1)) = 0이지만 실제 변화는 3.06 − 3 = 0.06이다. 직교 방향에서는 선형 항만 0이 되고 유한한 이동에서는 이차항이 남는다.</p>
@@ -98,9 +98,9 @@
     $("grad-read").innerHTML = rd("점과 J", vec([a, b]) + ", J = " + (a * a + 2 * b * b)) + rd("그래디언트 ∇J", vec(g)) + rd("방향 d", vec(d)) + rd("∇J·d", neg(dot) + " · " + change);
     $("grad-note").textContent = a === 0 && b === 0
       ? "원점에서는 ∇J = (0, 0)이라 어느 방향으로 움직여도 1차 변화가 0이다. 이 점에서 J가 최소다."
-      : c === "gradient" ? "d = ∇J이면 ∇J·d = ‖∇J‖² = " + dot + (/[036]$/.test(String(dot)) ? "으로" : "로") + " 양수라 J가 증가한다. 같은 길이의 방향 중 증가가 가장 크다."
+      : c === "gradient" ? "d = ∇J이면 ∇J·d = ‖∇J‖² = " + dot + (/[036]$/.test(String(dot)) ? "으로" : "로") + " 양수다. 단위 방향 중 그래디언트 방향의 1차 변화율이 가장 크다."
       : c === "negative" ? "d = −∇J이면 ∇J·d = −‖∇J‖² = " + neg(dot) + (/[036]$/.test(String(dot)) ? "으로" : "로") + " 음수라 J가 감소한다. 경사하강법이 이 방향으로 움직인다."
-      : "접선 방향 (2θ₂, −θ₁)에서는 ∇J와의 내적이 2θ₁·2θ₂ + 4θ₂·(−θ₁) = 0이라 1차 변화가 없다. 화살표가 등고선을 따라간다.";
+      : "접선 방향 (2θ₂, −θ₁)에서는 ∇J와의 내적이 2θ₁·2θ₂ + 4θ₂·(−θ₁) = 0이라 1차 변화가 없다. 화살표는 현재 점에서 등고선의 접선 방향을 가리킨다.";
   }
   ["x", "y", "direction-choice"].forEach(function (id) { $(id).addEventListener("input", render); });
   $("direction-choice").addEventListener("change", render);

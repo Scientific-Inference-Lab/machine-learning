@@ -46,7 +46,7 @@
         </div>
         <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-2" class="topic-plot" viewBox="45 25 510 245" role="img" aria-labelledby="plot-title-2 plot-desc-2"><title id="plot-title-2">비용·커널에 따른 결정 경계</title><desc id="plot-desc-2">결정 경계와 각 관측의 분류 상태</desc></svg></div><figcaption class="visual-caption">실선은 결정 점수 0, 점선은 −1과 +1이다. 파란 점은 범주 A, 초록 점은 범주 B다. 회색 테두리는 맞게 분류했지만 마진 안쪽에 있는 점, 빨간 ×는 잘못 분류한 점이다.</figcaption></figure>
         <div class="visual-readouts" id="state-read-2" aria-live="polite"></div>
-        <p class="visual-note">C가 20일 때 RBF 커널은 학습 관측 10개를 모두 맞힌다. 새 관측의 분류 성능은 별도의 검증 자료에서 비교한다.</p>
+        <p class="visual-note">이 예에서 RBF 커널과 C = 20을 고르면 학습 관측 10개를 모두 맞힌다. 새 관측의 분류 성능은 별도의 검증 자료에서 비교한다.</p>
       </div>
     </section>
     <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../23. nearest-neighbors-and-support-vectors/knn.html" rel="prev">이전 · kNN</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../24. clustering-and-principal-components/k-means-clustering.html" rel="next">다음 · K-means Clustering</a></nav>
@@ -130,7 +130,7 @@
       '<title id="plot-title-2">비용·커널에 따른 결정 경계</title><desc id="plot-desc-2">잘못 분류한 점 ' + errors + '개. 맞게 분류했지만 마진 안쪽에 있는 점 ' + inside + '개.</desc>' +
       basePlot() + '<path class="svm-margin" d="' + fit.levels + '"/><path class="svm-boundary" d="' + fit.boundary + '"/>' + points;
     document.getElementById("state-read-2").innerHTML =
-      readout("마진 위반 합계", (inside + errors) + "개") +
+      readout("마진을 위반한 관측 수", (inside + errors) + "개") +
       readout("맞게 분류한 점 중 마진 안쪽", inside + "개") +
       readout("오분류", errors + "개");
   }

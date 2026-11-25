@@ -145,7 +145,7 @@
     svg.querySelector("desc").textContent = "β = " + b + ", RSS " + r.toFixed(2) + ", 음의 로그 우도 " + nll.toFixed(2);
     var near = Math.abs(b - BHAT) < 0.03;
     var note = "오차가 서로 독립이고 N(0, σ²)을 따른다고 두면 −ℓ(β) = RSS/(2σ²) + C이고, σ² = 1이면 C = 3 ln 2π ≈ " + C.toFixed(3) + "는 β와 무관하다. " +
-      (near ? "β = " + b.toFixed(2) + "는 최소제곱 해 β̂ = " + BHAT.toFixed(3) + "에 가까워 RSS와 음의 로그 우도가 함께 가장 작다." : "β = " + b.toFixed(2) + "에서 RSS는 " + r.toFixed(2) + ", 음의 로그 우도는 " + nll.toFixed(2) + "로 둘 다 β̂ = " + BHAT.toFixed(3) + "에서보다 크다. 두 곡선은 위아래로만 떨어져 있어 가장 낮은 β가 같으므로, 최소제곱 계수가 곧 정규 오차 모델의 최대우도 추정값이다.");
+      (near ? "β = " + b.toFixed(2) + "는 최소제곱 해 β̂ = " + BHAT.toFixed(3) + "에 가까워 RSS와 음의 로그 우도가 각각의 최솟값에 가깝다." : "β = " + b.toFixed(2) + "에서 RSS는 " + r.toFixed(2) + ", 음의 로그 우도는 " + nll.toFixed(2) + "로 둘 다 β̂ = " + BHAT.toFixed(3) + "에서보다 크다. 두 곡선은 위아래로만 떨어져 있어 가장 낮은 β가 같으므로, 최소제곱 계수가 곧 정규 오차 모델의 최대우도 추정값이다.");
     note = note.replace("C.toFixed(3)", "").replace(C.toFixed(3) + "는", kj(C.toFixed(3), "은", "는")).replace("β = " + b.toFixed(2) + "는", kj("β = " + b.toFixed(2), "은", "는")).replace(nll.toFixed(2) + "로 둘 다", jro(nll.toFixed(2)) + " 둘 다");
     show(2, [["RSS", r.toFixed(2)], ["−ℓ(β) (σ² = 1)", nll.toFixed(2)], ["최소제곱 해 β̂", BHAT.toFixed(3)], ["β̂에서의 RSS", rss(BHAT).toFixed(2)]], note);
   }

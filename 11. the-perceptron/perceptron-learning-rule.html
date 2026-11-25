@@ -47,7 +47,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>갱신 조건</strong><span>mᵢ = yᵢ(wᵀxᵢ + b) ≤ 0이면 갱신하고, mᵢ > 0이면 그대로 둔다.</span></article><article class="summary-card"><strong>갱신 방향 yᵢxᵢ</strong><span>정답이 +1이면 xᵢ 쪽으로, −1이면 반대쪽으로 w를 옮긴다.</span></article><article class="summary-card"><strong>종료 조건</strong><span>한 에포크의 갱신 0회, 또는 미리 정한 최대 에포크 수다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">오분류하거나 경계 위에 있는 관측에서만 가중치가 바뀐다</h2><p class="lead">w = (0, 0), b = 0에서 시작해 정한 순서대로 관측마다 점수 s와 판정 yᵢsᵢ를 계산하고, yᵢsᵢ ≤ 0이면 w와 b를 갱신해 결정 경계를 옮긴다.</p></header>
+    <header class="example-header"><h2 class="section-title">오분류하거나 경계 위에 있는 관측에서만 가중치가 바뀐다</h2><p class="lead">w = (0, 0), b = 0에서 시작해 정한 순서대로 관측마다 점수 s와 판정 yᵢsᵢ를 계산하고, yᵢsᵢ ≤ 0이면 w와 b를 갱신한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="porder">관측 순서</label><select id="porder"><option value="a">1 → 2 → 3 → 4</option><option value="b">3 → 1 → 4 → 2</option></select></div><div class="action-row"><button id="p-first" class="btn btn-outline" type="button">처음으로</button><button id="p-prev" class="btn btn-outline" type="button">이전</button><button id="p-next" class="btn" type="button">다음</button></div></div>
       <p id="reason-1" class="control-reason" hidden></p>
@@ -60,8 +60,8 @@
   <section class="topic-example">
     <header class="example-header"><h2 class="section-title">경사하강법과 퍼셉트론은 갱신 방향을 구하는 방법이 다르다</h2><p class="lead">두 방법 모두 매개변수를 반복해서 바꾸지만 갱신 기준, 시점, 방향이 다르다.</p></header>
     <div class="visual-lab">
-      <figure class="visual-figure"><div class="visual-frame"><table class="topic-table" aria-label="경사하강법과 퍼셉트론 비교"><thead><tr><th scope="col">항목</th><th scope="col">경사하강법</th><th scope="col">퍼셉트론 학습 규칙</th></tr></thead><tbody><tr><th scope="row">갱신 기준</th><td>목적함수의 그래디언트</td><td>현재 관측의 yᵢsᵢ ≤ 0</td></tr><tr><th scope="row">갱신 시점</th><td>각 반복</td><td>오분류 또는 경계 위</td></tr><tr><th scope="row">방향</th><td>−∇J</td><td class="is-y">yᵢxᵢ</td></tr><tr><th scope="row">곱하는 계수</th><td>학습률 η</td><td>학습률 1</td></tr></tbody></table></div><figcaption class="visual-caption">행은 비교 항목이다. 초록 칸은 퍼셉트론의 갱신 방향이다.</figcaption></figure>
-      <p class="visual-note">퍼셉트론은 자료 전체 목적함수의 그래디언트를 계산하지 않는다. 틀린 관측 하나의 정답 부호와 특성 벡터를 그대로 더해 그 관측의 점수를 정답 부호 쪽으로 움직인다. 이 갱신은 그 관측의 손실 −yᵢsᵢ에 학습률 1을 적용한 확률적 경사하강법 한 단계와 같다.</p>
+      <figure class="visual-figure"><div class="visual-frame"><table class="topic-table" aria-label="경사하강법과 퍼셉트론 비교"><thead><tr><th scope="col">항목</th><th scope="col">경사하강법</th><th scope="col">퍼셉트론 학습 규칙</th></tr></thead><tbody><tr><th scope="row">갱신 기준</th><td>목적함수의 그래디언트</td><td>현재 관측의 yᵢsᵢ ≤ 0</td></tr><tr><th scope="row">갱신 시점</th><td>각 반복</td><td>오분류 또는 경계 위</td></tr><tr><th scope="row">가중치 갱신 방향</th><td>−∇w J</td><td class="is-y">yᵢxᵢ</td></tr><tr><th scope="row">곱하는 계수</th><td>학습률 η</td><td>학습률 1</td></tr></tbody></table></div><figcaption class="visual-caption">행은 비교 항목이다. 초록 칸은 퍼셉트론의 갱신 방향이다.</figcaption></figure>
+      <p class="visual-note">퍼셉트론은 자료 전체 목적함수의 그래디언트를 계산하지 않는다. 오분류했거나 점수가 0인 관측에서 w에 yᵢxᵢ를, b에 yᵢ를 더한다. 이 갱신은 그 관측의 손실 −yᵢsᵢ에 학습률 1을 적용한 확률적 경사하강법 한 단계와 같다.</p>
     </div>
   </section>
 

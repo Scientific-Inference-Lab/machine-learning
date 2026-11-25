@@ -64,7 +64,7 @@
           <g id="fit-node-2" class="muted"><rect class="box" x="445" y="95" width="135" height="90" rx="11"></rect><text class="strong" x="512" y="128" text-anchor="middle">변환된 자료</text><text x="512" y="154" text-anchor="middle">같은 열 구조</text></g>
           <path class="green-arrow" d="M585 140 H620"></path>
           <g id="fit-node-3" class="muted"><rect class="reference" x="625" y="95" width="110" height="90" rx="11"></rect><text class="strong" x="680" y="128" text-anchor="middle">모델 fit</text><text x="680" y="154" text-anchor="middle">매개변수</text></g>
-          
+
         </svg>
       </div><figcaption class="visual-caption">초록 점선 상자는 전처리가 fit에서 저장하는 상태, 초록 실선 상자는 모델이 저장하는 상태다. 흐린 상자는 아직 지나지 않은 단계다.</figcaption></figure>
       <div id="read-1" class="visual-readouts" aria-live="polite"></div>
@@ -84,7 +84,7 @@
           <g id="predict-node-1" class="muted"><rect class="state" x="265" y="65" width="220" height="150" rx="11"></rect><text class="strong" x="375" y="96" text-anchor="middle">저장된 전처리</text><text x="375" y="125" text-anchor="middle">μ_train · σ_train</text><text x="375" y="151" text-anchor="middle">학습 범주 목록</text><text class="small" x="375" y="188" text-anchor="middle">transform만 적용 · 상태를 다시 계산하지 않음</text></g>
           <path class="green-arrow" d="M490 140 H560"></path>
           <g id="predict-node-2" class="muted"><rect class="reference" x="565" y="95" width="160" height="90" rx="11"></rect><text class="strong" x="645" y="128" text-anchor="middle">저장된 모델</text><text x="645" y="154" text-anchor="middle">예측값 출력</text></g>
-          
+
         </svg>
       </div><figcaption class="visual-caption">초록 점선의 전처리 상태는 predict 동안 다시 계산되지 않는다.</figcaption></figure>
       <div id="read-2" class="visual-readouts" aria-live="polite"></div>
@@ -105,7 +105,7 @@
           <g id="categorical-branch" class="muted"><rect class="box" x="270" y="225" width="245" height="110" rx="11"></rect><text class="strong" x="392" y="257" text-anchor="middle">범주형 경로</text><text x="392" y="286" text-anchor="middle">결측값 대체</text><text x="392" y="312" text-anchor="middle">부호화</text></g>
           <path id="numeric-merge-arrow" class="arrow muted" d="M520 100 C565 100 555 185 600 185"></path><path id="categorical-merge-arrow" class="arrow muted" d="M520 280 C565 280 555 185 600 185"></path>
           <g id="merged-matrix" class="muted"><rect class="reference" x="605" y="125" width="130" height="120" rx="11"></rect><text class="strong" x="670" y="160" text-anchor="middle">병합</text><text x="670" y="190" text-anchor="middle">하나의</text><text x="670" y="216" text-anchor="middle">특성 행렬</text></g>
-          
+
         </svg>
       </div><figcaption class="visual-caption">위는 수치형 경로, 아래는 범주형 경로다. 흐리지 않은 경로가 연결된 변환이고, 오른쪽 초록 상자가 병합한 특성 행렬이다.</figcaption></figure>
       <div id="read-3" class="visual-readouts" aria-live="polite"></div>
@@ -145,7 +145,7 @@ function render(){var i=Number(el.value);progress("predict-node-",3,i);document.
 document.getElementById("read-2").innerHTML=R[i].map(function(p){return rd(p[0],p[1]);}).join("");document.getElementById("note-2").textContent=N[i];}
 el.addEventListener("input",render);render();}());
 (function(){var el=document.getElementById("branch-buttons");
-var T={numeric:{r:[["연결된 경로","수치형"],["적용 변환","결측값 대체 → 척도 조정"],["출력","수치형 열의 변환 결과"]],n:"수치형 열은 결측값 대체와 척도 조정을 거친다. 이 경로만으로는 범주형 열이 빠져 모델 입력이 완성되지 않는다."},
+var T={numeric:{r:[["연결된 경로","수치형"],["적용 변환","결측값 대체 → 척도 조정"],["출력","수치형 열의 변환 결과"]],n:"수치형 열은 결측값 대체와 척도 조정을 거친다. 이 예제에서는 범주형 열의 변환 결과도 모델 입력에 이어 붙인다."},
 categorical:{r:[["연결된 경로","범주형"],["적용 변환","결측값 대체 → 부호화"],["출력","범주형 열의 변환 결과"]],n:"범주형 열은 결측값 대체와 부호화를 거친다. 수치형 열과 다른 상태를 저장하므로 별도 경로로 둔다."},
 both:{r:[["연결된 경로","수치형 · 범주형"],["적용 변환","열 종류별 변환"],["출력","하나의 특성 행렬"]],n:"두 경로의 출력은 행 순서를 유지한 채 열 방향으로 합쳐진다. ColumnTransformer는 열 종류마다 다른 상태를 유지하면서 모델에는 하나의 행렬을 전달한다."}};
 function render(){var v=el.value,t=T[v],num=v!=="categorical",cat=v!=="numeric";

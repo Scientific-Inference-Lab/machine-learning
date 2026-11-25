@@ -160,9 +160,14 @@
     svg.innerHTML = h;
     svg.querySelector("desc").textContent = "μ = " + m + ", σ² = " + v + ", 로그 우도 " + l.toFixed(2) + ", 최댓값 " + LMAX.toFixed(2);
     var near = Math.abs(m - MU) < 0.03 && Math.abs(v - V) < 0.02;
-    var note = near ? "μ = " + m.toFixed(2) + ", σ² = " + v.toFixed(2) + "는 MLE μ̂ = " + MU.toFixed(3) + ", σ̂² = " + V.toFixed(3) + "와 거의 같아 로그 우도가 최댓값 " + LMAX.toFixed(2) + "에 닿았다. 분모를 n − 1로 한 불편 표본분산 " + VU.toFixed(3) + "은 MLE가 아니다."
-      : "후보의 로그 우도는 " + l.toFixed(2) + "로 최댓값보다 " + (LMAX - l).toFixed(2) + " 작다. " + (Math.abs(m - MU) >= 0.03 ? "평균이 표본평균 " + MU.toFixed(3) + "에서 벗어나면 관측과 곡선 중심이 어긋나고, " : "평균은 표본평균에 가깝지만 ") + (v > V ? "분산이 σ̂² = " + V.toFixed(3) + "보다 크면 밀도가 낮게 퍼진다." : v < V ? "분산이 σ̂² = " + V.toFixed(3) + "보다 작으면 가장자리 관측의 밀도가 급히 낮아진다." : "분산은 MLE와 같다.");
-    note = note.replace("로그 우도는 " + l.toFixed(2) + "로", "로그 우도는 " + jro(l.toFixed(2))).replace("σ² = " + v.toFixed(2) + "는", kj("σ² = " + v.toFixed(2), "은", "는")).replace(V.toFixed(3) + "와 거의", kj(V.toFixed(3), "과", "와") + " 거의").replace(VU.toFixed(3) + "은 MLE", kj(VU.toFixed(3), "은", "는") + " MLE");
+    var gap = LMAX - l;
+    var roundedGap = gap.toFixed(2);
+    var gapNote = gap === 0 ? "이며 최댓값과 같다."
+      : roundedGap === "0.00" ? "이며 최댓값과의 차이는 0.01 미만이다."
+      : "이며 최댓값보다 " + roundedGap + " 작다.";
+    var note = near ? "μ = " + m.toFixed(2) + ", σ² = " + v.toFixed(2) + "는 MLE μ̂ = " + MU.toFixed(3) + ", σ̂² = " + V.toFixed(3) + "와 가까우며 로그 우도도 최댓값 " + LMAX.toFixed(2) + "에 가깝다. 분모를 n − 1로 한 불편 표본분산 " + VU.toFixed(3) + "은 MLE가 아니다."
+      : "후보의 로그 우도는 " + l.toFixed(2) + gapNote + " " + (Math.abs(m - MU) >= 0.03 ? "평균이 표본평균 " + MU.toFixed(3) + "에서 벗어나면 관측과 곡선 중심이 어긋나고, " : "평균은 표본평균에 가깝지만 ") + (v > V ? "분산이 σ̂² = " + V.toFixed(3) + "보다 크면 밀도가 낮게 퍼진다." : v < V ? "분산이 σ̂² = " + V.toFixed(3) + "보다 작으면 가장자리 관측의 밀도가 급히 낮아진다." : "분산은 MLE와 같다.");
+    note = note.replace("σ² = " + v.toFixed(2) + "는", kj("σ² = " + v.toFixed(2), "은", "는")).replace(V.toFixed(3) + "와 가까우며", kj(V.toFixed(3), "과", "와") + " 가까우며").replace(VU.toFixed(3) + "은 MLE", kj(VU.toFixed(3), "은", "는") + " MLE");
     show(3, [["로그 우도 ℓ(μ, σ²)", l.toFixed(2)], ["μ̂ (표본평균)", MU.toFixed(3)], ["σ̂² (분모 n)", V.toFixed(3)], ["분모 n − 1의 표본분산", VU.toFixed(3)]], note);
   }
 

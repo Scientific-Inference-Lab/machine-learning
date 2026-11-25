@@ -33,7 +33,7 @@
       </div>
     </section>
     <section class="topic-example">
-      <header class="example-header"><h2 class="section-title">다수결과 확률 평균은 서로 다른 답을 낼 수 있다</h2><p class="lead">나무 수가 바뀌면 같은 입력에서 나무들이 낸 범주별 표 수와 범주 A의 평균 확률도 바뀐다. scikit-learn은 나무별 확률을 평균해 범주를 고른다.</p></header>
+      <header class="example-header"><h2 class="section-title">다수결과 확률 평균은 서로 다른 답을 낼 수 있다</h2><p class="lead">나무 수가 바뀌면 같은 입력에서 나무들이 낸 범주별 표 수와 범주 A의 평균 확률도 바뀐다. scikit-learn의 RandomForestClassifier는 평균 확률이 가장 큰 범주를 고른다.</p></header>
       <div class="visual-lab">
         <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-2">나무 수</label><select id="state-2"><option value="0">5그루</option><option value="1">9그루</option></select></div></div>
         <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-2" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-2 plot-desc-2"><title id="plot-title-2">다수결과 확률 평균</title><desc id="plot-desc-2">나무별 확률과 범주, 확률 평균으로 정한 예측</desc></svg></div><figcaption class="visual-caption">원 안의 수는 나무별 범주 A의 확률, 원 아래 글자는 각 나무가 고른 범주다. 아래 막대는 A(파랑)와 B(초록)의 평균 확률이다.</figcaption></figure>

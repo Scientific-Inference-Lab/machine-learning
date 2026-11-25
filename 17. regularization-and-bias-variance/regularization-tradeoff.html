@@ -40,10 +40,10 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>E[(y₀ − f̂(x₀))²]</strong><span>= (E[f̂(x₀)] − f(x₀))² + Var(f̂(x₀)) + σ²이다.</span></article><article class="summary-card"><strong>편향(bias)과 분산(variance)</strong><span>편향은 평균 예측이 참함수값에서 벗어난 정도, 분산은 학습 자료를 바꿀 때 예측이 흔들리는 정도다.</span></article><article class="summary-card"><strong>λ 선택</strong><span>계수는 고정한 λ에서 목적함수로, λ는 교차검증의 평균 검증 오차로 정한다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">λ를 키우면 적합 곡선들이 덜 흔들리지만 평균 곡선은 참함수에서 멀어진다</h2><p class="lead">참함수 f(x) = sin(2x) + x/2에서 잡음 σ = 0.5인 학습 자료를 200번 새로 뽑아 9차 다항식 ridge regression을 적합했다. 적합 곡선들의 평균과 참함수의 차이가 편향이고, 평균 주위로 곡선들이 흩어진 정도가 분산이다.</p></header>
+    <header class="example-header"><h2 class="section-title">이 모의실험에서 벌점이 커지면 적합 곡선의 변동이 줄어든다</h2><p class="lead">참함수 f(x) = sin(2x) + x/2에서 잡음 σ = 0.5인 학습 자료를 200번 새로 뽑아 9차 다항식 ridge regression을 적합했다. 적합 곡선들의 평균과 참함수의 차이가 편향이고, 평균 주위로 곡선들이 흩어진 정도가 분산이다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="li">정규화 강도 λ <output id="li-out" class="control-value" for="li">0.01</output></label><input id="li" type="range" min="0" max="10" step="1" value="4"></div></div>
-      <figure class="visual-figure"><div class="visual-frame"><svg id="rep-plot" class="topic-plot" viewBox="0 0 900 340" role="img" aria-labelledby="rp-title rp-desc"><title id="rp-title">반복 학습한 곡선과 오차 분해</title><desc id="rp-desc">λ에 따른 적합 곡선의 흩어짐과 편향의 제곱, 분산, 잡음 분산</desc></svg></div><figcaption class="visual-caption">왼쪽: 검은 점선은 참함수, 옅은 파란 선은 서로 다른 학습 자료 8개로 적합한 곡선, 초록 선은 200개 곡선의 평균이다. 오른쪽: 막대는 x 구간 전체에서 평균한 편향의 제곱(짙은 파랑), 분산(초록), 잡음 분산(회색)이며 세 막대를 더한 값이 기대 제곱 예측 오차다.</figcaption></figure>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="rep-plot" class="topic-plot" viewBox="0 0 900 340" role="img" aria-labelledby="rp-title rp-desc"><title id="rp-title">반복 학습한 곡선과 오차 분해</title><desc id="rp-desc">λ에 따른 적합 곡선의 흩어짐과 편향의 제곱, 분산, 잡음 분산</desc></svg></div><figcaption class="visual-caption">왼쪽: 검은 점선은 참함수, 옅은 파란 선은 서로 다른 학습 자료 8개로 적합한 곡선, 초록 선은 200개 곡선의 평균이다. 오른쪽: 막대는 x 구간 전체에서 평균한 편향의 제곱(짙은 파랑), 분산(초록), 잡음 분산(회색)이며 반올림 전 세 항을 더하면 기대 제곱 예측 오차의 추정값을 얻는다.</figcaption></figure>
       <div id="read-1" class="visual-readouts" aria-live="polite"></div>
       <p id="note-1" class="visual-note"></p>
     </div>
@@ -119,7 +119,7 @@
     svg.querySelector("desc").textContent = "λ = " + lamText(BV.lams[i]) + ", 편향의 제곱 " + f3(b2) + ", 분산 " + f3(v);
     var note = i === 0 ? "λ = 0이면 벌점이 없어 9차 곡선이 학습 자료의 잡음까지 따라가 곡선들이 크게 흔들린다. 평균 곡선은 참함수에 거의 붙어 편향의 제곱은 " + f3(b2) + "로 작지만 분산이 " + kj(f3(v), "이다", "다") + "."
       : BV.lams[i] >= 1 ? "λ = " + lamText(BV.lams[i]) + "처럼 크면 계수가 크게 축소되어 곡선들이 거의 겹치지만(분산 " + f3(v) + ") 평균 곡선이 참함수의 굴곡을 따라가지 못해 편향의 제곱이 " + f3(b2) + "까지 커진다."
-      : "λ = " + lamText(BV.lams[i]) + "에서 편향의 제곱 " + f3(b2) + ", 분산 " + f3(v) + ", 잡음 분산 0.250을 더한 기대 제곱 예측 오차는 " + kj(f3(BV.mse[i]), "이다", "다") + ". 잡음 분산은 어떤 λ에서도 줄지 않는다.";
+      : "λ = " + lamText(BV.lams[i]) + "에서 편향의 제곱 " + f3(b2) + ", 분산 " + f3(v) + ", 잡음 분산 0.250을 반올림 전에 더한 기대 제곱 예측 오차의 추정값은 " + kj(f3(BV.mse[i]), "이다", "다") + ". 잡음 분산은 어떤 λ에서도 줄지 않는다.";
     show(1, [["편향의 제곱", f3(b2)], ["분산", f3(v)], ["잡음 분산", "0.250"], ["기대 제곱 예측 오차", f3(BV.mse[i])]], note);
   }
 
@@ -161,7 +161,7 @@
     var cvBest = cv.indexOf(Math.min.apply(null, cv));
     svg.querySelector("desc").textContent = "λ = " + R.lams[i] + ", 교차검증 최소 λ = " + R.lams[cvBest];
     show(3, [["RSS + 벌점 (ridge regression)", obj[i].toFixed(1)], ["교차검증 오차", cv[i].toFixed(2)], ["교차검증으로 고른 λ", String(R.lams[cvBest])]],
-      "벌점은 0 이상이라 학습 목적함수는 λ = 0에서 가장 작다(" + obj[0].toFixed(1) + "). 이 기준으로 고르면 늘 정규화를 하지 않게 된다. " + (meth === "ridge" ? "ridge regression" : "lasso") + "의 5-fold 교차검증 오차는 λ = " + R.lams[cvBest] + "에서 " + jro(cv[cvBest].toFixed(2)) + " 가장 작아 이 값을 고르고, 개발 자료 전체로 다시 학습한 뒤 테스트 자료로 한 번 평가한다.");
+      "벌점은 0 이상이라 학습 목적함수는 λ = 0에서 가장 작다(" + obj[0].toFixed(1) + "). 서로 다른 λ의 목적함수를 직접 비교하면 작은 λ가 유리하다. " + (meth === "ridge" ? "ridge regression" : "lasso") + "의 5-fold 교차검증 오차는 λ = " + R.lams[cvBest] + "에서 " + jro(cv[cvBest].toFixed(2)) + " 가장 작아 이 값을 고르고, 개발 자료 전체로 다시 학습한 뒤 테스트 자료로 한 번 평가한다.");
   }
 
   $("li").addEventListener("input", renderRep); $("li2").addEventListener("input", renderCurve);

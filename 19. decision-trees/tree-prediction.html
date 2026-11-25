@@ -45,7 +45,7 @@
 <body class="visual-topic topic-tree-prediction">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
 <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/19.%20Decision%20Trees.pdf" aria-label="Decision Trees 강의 PDF">Decision Trees</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-<section class="hero topic-hero"><div class="container"><h1 class="page-title">Tree Prediction</h1><hr class="accent-rule"><p class="page-subtitle">분류 트리(classification tree)는 새 관측을 뿌리에서부터 조건에 따라 내려보내고, 도달한 끝점에 있던 학습 관측의 다수 범주로 답한다. 깊이(max_depth)는 표현할 수 있는 구역 수를 정하지만 깊을수록 검증 오차가 작아지지는 않으며, 한 번에 한 축만 자르므로 비스듬한 경계는 계단 모양으로만 흉내 낸다.</p></div></section>
+<section class="hero topic-hero"><div class="container"><h1 class="page-title">Tree Prediction</h1><hr class="accent-rule"><p class="page-subtitle">분류 트리(classification tree)는 새 관측을 뿌리에서부터 조건에 따라 내려보내고, 도달한 끝점에 있던 학습 관측의 다수 범주로 답한다. 최대 깊이(max_depth)는 끝점 수의 상한을 정하지만 깊을수록 검증 오차가 작아지지는 않으며, 한 번에 한 축만 자르므로 비스듬한 경계는 계단 모양으로만 흉내 낸다.</p></div></section>
 <main id="main-content" class="page-body container">
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>경로와 구역</strong><span>뿌리에서 끝점까지의 경로는 한 구역에 도달하는 조건의 연쇄이고, 같은 끝점에 닿은 관측은 같은 범주로 예측된다.</span></article><article class="summary-card"><strong>끝점 수의 상한</strong><span>최대 깊이가 d이면 끝점은 많아야 2ᵈ개다. 깊이는 검증 성능을 비교해 고른다.</span></article><article class="summary-card"><strong>단위 변환</strong><span>x &lt; 2 m를 100x &lt; 200 cm로 바꿔도 같은 관측이 같은 쪽으로 가므로 표준화가 보통 필요 없다.</span></article><article class="summary-card"><strong>나무의 불안정성</strong><span>자료가 조금 바뀌어 맨 위 분할이 달라지면 그 아래 규칙이 통째로 달라 보일 수 있다.</span></article></div></section>
 
@@ -60,7 +60,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">깊이를 늘리면 학습 오차는 계속 줄지만 검증 오차는 어느 깊이부터 다시 커진다</h2><p class="lead">가운데 원 안이면 85%, 밖이면 15%의 확률로 범주 1이 되는 자료에서 학습 관측 100개로 나무를 키우고 검증 관측 1,000개로 잰다. 깊은 나무는 더 작은 구역으로 학습 자료에 맞출 수 있지만 검증 오분류율도 낮아지는 것은 아니다.</p></header>
+    <header class="example-header"><h2 class="section-title">이 예에서는 최대 깊이 4에서 검증 오분류율이 가장 낮다</h2><p class="lead">가운데 원 안이면 85%, 밖이면 15%의 확률로 범주 1이 되는 자료에서 학습 관측 100개로 나무를 키우고 검증 관측 1,000개로 잰다. 깊은 나무는 더 작은 구역으로 학습 자료에 맞출 수 있지만 검증 오분류율도 낮아지는 것은 아니다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="d2">최대 깊이 <output id="d2-out" class="control-value" for="d2">4</output></label><input id="d2" type="range" min="1" max="10" step="1" value="4"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="depth-plot" class="topic-plot" viewBox="0 0 900 430" role="img" aria-labelledby="de-title de-desc"><title id="de-title">깊이와 오분류율</title><desc id="de-desc">학습 관측의 구역과 깊이별 학습·검증 오분류율</desc></svg></div><figcaption class="visual-caption">왼쪽은 학습 관측 100개와 현재 깊이의 구역이고, 빨간 점선 원은 자료를 만든 원의 경계다. 오른쪽 곡선은 깊이별 오분류율이며 파란 실선이 학습, 초록 점선이 검증이고 세로 점선이 현재 깊이다.</figcaption></figure>
@@ -189,7 +189,7 @@
     svg.innerHTML = h;
     svg.querySelector("desc").textContent = "최대 깊이 " + d + ", 끝점 " + cur.leaves + "개, 학습 " + pct(cur.tr) + ", 검증 " + pct(cur.va);
     var note;
-    if (d < BEST.d) note = "깊이 " + d + "의 나무는 끝점 " + cur.leaves + "개로 원 모양을 아직 거칠게 잘라 학습 " + pct(cur.tr) + ", 검증 " + pct(cur.va) + "를 틀린다. 깊이를 늘리면 두 오분류율이 함께 줄어든다.";
+    if (d < BEST.d) note = "깊이 " + d + "의 나무는 끝점 " + cur.leaves + "개로 원 모양을 아직 거칠게 잘라 학습 " + pct(cur.tr) + ", 검증 " + pct(cur.va) + "를 틀린다. 이 예에서 깊이 4일 때 두 오분류율은 지금보다 낮다.";
     else if (d === BEST.d) note = "깊이 " + d + "에서 검증 오분류율이 " + pct(cur.va) + "로 가장 낮다. 끝점 " + cur.leaves + "개가 원 모양을 대략 따라가고, 검증 자료로 고를 깊이는 이 값이다.";
     else note = "깊이 " + d + "의 나무는 끝점이 " + cur.leaves + "개로 늘어 학습 오분류율이 " + pct(cur.tr) + "까지 내려가지만 검증 오분류율은 " + pct(cur.va) + "로 깊이 " + BEST.d + "의 " + pct(BEST.va) + "보다 높다. 작은 끝점이 잡음으로 뒤집힌 학습 관측까지 따로 떼어 내기 때문이며, 학습 오차 감소가 검증 오차 감소를 보장하지 않는다.";
     show(2, [["끝점 수 (상한 2ᵈ)", cur.leaves + "개 (" + Math.pow(2, d) + "개)"], ["학습 오분류율", pct(cur.tr)], ["검증 오분류율", pct(cur.va)], ["검증이 가장 낮은 깊이", String(BEST.d)]], note);

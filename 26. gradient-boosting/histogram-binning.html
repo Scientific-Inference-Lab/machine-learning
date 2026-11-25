@@ -44,7 +44,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">결측 관측은 분할마다 잔차 제곱합을 더 줄이는 쪽 가지로 간다</h2><p class="lead">특성 값이 있는 관측 6개와 비어 있는 관측 2개가 든 잎이다. 분할 위치와 결측 관측의 잔차에 따라 결측을 왼쪽에 보낼 때와 오른쪽에 보낼 때의 잔차 제곱합이 달라지고, 더 작은 쪽이 선택된다.</p></header>
+    <header class="example-header"><h2 class="section-title">결측 관측은 제곱오차 합이 작은 가지로 간다</h2><p class="lead">특성 값이 있는 관측 6개와 비어 있는 관측 2개가 있다. 분할마다 결측 관측을 왼쪽과 오른쪽에 각각 넣어 보고, 두 잎의 잔차 평균으로 예측했을 때의 제곱오차 합을 비교한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double"><div class="control-field"><label for="mcut">분할 위치 x ≤ <output id="mcut-out" class="control-value" for="mcut">3.5</output></label><input id="mcut" type="range" min="1.5" max="5.5" step="1" value="3.5"></div><div class="control-field"><label for="mres">결측 관측의 잔차 <output id="mres-out" class="control-value" for="mres">−1, 0.2</output></label><select id="mres"><option value="a">−2.5, −1.5</option><option value="b" selected>−1, 0.2</option><option value="c">1.5, 2.5</option></select></div></div>
       <figure class="visual-figure"><div class="visual-frame"><svg id="miss-plot" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="miss-title miss-desc"><title id="miss-title">결측 관측의 가지 선택</title><desc id="miss-desc">관측 잔차와 결측 관측</desc></svg></div><figcaption class="visual-caption">짙은 점은 특성 값이 있는 관측의 잔차, 오른쪽 칸의 초록 점은 특성이 비어 있는 관측의 잔차다. 회색 점선은 분할 위치, 파란 가로선은 결측을 선택된 쪽에 넣었을 때 두 잎의 잔차 평균이다.</figcaption></figure>
@@ -140,7 +140,7 @@
     s += '<line class="split" x1="' + MX(t) + '" y1="24" x2="' + MX(t) + '" y2="272"/>';
     $("miss-plot").innerHTML = s;
     show(2, [["결측을 왼쪽에 보낼 때", r2(left)], ["결측을 오른쪽에 보낼 때", r2(right)], ["선택한 쪽", goLeft ? "왼쪽 가지" : "오른쪽 가지"], ["두 잎의 잔차 평균", r2(avg(LL)) + ", " + r2(avg(RR))]],
-      "x ≤ " + t + "에서 결측 관측 두 개를 " + (goLeft ? "왼쪽" : "오른쪽") + "에 보내면 잔차 제곱합이 " + kj(r2(Math.min(left, right)), "으로") + " 반대쪽의 " + r2(Math.max(left, right)) + "보다 작아 그쪽을 고른다. " + (varies ? "이 결측 관측은 분할 위치에 따라 왼쪽으로도 오른쪽으로도 가므로, 결측을 보낼 쪽은 분할마다 따로 정해진다." : "이 결측 관측의 잔차는 한쪽 관측들과 비슷해 다섯 분할 위치 모두에서 같은 쪽으로 간다."));
+      "x ≤ " + t + "에서 결측 관측 두 개를 " + (goLeft ? "왼쪽" : "오른쪽") + "에 보내면 잔차 예측의 제곱오차 합이 " + kj(r2(Math.min(left, right)), "으로") + " 반대쪽의 " + r2(Math.max(left, right)) + "보다 작아 그쪽을 고른다. " + (varies ? "이 결측 관측은 분할 위치에 따라 왼쪽으로도 오른쪽으로도 가므로, 결측을 보낼 쪽은 분할마다 따로 정해진다." : "이 결측 관측의 잔차는 한쪽 관측들과 비슷해 다섯 분할 위치 모두에서 같은 쪽으로 간다."));
   }
   $("nobs").addEventListener("change", renderBins); $("bins").addEventListener("change", renderBins);
   $("mcut").addEventListener("input", renderMiss); $("mres").addEventListener("change", renderMiss);

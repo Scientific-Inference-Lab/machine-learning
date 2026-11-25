@@ -152,7 +152,7 @@
     var fmt = function (b) { return "(" + neg(b[0].toFixed(2)) + ", " + neg(b[1].toFixed(2)) + ")"; };
     var inside = Math.abs(BH[0]) + Math.abs(BH[1]) <= s;
     var note = inside ? "s = " + s.toFixed(2) + "이면 최소제곱 해 (2.20, 0.60)이 lasso 마름모 안에 있어 lasso 해는 최소제곱 해와 같다. 반지름 √s ≈ " + Math.sqrt(s).toFixed(2) + "인 ridge regression의 원은 이 해를 담지 못해 해가 원 위의 점 " + fmt(r) + "에 놓인다."
-      : l[1] === 0 ? "s = " + s.toFixed(2) + "에서 등고선이 lasso 마름모의 축 위 모서리 (" + l[0].toFixed(2) + ", 0)에 먼저 닿아 β₂가 정확히 0이 된다. 같은 s에서 ridge regression의 원에는 모서리가 없어 해 " + fmt(r) + "의 두 계수가 모두 0이 아니다."
+      : l[1] === 0 ? "s = " + s.toFixed(2) + "에서 등고선이 lasso 마름모의 축 위 모서리 (" + l[0].toFixed(2) + ", 0)에 먼저 닿아 β₂가 정확히 0이 된다. 같은 s에서 이 예의 ridge regression 해 " + fmt(r) + "는 두 축 바깥에 있다."
       : "s = " + s.toFixed(2) + "에서는 등고선이 lasso 마름모의 변에 닿아 해 " + fmt(l) + "의 두 계수가 모두 0이 아니다. 제약이 더 작아지면 모서리에 닿아 β₂가 0이 된다.";
     show(2, [["lasso 해", fmt(l)], ["ridge regression 해", fmt(r)], ["lasso에서 0인 계수", l[1] === 0 ? "β₂" : l[0] === 0 ? "β₁" : "없음"]], note);
   }

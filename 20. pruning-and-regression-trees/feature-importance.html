@@ -38,7 +38,7 @@
     <header class="example-header"><h2 class="section-title">중요도는 분기점마다의 감소량을 특성별로 모은 비율이다</h2><p class="lead">y가 x₁에 크게, x₂에 조금 의존하고 x₃와는 무관하게 만든 학습 관측 120개로 회귀 트리를 키운다. 최대 깊이가 커지면 분기점이 늘어 새 분기점의 감소량 d_t가 더해지고 특성별 합을 전체로 나눈 중요도가 달라진다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="d1">최대 깊이 <output id="d1-out" class="control-value" for="d1">2</output></label><input id="d1" type="range" min="1" max="6" step="1" value="2"></div></div>
-      <figure class="visual-figure"><div class="visual-frame"><svg id="imp-plot" class="topic-plot" viewBox="0 0 900 300" role="img" aria-labelledby="im-title im-desc"><title id="im-title">분기점별 감소량과 특성 중요도</title><desc id="im-desc">특성마다 분기점 감소량 조각을 이어 붙인 막대</desc></svg></div><figcaption class="visual-caption">한 줄이 특성 하나다. 막대 안의 조각 하나가 그 특성으로 나눈 분기점 하나의 감소량 d_t이고, 조각을 모두 이은 길이가 특성 중요도 v_j다. 세 줄의 길이를 더하면 1이다.</figcaption></figure>
+      <figure class="visual-figure"><div class="visual-frame"><svg id="imp-plot" class="topic-plot" viewBox="0 0 900 300" role="img" aria-labelledby="im-title im-desc"><title id="im-title">분기점별 감소량과 특성 중요도</title><desc id="im-desc">특성마다 분기점 감소량 조각을 이어 붙인 막대</desc></svg></div><figcaption class="visual-caption">한 줄이 특성 하나다. 막대 안의 조각 하나가 그 특성으로 나눈 분기점 하나의 감소량을 전체 감소량으로 나눈 값이고, 그 특성의 조각 길이의 합이 특성 중요도 v_j다. 세 줄의 길이를 더하면 1이다.</figcaption></figure>
       <div id="read-1" class="visual-readouts" aria-live="polite"></div>
       <p id="note-1" class="visual-note"></p>
     </div>
@@ -114,7 +114,7 @@
     var note;
     if (im.ds.length === 1) note = "분기점이 하나뿐이고 x₁로 나눴으므로 전체 감소량이 모두 x₁의 몫이다. 중요도는 x₁이 1, 나머지는 0이다.";
     else note = "분기점 " + im.ds.length + "개 가운데 x₁이 " + counts[0] + "번, x₂가 " + counts[1] + "번, x₃이 " + counts[2] + "번 쓰였다. 감소량을 특성별로 더해 나누면 x₁ " + im.v[0].toFixed(3) + ", x₂ " + im.v[1].toFixed(3) + ", x₃ " + im.v[2].toFixed(3) + "이다. " +
-      (im.v[2] > 0.005 ? "y와 무관하게 만든 x₃도 깊은 분기점에서 잡음을 따라 나눠 작은 중요도를 얻었다. 중요도는 이 나무 안에서의 기여이지 원인의 크기가 아니다." : "뿌리 근처의 분기점은 관측이 많아 감소량 조각이 크고, 깊은 분기점의 조각은 작다.");
+      (im.v[2] > 0.005 ? "y와 무관하게 만든 x₃도 깊은 분기점에서 잡음을 따라 나눠 작은 중요도를 얻었다. 중요도는 이 나무 안에서의 기여이지 원인의 크기가 아니다." : "이 나무에서는 뿌리 가까운 분기점의 조각이 크다. 조각 크기에는 분기점의 관측 수와 분할로 줄인 불순도가 함께 반영된다.");
     show(1, [["분기점 수", im.ds.length + "개"], ["x₁ 중요도", im.v[0].toFixed(3)], ["x₂ 중요도", im.v[1].toFixed(3)], ["x₃ 중요도", im.v[2].toFixed(3)]], note);
   }
 

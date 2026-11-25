@@ -48,7 +48,7 @@
   </section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">같은 p에서도 표본 비율은 관측마다 다르다</h2><p class="lead">p = 0.5인 동전을 던진 기록에서도 앞에서부터 쓰는 관측 수 n마다 앞면(H)의 개수와 표본 비율 p̂가 다르다.</p></header>
+    <header class="example-header"><h2 class="section-title">같은 p에서도 표본 비율은 표본에 따라 달라질 수 있다</h2><p class="lead">앞면 확률이 p = 0.5인 동전을 던진 기록이다. 처음 n번 가운데 앞면(H)이 나온 비율 p̂를 계산한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="n">사용할 관측 수 n <output id="n-out" class="control-value" for="n">5</output></label><input id="n" type="range" min="1" max="10" step="1" value="5"></div></div>
       <figure class="visual-figure"><div class="visual-frame"><div id="sample-strip" class="sample-strip" role="img" aria-label="H와 T 관측 순서"></div></div><figcaption class="visual-caption">파란 원은 계산에 쓰는 앞의 n개 관측이고 점선 원은 쓰지 않는 관측이다.</figcaption></figure>
@@ -98,7 +98,7 @@
     $("bernoulli-note").textContent = p === 0 || p === 1
       ? "p = " + p + "이면 한 결과만 가능해 퍼짐이 없으므로 분산이 0이다."
       : p === 0.5 ? "p = 0.5에서 두 결과의 확률이 같고 분산 0.25가 가장 크다."
-      : "p = " + p.toFixed(1) + "이면 X = " + (p > 0.5 ? 1 : 0) + "이 더 가능성이 크고, 분산 p(1 − p) = " + f2(v) + "이다. 분산은 0과 최댓값 0.25 사이에 있다.";
+      : "p = " + p.toFixed(1) + "이면 X = " + (p > 0.5 ? 1 : 0) + "이 나올 확률이 더 크고, 분산 p(1 − p) = " + f2(v) + "이다. 분산은 0과 최댓값 0.25 사이에 있다.";
   }
   var seq = ["H", "T", "H", "H", "T", "T", "H", "T", "H", "H"];
   function sample() {
@@ -107,7 +107,7 @@
     $("sample-strip").innerHTML = seq.map(function (v, i) { return '<span class="' + (i < n ? "used" : "unused") + '">' + v + "</span>"; }).join("");
     $("sample-strip").setAttribute("aria-label", "관측 " + seq.join(" ") + " 가운데 앞의 " + n + "개 사용");
     $("sample-read").innerHTML = rd("H 개수", heads + " / " + n) + rd("표본 비율 p̂", ph.toFixed(3)) + rd("p = 0.5와의 차이", f2(ph - 0.5));
-    $("sample-note").textContent = "앞의 " + n + "개 중 H가 " + heads + "개이므로 p̂ = " + heads + "/" + n + " = " + ph.toFixed(3) + "이다. p = 0.5는 분포의 매개변수이고 p̂는 이 표본에서 계산한 통계량이라 관측 수에 따라 달라진다.";
+    $("sample-note").textContent = "앞의 " + n + "개 중 H가 " + heads + "개이므로 p̂ = " + heads + "/" + n + " = " + ph.toFixed(3) + "이다. p = 0.5는 분포의 매개변수이고 p̂는 이 표본에서 계산한 통계량이라 관측 수에 따라 달라질 수 있다.";
   }
   var X = function (x) { return 40 + (x + 5) * 56; };
   var Y = function (y) { return 250 - y * 290; };
