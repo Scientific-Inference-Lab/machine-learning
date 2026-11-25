@@ -3,9 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><meta name="color-scheme" content="light">
-  <title>Support Vector Machines | Machine Learning | Pusan National University</title><meta name="description" content="Support vector machines use a large-margin hyperplane as the decision boundary between two classes."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/23.%20nearest-neighbors-and-support-vectors/support-vector-machines.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Support Vector Machines | Machine Learning | Pusan National University"><meta property="og:description" content="Support vector machines use a large-margin hyperplane as the decision boundary between two classes."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/23.%20nearest-neighbors-and-support-vectors/support-vector-machines.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
+  <title>Support Vector Machines | Machine Learning | Pusan National University</title><meta name="description" content="Support vector machines learn decision boundaries by balancing a wide margin with the cost of margin violations."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/23.%20nearest-neighbors-and-support-vectors/support-vector-machines.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="Support Vector Machines | Machine Learning | Pusan National University"><meta property="og:description" content="Support vector machines learn decision boundaries by balancing a wide margin with the cost of margin violations."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/23.%20nearest-neighbors-and-support-vectors/support-vector-machines.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
   <link rel="stylesheet" href="../assets/pnu-theme.css">
   <link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
+  <style>
+    #state-plot-2{min-width:0}
+    .svm-boundary{fill:none;stroke:#1f2d3d;stroke-width:4}
+    .svm-margin{fill:none;stroke:#5c6c7c;stroke-width:2;stroke-dasharray:7 5}
+  </style>
 <script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
   window.dataLayer = window.dataLayer || [];
   window.gtag = function () { window.dataLayer.push(arguments); };
@@ -20,25 +25,28 @@
 <body class="visual-topic">
   <a class="skip-link" href="#main-content">본문으로 이동</a>
   <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/23.%20kNN%20and%20SVM.pdf" aria-label="kNN and SVM 강의 PDF">kNN and SVM</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
-  <section class="hero topic-hero"><div class="container"><h1 class="page-title">Support Vector Machines</h1><hr class="accent-rule"><p class="page-subtitle">서포트 벡터 머신(support vector machine, SVM)은 두 범주 사이의 마진(margin)을 크게 만드는 초평면을 결정 경계로 선택한다.</p></div></section>
+  <section class="hero topic-hero"><div class="container"><h1 class="page-title">Support Vector Machines</h1><hr class="accent-rule"><p class="page-subtitle">서포트 벡터 머신(support vector machine, SVM)은 마진(margin)을 넓히는 것과 마진 위반에 드는 비용을 함께 고려해 결정 경계를 학습한다.</p></div></section>
   <main id="main-content" class="page-body container">
-    <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>초평면과 마진</strong><span>마진은 결정 경계에서 가장 가까운 학습 관측까지의 거리다.</span></article><article class="summary-card"><strong>비용과 마진 위반</strong><span>C가 클수록 마진 위반을 크게 벌해 관측을 엄격하게 나누고 작을수록 일부 위반을 허용해 마진이 넓어진다.</span></article></div></section>
+    <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>초평면과 마진</strong><span>두 범주를 완전히 나누는 후보 경계에서는 가장 가까운 학습 관측까지의 거리가 마진이다.</span></article><article class="summary-card"><strong>비용과 마진 위반</strong><span>C는 마진 안쪽에 있거나 반대편에 놓인 관측에 부과하는 비용의 크기를 조절한다.</span></article></div></section>
     <section class="topic-example">
       <header class="example-header"><h2 class="section-title">초평면과 마진</h2><p class="lead">후보 초평면마다 마진과 가장 가까운 학습 관측이 다르다.</p></header>
       <div class="visual-lab">
         <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-1">초평면</label><select id="state-1"><option value="0">중앙 경계</option><option value="1">치우친 경계</option></select></div></div>
-        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-1" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-1 plot-desc-1"><title id="plot-title-1">초평면과 마진</title><desc id="plot-desc-1">두 범주를 나누는 경계와 가장 가까운 관측까지의 거리</desc></svg></div><figcaption class="visual-caption">실선은 후보 결정 경계, 점선은 마진의 양쪽 끝이다. 테두리가 굵은 점은 각 후보 경계에서 가장 가까운 학습 관측이다. 최대 마진 경계를 학습한 결과를 뜻하지는 않는다.</figcaption></figure>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-1" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-1 plot-desc-1"><title id="plot-title-1">초평면과 마진</title><desc id="plot-desc-1">두 범주를 나누는 경계와 가장 가까운 관측까지의 거리</desc></svg></div><figcaption class="visual-caption">실선은 후보 경계, 점선은 마진의 양쪽 끝이다. 테두리가 굵은 점은 후보 경계에 가장 가깝다.</figcaption></figure>
         <div class="visual-readouts" id="state-read-1" aria-live="polite"></div>
         <p class="visual-note" id="state-result-1"></p>
       </div>
     </section>
     <section class="topic-example">
-      <header class="example-header"><h2 class="section-title">비용과 마진 위반</h2><p class="lead">SVC의 C는 마진 위반 비용의 계수이므로 큰 C는 위반을 더 강하게 벌한다. 작은 C는 일부 위반을 감수하며 넓은 마진을 허용한다.</p></header>
+      <header class="example-header"><h2 class="section-title">비용과 커널에 따라 결정 경계가 달라진다</h2><p class="lead">두 커널에 같은 학습 관측 10개를 쓴다. 커널을 그대로 두고 C를 높이면 마진 위반과 오분류는 각각 어떻게 달라지는가?</p></header>
       <div class="visual-lab">
-        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-2">비용 C</label><select id="state-2"><option value="0">작은 C</option><option value="1">큰 C</option></select></div></div>
-        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-2" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-2 plot-desc-2"><title id="plot-title-2">비용 C와 마진 위반</title><desc id="plot-desc-2">C가 달라질 때 마진과 위반 관측이 달라지는 모습</desc></svg></div><figcaption class="visual-caption">반투명 띠는 결정 경계에서 양쪽으로 마진 M만큼 떨어진 두 점선 사이의 띠이며 폭은 2M이다. 빨간 테두리는 마진 안쪽에 있거나 경계를 넘은 관측을 표시한다.</figcaption></figure>
+        <div class="visual-controls visual-controls--double">
+          <div class="control-field"><label for="svm-kernel">커널</label><select id="svm-kernel"><option value="linear">선형</option><option value="rbf">RBF</option></select></div>
+          <div class="control-field"><label for="svm-cost">비용 C</label><select id="svm-cost"><option value="0.5">0.5</option><option value="20">20</option></select></div>
+        </div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-2" class="topic-plot" viewBox="45 25 510 245" role="img" aria-labelledby="plot-title-2 plot-desc-2"><title id="plot-title-2">비용·커널에 따른 결정 경계</title><desc id="plot-desc-2">결정 경계와 각 관측의 분류 상태</desc></svg></div><figcaption class="visual-caption">실선은 결정 점수 0, 점선은 −1과 +1이다. 파란 점은 범주 A, 초록 점은 범주 B다. 회색 테두리는 맞게 분류했지만 마진 안쪽에 있는 점, 빨간 ×는 잘못 분류한 점이다.</figcaption></figure>
         <div class="visual-readouts" id="state-read-2" aria-live="polite"></div>
-        <p class="visual-note" id="state-result-2"></p>
+        <p class="visual-note">C가 20일 때 RBF 커널은 학습 관측 10개를 모두 맞힌다. 새 관측의 분류 성능은 별도의 검증 자료에서 비교한다.</p>
       </div>
     </section>
     <nav class="topic-pager" aria-label="주제 탐색"><a class="pager-link" href="../23. nearest-neighbors-and-support-vectors/knn.html" rel="prev">이전 · kNN</a><a class="pager-link is-all" href="../index.html">전체</a><a class="pager-link" href="../24. clustering-and-principal-components/k-means-clustering.html" rel="next">다음 · K-means Clustering</a></nav>
@@ -55,11 +63,11 @@
 </footer>
 <script>
 (function () {
-  var states = [[["중앙 경계", "두 범주에서 가장 가까운 점까지의 거리가 균형을 이룬다."], ["치우친 경계", "한 범주의 점이 경계에 가까워져 마진이 줄어든다."]], [["작은 C", "일부 위반을 허용하고 넓은 마진을 만든다."], ["큰 C", "위반을 크게 벌해 관측을 더 엄격하게 나눈다."]]];
+  var readings = ["두 범주에서 가장 가까운 점이 경계에서 같은 거리만큼 떨어져 있다.", "범주 B의 가장 가까운 점이 경계에서 25만큼 떨어져 있어 마진이 줄어든다."];
   var blue = "#005baa", green = "#00a651", ink = "#1f2d3d", red = "#b3261e";
   var pts = [[120,210,blue],[165,175,blue],[205,225,blue],[225,150,blue],[360,120,green],[395,165,green],[435,100,green],[480,145,green]];
-  function dot(p, strong, violation) {
-    return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="9" fill="' + p[2] + '" stroke="' + (violation ? red : strong ? ink : '#ffffff') + '" stroke-width="' + (violation || strong ? 4 : 2) + '"/>';
+  function dot(p, strong) {
+    return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="9" fill="' + p[2] + '" stroke="' + (strong ? ink : '#ffffff') + '" stroke-width="' + (strong ? 4 : 2) + '"/>';
   }
   function basePlot() {
     return '<rect x="55" y="35" width="490" height="225" rx="12" fill="#f5f8fb"/>';
@@ -68,40 +76,69 @@
     var svg = document.getElementById("state-plot-1");
     var x = index === 0 ? 292.5 : 335;
     var gap = index === 0 ? 67.5 : 25;
-    var html = basePlot() + '<rect x="' + (x-gap) + '" y="35" width="' + (gap*2) + '" height="225" fill="#d7e0e8" opacity="0.8"/>';
+    var html = '<title id="plot-title-1">초평면과 마진</title><desc id="plot-desc-1">후보 경계에서 가장 가까운 관측까지의 거리는 ' + gap + '이다.</desc>' + basePlot();
+    html += '<rect x="' + (x-gap) + '" y="35" width="' + (gap*2) + '" height="225" fill="#d7e0e8" opacity="0.8"/>';
     html += '<line x1="' + x + '" y1="35" x2="' + x + '" y2="260" stroke="' + ink + '" stroke-width="4"/><line x1="' + (x-gap) + '" y1="35" x2="' + (x-gap) + '" y2="260" stroke="#5c6c7c" stroke-width="2" stroke-dasharray="7 6"/><line x1="' + (x+gap) + '" y1="35" x2="' + (x+gap) + '" y2="260" stroke="#5c6c7c" stroke-width="2" stroke-dasharray="7 6"/>';
-    pts.forEach(function (p, j) { html += dot(p, index === 0 ? (j === 3 || j === 4) : (j === 4), false); });
+    pts.forEach(function (p, j) { html += dot(p, j === 4 || (index === 0 && j === 3)); });
     html += '<text x="' + (x-20) + '" y="285" fill="' + ink + '" font-size="14" font-weight="700">결정 경계</text>';
     svg.innerHTML = html;
-  }
-  function drawCost(index) {
-    var svg = document.getElementById("state-plot-2");
-    var x = index === 0 ? 300 : 323;
-    var gap = index === 0 ? 72 : 37;
-    var mixed = index === 0 ? [[270,170,green],[330,132,blue]] : [[270,170,green],[330,132,blue]];
-    var all = pts.concat(mixed);
-    var html = basePlot() + '<rect x="' + (x-gap) + '" y="35" width="' + (gap*2) + '" height="225" fill="#d7e0e8" opacity="0.8"/>';
-    html += '<line x1="' + x + '" y1="35" x2="' + x + '" y2="260" stroke="' + ink + '" stroke-width="4"/><line x1="' + (x-gap) + '" y1="35" x2="' + (x-gap) + '" y2="260" stroke="#5c6c7c" stroke-width="2" stroke-dasharray="7 6"/><line x1="' + (x+gap) + '" y1="35" x2="' + (x+gap) + '" y2="260" stroke="#5c6c7c" stroke-width="2" stroke-dasharray="7 6"/>';
-    all.forEach(function (p, j) { var violation = j >= pts.length || (p[0] > x-gap && p[0] < x+gap); html += dot(p, false, violation); });
-    html += '<text x="72" y="62" fill="' + blue + '" font-size="15" font-weight="700">범주 A</text><text x="458" y="62" fill="' + green + '" font-size="15" font-weight="700">범주 B</text>';
-    svg.innerHTML = html;
+    return gap;
   }
   function readout(label, value) {
     return '<div class="visual-readout"><span class="visual-readout-label">' + label + '</span><strong class="visual-readout-value">' + value + '</strong></div>';
   }
-  states.forEach(function (options, i) {
-    var n = i + 1;
-    var select = document.getElementById("state-" + n);
-    function render() {
-      var index = Number(select.value);
-      var state = options[index];
-      if (n === 1) { drawMargin(index); } else { drawCost(index); }
-      document.getElementById("state-read-" + n).innerHTML = readout("선택한 조건", state[0]) + readout("선택지", (index + 1) + " / " + options.length);
-      document.getElementById("state-result-" + n).textContent = state[1];
+  var candidate = document.getElementById("state-1");
+  var kernel = document.getElementById("svm-kernel");
+  var cost = document.getElementById("svm-cost");
+  const fitted = {
+    "points": [[120,210,-1],[165,175,-1],[205,225,-1],[225,150,-1],[360,120,1],[395,165,1],[435,100,1],[480,145,1],[270,170,1],[330,132,-1]],
+    "fits": {
+      "linear-0.5": {"margins":[1.828538,1.321962,1.0,0.680807,0.720261,1.0,1.503906,1.883912,-0.261248,-0.400474],"boundary":"M310.3 260.0 L274.8 35.0 L274.8 35.0","levels":"M210.5 260.0 L175.0 35.0 L175.0 35.0 M410.0 260.0 L374.5 35.0 L374.5 35.0"},
+      "linear-20": {"margins":[2.401574,1.839895,1.0,1.0,1.0,1.740158,2.097113,2.994751,-0.207349,-0.577953],"boundary":"M259.2 260.0 L319.2 35.0 L319.2 35.0","levels":"M195.7 260.0 L255.7 35.0 L255.7 35.0 M322.7 260.0 L382.7 35.0 L382.7 35.0"},
+      "rbf-0.5": {"margins":[0.889136,1.0,0.856911,0.622771,0.744535,1.0,1.0,0.976398,-0.206055,-0.472738],"boundary":"M81.9 35.0 L74.9 39.1 L68.2 43.2 L61.9 47.3 L56.0 51.4 L55.0 52.0 L55.0 52.0 M299.3 260.0 L297.6 247.7 L292.5 213.0 L290.6 198.6 L289.0 184.3 L287.7 170.0 L286.6 155.7 L285.4 137.3 L283.6 108.6 L282.6 96.4 L281.5 86.1 L280.4 78.0 L279.1 69.8 L277.9 63.6 L276.5 57.5 L274.8 51.4 L272.7 45.2 L272.0 43.2 L270.2 39.1 L268.3 35.0 L268.3 35.0","levels":"M162.2 175.4 L159.1 176.2 L156.1 177.3 L153.0 179.0 L149.9 181.1 L148.6 182.3 L146.5 184.3 L144.9 186.4 L143.5 188.4 L142.4 190.5 L141.4 192.5 L140.7 194.5 L140.2 196.6 L139.9 198.6 L139.7 200.7 L139.8 202.7 L140.0 204.8 L140.4 206.8 L141.0 208.9 L141.9 210.9 L143.0 213.0 L144.3 215.0 L146.9 217.8 L148.4 219.1 L149.9 220.3 L153.0 222.1 L156.1 223.3 L159.1 224.1 L162.2 224.6 L165.2 224.6 L168.3 224.3 L171.4 223.6 L174.4 222.4 L177.5 220.8 L180.6 218.5 L182.0 217.0 L183.8 215.0 L185.2 213.0 L186.7 210.3 L187.3 208.9 L188.0 206.8 L188.6 204.8 L188.9 202.7 L189.2 200.7 L189.2 198.6 L189.1 196.6 L188.9 194.5 L188.5 192.5 L187.9 190.5 L186.7 187.4 L186.2 186.4 L184.9 184.3 L183.3 182.3 L180.6 179.6 L177.5 177.6 L174.2 176.1 L171.4 175.4 L168.3 175.0 L165.2 175.0 L162.2 175.4 L162.2 175.4 M424.7 100.5 L425.6 100.3 L428.6 100.0 L431.7 99.9 L434.8 100.0 L439.0 100.5 L440.9 100.8 L443.9 101.4 L447.4 102.5 L450.1 103.5 L453.1 104.8 L456.3 106.6 L459.5 108.6 L462.3 110.8 L465.4 113.7 L466.4 114.8 L468.4 117.1 L469.7 118.9 L471.5 121.6 L472.2 123.0 L473.2 125.0 L474.6 128.3 L474.8 129.1 L475.4 131.1 L475.9 133.2 L476.2 135.2 L476.4 137.3 L476.5 139.3 L476.5 141.4 L476.3 143.4 L476.0 145.5 L475.6 147.5 L474.6 151.3 L474.5 151.6 L473.7 153.6 L472.7 155.7 L471.5 158.0 L470.4 159.8 L468.4 162.5 L467.3 163.9 L465.4 166.0 L462.3 168.8 L459.2 171.2 L456.2 173.2 L453.1 174.9 L450.1 176.3 L447.0 177.5 L443.9 178.5 L440.9 179.3 L437.8 179.9 L434.8 180.3 L431.7 180.6 L428.6 180.6 L425.6 180.5 L422.5 180.2 L419.4 179.7 L416.4 179.0 L413.3 178.0 L408.8 176.1 L407.2 175.3 L404.1 173.5 L401.1 171.2 L398.0 168.4 L397.5 168.0 L394.9 164.9 L394.2 163.9 L391.9 160.1 L390.7 157.7 L389.9 155.7 L388.8 152.3 L388.2 149.5 L387.7 145.5 L387.6 141.4 L387.9 137.3 L388.6 133.2 L389.2 131.1 L390.6 127.0 L391.9 124.1 L393.7 120.9 L394.9 118.9 L398.0 114.9 L400.1 112.7 L402.3 110.7 L404.8 108.6 L407.9 106.6 L411.6 104.5 L413.3 103.7 L416.4 102.5 L419.4 101.6 L422.5 100.8 L424.7 100.5 L424.7 100.5"},
+      "rbf-20": {"margins":[1.814127,2.348135,1.0,1.0,1.0,1.722599,2.755159,1.408541,1.0,0.064585],"boundary":"M233.2 260.0 L231.1 253.9 L229.3 247.7 L227.7 241.6 L226.3 235.5 L225.2 229.3 L224.4 223.2 L224.0 217.0 L223.8 213.0 L223.9 208.9 L224.0 204.8 L224.4 200.7 L225.0 196.6 L225.8 192.5 L226.8 188.4 L228.1 184.3 L229.7 180.2 L231.7 176.1 L232.8 174.1 L235.4 170.0 L237.0 168.0 L238.8 165.8 L241.8 162.6 L245.0 159.8 L247.9 157.6 L251.0 155.7 L254.9 153.6 L257.1 152.6 L260.2 151.4 L263.2 150.4 L266.4 149.5 L269.4 148.9 L275.5 147.8 L281.6 147.1 L287.8 146.7 L303.1 145.7 L309.2 145.0 L312.2 144.4 L316.2 143.4 L318.4 142.7 L321.6 141.4 L325.1 139.3 L327.7 137.3 L330.6 134.3 L331.5 133.2 L333.7 129.7 L335.0 127.0 L336.6 123.0 L337.2 120.9 L338.1 116.8 L338.9 112.7 L339.4 108.6 L339.7 104.5 L339.9 98.4 L339.8 91.9 L339.6 86.1 L339.0 78.0 L338.1 69.8 L336.8 59.1 L334.9 47.3 L332.8 35.0 L332.8 35.0","levels":"M181.2 35.0 L177.0 37.0 L171.4 40.0 L165.2 43.4 L158.9 47.3 L152.8 51.4 L146.9 55.7 L142.1 59.5 L137.3 63.6 L132.9 67.7 L128.5 72.2 L125.1 75.9 L121.6 80.0 L118.3 84.1 L115.2 88.2 L112.4 92.3 L109.7 96.4 L107.1 100.8 L104.0 106.2 L101.7 110.7 L98.8 116.8 L96.3 123.0 L94.0 129.1 L91.9 135.2 L90.1 141.4 L88.5 147.5 L87.2 153.6 L86.0 159.8 L85.1 165.9 L84.4 172.0 L83.9 178.2 L83.6 184.3 L83.5 190.5 L83.6 196.6 L83.9 202.7 L84.4 208.9 L85.2 215.0 L86.2 221.1 L87.5 227.3 L89.0 233.4 L90.7 239.5 L92.8 245.7 L95.2 251.8 L97.1 255.9 L99.0 260.0 L99.0 260.0 M207.0 260.0 L206.4 249.8 L205.3 231.4 L204.9 223.2 L204.9 217.0 L205.0 210.9 L205.3 204.8 L205.9 198.6 L206.7 192.5 L207.5 188.4 L208.9 182.3 L210.0 178.2 L211.4 174.1 L212.9 170.0 L214.7 165.9 L216.8 161.8 L219.3 157.7 L222.1 153.6 L223.7 151.6 L226.5 148.3 L229.6 145.2 L232.6 142.6 L235.7 140.2 L238.8 138.2 L241.8 136.4 L244.9 134.8 L248.4 133.2 L251.0 132.2 L254.1 131.1 L257.1 130.2 L263.2 128.6 L269.4 127.4 L287.8 124.0 L292.2 123.0 L293.9 122.5 L298.2 120.9 L300.0 120.1 L303.1 118.5 L306.1 116.4 L308.0 114.8 L309.9 112.7 L312.2 109.4 L312.7 108.6 L313.8 106.6 L314.6 104.5 L315.3 102.5 L316.3 98.4 L316.9 94.3 L317.2 90.2 L317.2 86.1 L316.9 82.0 L316.4 78.0 L315.7 73.9 L314.7 69.8 L313.6 65.7 L312.2 61.6 L310.6 57.5 L308.8 53.4 L306.1 48.4 L304.2 45.2 L302.8 43.2 L299.7 39.1 L296.1 35.0 L296.1 35.0 M474.9 35.0 L478.2 39.1 L481.2 43.2 L483.9 47.3 L486.8 52.1 L488.7 55.5 L491.7 61.6 L494.3 67.7 L496.0 72.4 L497.2 75.9 L498.3 80.0 L499.8 86.1 L500.6 90.2 L501.3 94.3 L502.0 100.5 L502.4 106.6 L502.4 112.7 L502.3 116.8 L501.8 123.0 L501.3 127.0 L500.6 131.1 L499.8 135.2 L498.2 141.4 L497.0 145.5 L495.5 149.5 L493.9 153.6 L492.0 157.7 L489.9 161.8 L487.5 165.9 L484.9 170.0 L481.9 174.1 L478.6 178.2 L476.8 180.2 L472.8 184.3 L470.6 186.4 L468.2 188.4 L465.4 190.7 L462.3 192.9 L459.2 194.9 L456.2 196.8 L452.8 198.6 L448.5 200.7 L447.0 201.3 L443.5 202.7 L440.9 203.7 L434.8 205.6 L428.6 207.0 L422.5 208.1 L416.4 208.9 L410.2 209.5 L394.9 210.9 L391.9 211.4 L388.8 212.0 L385.6 213.0 L382.7 214.1 L379.6 215.8 L376.6 218.3 L373.8 221.1 L373.5 221.5 L370.4 225.7 L367.0 231.4 L359.8 243.6 L355.9 249.8 L352.1 255.1 L349.8 258.0 L348.0 260.0 L348.0 260.0 M261.3 260.0 L259.6 258.0 L256.6 253.9 L254.0 249.8 L251.0 244.4 L249.7 241.6 L247.9 237.5 L246.5 233.4 L245.2 229.3 L244.3 225.2 L243.5 221.1 L243.0 217.0 L242.8 213.0 L242.8 208.9 L243.1 204.8 L243.7 200.7 L244.7 196.6 L245.3 194.5 L246.9 190.5 L247.9 188.4 L249.1 186.4 L251.0 183.5 L251.9 182.3 L254.1 179.8 L257.1 176.9 L260.2 174.7 L263.2 172.8 L266.3 171.4 L270.1 170.0 L272.4 169.3 L275.5 168.6 L279.7 168.0 L281.6 167.7 L284.7 167.6 L287.8 167.5 L293.9 167.7 L300.0 168.3 L306.1 169.1 L315.3 170.6 L324.5 172.3 L330.6 173.1 L333.7 173.4 L336.8 173.6 L339.8 173.6 L342.9 173.3 L345.9 172.5 L347.1 172.0 L349.0 171.2 L350.6 170.0 L352.1 168.8 L352.8 168.0 L354.2 165.9 L355.4 163.9 L356.2 161.8 L357.0 159.8 L358.0 155.7 L358.5 153.6 L359.1 149.5 L359.5 145.5 L359.9 139.3 L360.1 133.2 L360.1 125.0 L359.9 114.8 L359.1 96.4 L358.7 82.0 L358.5 71.8 L358.7 63.6 L359.0 57.5 L359.5 51.4 L360.3 45.2 L361.2 40.4 L362.0 37.0 L362.6 35.0 L362.6 35.0"}
     }
-    select.addEventListener("change", render);
-    render();
-  });
+  };
+  function renderCandidate() {
+    var index = Number(candidate.value);
+    var gap = drawMargin(index);
+    document.getElementById("state-read-1").innerHTML = readout("마진", gap) + readout("두 점선 사이의 폭", 2 * gap);
+    document.getElementById("state-result-1").textContent = readings[index];
+  }
+  function renderFit() {
+    var fit = fitted.fits[kernel.value + "-" + cost.value];
+    var errors = 0;
+    var inside = 0;
+    var points = fitted.points.map(([x, y, label], index) => {
+      var margin = fit.margins[index];
+      var wrong = margin < 0;
+      var inMargin = !wrong && margin < 1;
+      if (wrong) errors += 1;
+      if (inMargin) inside += 1;
+      var point = dot([x, y, label < 0 ? blue : green], false);
+      if (inMargin) {
+        point += '<circle class="svm-inside" cx="' + x + '" cy="' + y + '" r="12" fill="none" stroke="var(--ink-600)" stroke-width="4"/>';
+      }
+      if (wrong) {
+        var cross = "M" + (x-7) + " " + (y-7) + "l14 14m0 -14l-14 14";
+        point += '<path class="svm-error" d="' + cross + '" fill="none" stroke="white" stroke-width="7"/>' +
+          '<path d="' + cross + '" fill="none" stroke="' + red + '" stroke-width="4"/>';
+      }
+      return point;
+    }).join("");
+    document.getElementById("state-plot-2").innerHTML =
+      '<title id="plot-title-2">비용·커널에 따른 결정 경계</title><desc id="plot-desc-2">잘못 분류한 점 ' + errors + '개. 맞게 분류했지만 마진 안쪽에 있는 점 ' + inside + '개.</desc>' +
+      basePlot() + '<path class="svm-margin" d="' + fit.levels + '"/><path class="svm-boundary" d="' + fit.boundary + '"/>' + points;
+    document.getElementById("state-read-2").innerHTML =
+      readout("마진 위반 합계", (inside + errors) + "개") +
+      readout("맞게 분류한 점 중 마진 안쪽", inside + "개") +
+      readout("오분류", errors + "개");
+  }
+  candidate.addEventListener("change", renderCandidate);
+  kernel.addEventListener("change", renderFit);
+  cost.addEventListener("change", renderFit);
+  renderCandidate();
+  renderFit();
 }());
 </script>
 </body>

@@ -6,6 +6,9 @@
   <title>kNN | Machine Learning | Pusan National University</title><meta name="description" content="K-nearest neighbors predicts a new observation from the values of its K nearest training observations."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/23.%20nearest-neighbors-and-support-vectors/knn.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="kNN | Machine Learning | Pusan National University"><meta property="og:description" content="K-nearest neighbors predicts a new observation from the values of its K nearest training observations."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/23.%20nearest-neighbors-and-support-vectors/knn.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
   <link rel="stylesheet" href="../assets/pnu-theme.css">
   <link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
+  <style>
+    #state-plot-1{min-width:0}
+  </style>
 <script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
   window.dataLayer = window.dataLayer || [];
   window.gtag = function () { window.dataLayer.push(arguments); };
@@ -24,10 +27,13 @@
   <main id="main-content" class="page-body container">
     <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>새 관측과 이웃 투표</strong><span>새 관측과 가장 가까운 K개 학습 관측 가운데 가장 많은 범주가 예측 범주가 된다.</span></article><article class="summary-card"><strong>특성 척도와 거리</strong><span>값의 범위가 큰 특성일수록 거리에 크게 기여하므로 특성 척도를 맞추는지에 따라 이웃 구성이 달라진다.</span></article></div></section>
     <section class="topic-example">
-      <header class="example-header"><h2 class="section-title">새 관측과 이웃 투표</h2><p class="lead">새 관측의 위치와 K에 따라 이웃 순위와 다수결로 정하는 예측 범주가 달라진다.</p></header>
+      <header class="example-header"><h2 class="section-title">이웃을 더 세면 예측이 달라질 수 있다</h2><p class="lead">같은 위치에서 이웃을 세 개 셀 때와 다섯 개 셀 때를 비교한다. 어느 위치에서 예측 범주가 바뀌는가?</p></header>
       <div class="visual-lab">
-        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-1">새 관측과 K</label><select id="state-1"><option value="0">왼쪽 관측, K = 3</option><option value="1">오른쪽 관측, K = 5</option></select></div></div>
-        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-1" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-1 plot-desc-1"><title id="plot-title-1">새 관측과 가까운 이웃</title><desc id="plot-desc-1">두 범주의 학습 관측, 새 관측, 선택된 가까운 이웃</desc></svg></div><figcaption class="visual-caption">점선 원 안의 점이 선택된 이웃이다. 선은 새 관측과 각 이웃을 잇고, 굵은 테두리는 다수결에 참여한 관측을 표시한다.</figcaption></figure>
+        <div class="visual-controls visual-controls--double">
+          <div class="control-field"><label for="query-position">새 관측</label><select id="query-position"><option value="left">왼쪽</option><option value="middle">두 범주 사이</option></select></div>
+          <div class="control-field"><label for="neighbor-count">이웃 수 K</label><select id="neighbor-count"><option value="3">3</option><option value="5">5</option></select></div>
+        </div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-1" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-1 plot-desc-1"><title id="plot-title-1">새 관측과 가까운 이웃</title><desc id="plot-desc-1">두 범주의 학습 관측, 새 관측, 선택된 가까운 이웃</desc></svg></div><figcaption class="visual-caption">×는 새 관측이다. 선으로 이은 K개 이웃이 투표한다. 파란 점은 범주 A, 초록 점은 범주 B다.</figcaption></figure>
         <div class="visual-readouts" id="state-read-1" aria-live="polite"></div>
         <p class="visual-note" id="state-result-1"></p>
       </div>
@@ -55,7 +61,6 @@
 </footer>
 <script>
 (function () {
-  var states = [[["왼쪽 관측, K = 3", "가까운 세 관측 중 범주 A가 많아 A를 예측한다."], ["오른쪽 관측, K = 5", "가까운 다섯 관측 중 범주 B가 많아 B를 예측한다."]], [["같은 척도", "두 특성이 거리 계산에 비슷하게 기여한다."], ["첫 특성 100배", "첫 특성이 거리를 지배해 이웃 순위가 바뀐다."]]];
   var blue = "#005baa", green = "#00a651", ink = "#1f2d3d", pale = "#f5f8fb";
   function point(x, y, color, selected) {
     return '<circle cx="' + x + '" cy="' + y + '" r="' + (selected ? 10 : 8) + '" fill="' + color + '" stroke="' + (selected ? ink : '#ffffff') + '" stroke-width="' + (selected ? 4 : 2) + '"/>';
@@ -63,10 +68,9 @@
   function line(x1, y1, x2, y2) {
     return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="#5c6c7c" stroke-width="2"/>';
   }
-  function drawVote(index) {
+  function drawVote(q, k) {
     var svg = document.getElementById("state-plot-1");
     var pts = [[112,198,blue],[150,132,blue],[190,185,blue],[235,112,blue],[278,206,green],[330,132,green],[372,190,green],[420,112,green],[475,172,green]];
-    var q = index === 0 ? [180,160] : [385,158], k = index === 0 ? 3 : 5;
     var nearest = pts.map(function (p, j) { return { id: j, distance: Math.hypot(p[0] - q[0], p[1] - q[1]) }; })
       .sort(function (a, b) { return a.distance - b.distance; }).slice(0, k);
     var chosen = nearest.map(function (p) { return p.id; });
@@ -76,9 +80,10 @@
     html += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="' + radius + '" fill="none" stroke="#5c6c7c" stroke-width="2" stroke-dasharray="7 6"/>';
     pts.forEach(function (p, j) { html += point(p[0], p[1], p[2], chosen.indexOf(j) >= 0); });
     html += '<path d="M ' + (q[0]-9) + ' ' + (q[1]-9) + ' L ' + (q[0]+9) + ' ' + (q[1]+9) + ' M ' + (q[0]+9) + ' ' + (q[1]-9) + ' L ' + (q[0]-9) + ' ' + (q[1]+9) + '" stroke="' + ink + '" stroke-width="4"/>';
-    html += '<text x="72" y="62" fill="' + blue + '" font-size="15" font-weight="700">범주 A</text><text x="460" y="62" fill="' + green + '" font-size="15" font-weight="700">범주 B</text><text x="' + (q[0]+15) + '" y="' + (q[1]-14) + '" fill="' + ink + '" font-size="14" font-weight="700">새 관측</text>';
     svg.innerHTML = html;
-    return nearest[k - 1].distance.toFixed(1);
+    return nearest.map(function (p) {
+      return {label: pts[p.id][2] === blue ? "A" : "B", distance: p.distance};
+    });
   }
   function drawScale(index) {
     var svg = document.getElementById("state-plot-2");
@@ -98,24 +103,38 @@
   function readout(label, value) {
     return '<div class="visual-readout"><span class="visual-readout-label">' + label + '</span><strong class="visual-readout-value">' + value + '</strong></div>';
   }
-  states.forEach(function (options, i) {
-    var n = i + 1;
-    var select = document.getElementById("state-" + n);
-    function render() {
-      var index = Number(select.value);
-      var state = options[index];
-      if (n === 1) {
-        var kthDistance = drawVote(index);
-        document.getElementById("state-read-1").innerHTML = readout("선택한 조건", state[0]) + readout("K번째 거리", kthDistance);
-      } else {
-        var nearest = drawScale(index);
-        document.getElementById("state-read-2").innerHTML = readout("첫 특성의 배율", index === 0 ? "1배" : "100배") + readout("가까운 두 관측", nearest.map(function (p) { return p.label; }).join(" → ")) + readout("계산 거리", nearest.map(function (p) { return p.distance.toFixed(1); }).join(" · "));
-      }
-      document.getElementById("state-result-" + n).textContent = state[1];
-    }
-    select.addEventListener("change", render);
-    render();
-  });
+  var query = document.getElementById("query-position");
+  var neighbors = document.getElementById("neighbor-count");
+  var scale = document.getElementById("state-2");
+  function renderVote() {
+    var middle = query.value === "middle";
+    var k = Number(neighbors.value);
+    var nearest = drawVote(middle ? [260,137] : [180,160], k);
+    var labels = nearest.map(p => p.label);
+    var votesA = labels.filter(label => label === "A").length;
+    var prediction = votesA > k / 2 ? "A" : "B";
+    document.getElementById("state-read-1").innerHTML =
+      readout("가까운 이웃의 범주", labels.join(" → ")) +
+      readout("득표", "A " + votesA + "표 · B " + (k - votesA) + "표") +
+      readout("예측 범주", prediction) +
+      readout("K번째 이웃까지 거리", nearest[k - 1].distance.toFixed(1));
+    document.getElementById("state-result-1").textContent = middle
+      ? "네 번째와 다섯 번째 이웃은 모두 A다. 두 이웃을 더 세면 A가 3표, B가 2표다."
+      : "왼쪽에서는 가까운 세 점이 모두 A다. 다섯 점까지 세어도 A가 더 많다.";
+  }
+  function renderScale() {
+    var index = Number(scale.value);
+    var nearest = drawScale(index);
+    document.getElementById("state-read-2").innerHTML = readout("첫 특성의 배율", index === 0 ? "1배" : "100배") + readout("가까운 두 관측", nearest.map(function (p) { return p.label; }).join(" → ")) + readout("계산 거리", nearest.map(function (p) { return p.distance.toFixed(1); }).join(" · "));
+    document.getElementById("state-result-2").textContent = index === 0
+      ? "두 특성이 거리 계산에 비슷하게 기여한다."
+      : "첫 특성이 거리를 지배해 이웃 순위가 바뀐다.";
+  }
+  query.addEventListener("change", renderVote);
+  neighbors.addEventListener("change", renderVote);
+  scale.addEventListener("change", renderScale);
+  renderVote();
+  renderScale();
 }());
 </script>
 </body>

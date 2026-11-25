@@ -35,7 +35,7 @@
   <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>undersampling · oversampling</strong><span>다수 범주 표본을 줄이거나 소수 범주 표본을 복제해 범주별 관측 수를 맞춘다.</span></article><article class="summary-card"><strong>균형 가중치 w_c = n / (C n_c)</strong><span>드문 범주의 모든 관측 손실에 더 큰 가중치를 곱해 범주별 가중치 합을 같게 한다.</span></article><article class="summary-card"><strong>새 정보는 생기지 않는다</strong><span>복제나 가중치는 새로운 관측을 만들지 않으며, 재현율과 정밀도가 함께 바뀐다.</span></article></div></section>
 
   <section class="topic-example">
-    <header class="example-header"><h2 class="section-title">표본 수 조정은 분할한 뒤 학습 자료에만 적용한다</h2><p class="lead">가상 관측 1,000개(소수 범주 60개)를 학습 80%, 검증 20%로 범주 비율을 지켜 나눈다. 조정 방법과 적용 시점을 바꾸면 학습 자료와 검증 자료의 범주별 관측 수가 바뀐다.</p></header>
+    <header class="example-header"><h2 class="section-title">표본 수 조정은 분할한 뒤 학습 자료에만 적용한다</h2><p class="lead">관측 1,000개(소수 범주 60개)를 학습 80%, 검증 20%로 범주 비율을 지켜 나눈다. 조정 방법과 적용 시점을 바꾸면 학습 자료와 검증 자료의 범주별 관측 수가 바뀐다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--double">
         <div class="control-field"><label for="method">조정 방법</label><select id="method"><option value="none">원래 자료</option><option value="under">다수 표본 줄이기</option><option value="over">소수 표본 복제하기</option></select></div>

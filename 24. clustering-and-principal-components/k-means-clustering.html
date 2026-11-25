@@ -6,6 +6,7 @@
   <title>K-means Clustering | Machine Learning | Pusan National University</title><meta name="description" content="K-means clustering repeatedly assigns observations to their nearest centers and updates the cluster centers."><link rel="canonical" href="https://scientific-inference-lab.github.io/machine-learning/24.%20clustering-and-principal-components/k-means-clustering.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Machine Learning"><meta property="og:title" content="K-means Clustering | Machine Learning | Pusan National University"><meta property="og:description" content="K-means clustering repeatedly assigns observations to their nearest centers and updates the cluster centers."><meta property="og:url" content="https://scientific-inference-lab.github.io/machine-learning/24.%20clustering-and-principal-components/k-means-clustering.html"><meta name="twitter:card" content="summary"><meta property="og:locale" content="ko_KR"><link rel="icon" type="image/png" href="../assets/favicon.png">
   <link rel="stylesheet" href="../assets/pnu-theme.css">
   <link rel="stylesheet" href="../assets/topic-visual-shell.css"><script src="../assets/topic-visual-shell.js" defer></script>
+  <style>#state-plot-2{min-width:0}</style>
 <script data-analytics="ga4">if (location.hostname === "scientific-inference-lab.github.io") {
   window.dataLayer = window.dataLayer || [];
   window.gtag = function () { window.dataLayer.push(arguments); };
@@ -22,21 +23,24 @@
   <header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="기계학습개론 전체 주제"><img class="brand-signature" src="../assets/logo/pnu_signature.png" alt="부산대학교" width="154" height="39"><span class="brand-text">기계학습개론</span></a><div class="header-actions"><nav class="course-nav" aria-label="강의 자료"><a class="nav-tag lecture-pdf-link" href="../lecture/24.%20Clustering%20and%20PCA.pdf" aria-label="Clustering and PCA 강의 PDF">Clustering and PCA</a></nav><a class="lab-site-link" href="https://scientific-inference-lab.github.io/">Scientific Inference Lab</a></div></div></header>
   <section class="hero topic-hero"><div class="container"><h1 class="page-title">K-means Clustering</h1><hr class="accent-rule"><p class="page-subtitle">K-평균 군집화(K-means clustering)는 관측을 가장 가까운 중심점에 배정하고 군집 중심을 반복 갱신한다.</p></div></section>
   <main id="main-content" class="page-body container">
-    <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>두 군집 설정 비교</strong><span>K는 관측을 나눌 군집 수이며 K가 다르면 배정과 중심점도 달라진다.</span></article><article class="summary-card"><strong>배정과 중심점 갱신</strong><span>관측을 가장 가까운 중심점에 배정하고 중심점을 군집 평균으로 옮기는 두 단계는 군집 안 제곱합을 늘리지 않는다.</span></article></div></section>
+    <section class="topic-summary" aria-label="핵심 개념"><div class="summary-grid"><article class="summary-card"><strong>군집 수</strong><span>K는 관측을 나눌 군집 수다.</span></article><article class="summary-card"><strong>배정과 중심점 갱신</strong><span>관측을 가장 가까운 중심점에 배정하고 중심점을 군집 평균으로 옮기는 두 단계는 군집 안 제곱합을 늘리지 않는다.</span></article></div></section>
     <section class="topic-example">
-      <header class="example-header"><h2 class="section-title">두 군집 설정 비교</h2><p class="lead">같은 관측도 K = 2와 K = 3으로 묶으면 배정과 중심점이 달라진다.</p></header>
+      <header class="example-header"><h2 class="section-title">같은 점을 두 군집 또는 세 군집으로 묶으면</h2><p class="lead">군집 수를 2에서 3으로 늘리면 가운데 점들은 어느 군집에 속하는가?</p></header>
       <div class="visual-lab">
-        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-1">군집 설정</label><select id="state-1"><option value="0">K = 2인 배정 예</option><option value="1">K = 3인 배정 예</option></select></div></div>
+        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-1">군집 수 K</label><select id="state-1"><option value="0">K = 2</option><option value="1">K = 3</option></select></div></div>
         <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-1" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-1 plot-desc-1"><title id="plot-title-1">두 군집 설정 비교</title><desc id="plot-desc-1">K = 2와 K = 3인 배정 예와 각 군집의 평균</desc></svg></div><figcaption class="visual-caption">색은 제시한 군집 배정, 큰 ×는 각 군집에 속한 관측의 평균이다.</figcaption></figure>
         <div class="visual-readouts" id="state-read-1" aria-live="polite"></div>
         <p class="visual-note" id="state-result-1"></p>
       </div>
     </section>
     <section class="topic-example">
-      <header class="example-header"><h2 class="section-title">배정과 중심점 갱신</h2><p class="lead">배정을 고정하고 중심점을 군집 평균으로 옮기면 군집 안 제곱합은 증가하지 않는다. 중심점이 이미 평균인 경우에는 값이 그대로다.</p></header>
+      <header class="example-header"><h2 class="section-title">같은 점도 초기 중심점에 따라 다르게 묶인다</h2><p class="lead">K는 2다. 왼쪽과 오른쪽에서 각각 시작하면 최종적으로 어느 점의 배정이 달라지는가?</p></header>
       <div class="visual-lab">
-        <div class="visual-controls visual-controls--single"><div class="control-field"><label for="state-2">갱신 단계</label><select id="state-2"><option value="0">초기 배정</option><option value="1">중심점 갱신</option></select></div></div>
-        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-2" class="topic-plot" viewBox="0 0 600 300" role="img" aria-labelledby="plot-title-2 plot-desc-2"><title id="plot-title-2">배정과 중심점 갱신</title><desc id="plot-desc-2">관측을 배정한 뒤 중심점이 군집 평균으로 이동하는 모습</desc></svg></div><figcaption class="visual-caption">가는 선은 관측과 배정된 중심점을 잇는다. 화살표는 초기 중심점에서 군집 평균으로 이동하는 방향을 나타낸다.</figcaption></figure>
+        <div class="visual-controls visual-controls--double">
+          <div class="control-field"><label for="initial-centers">초기 중심점</label><select id="initial-centers"><option value="left">왼쪽의 두 점</option><option value="right">오른쪽의 두 점</option></select></div>
+          <div class="control-field"><label for="iteration-stage">군집화 단계</label><input id="iteration-stage" type="range" min="0" max="4" value="0" step="1"></div>
+        </div>
+        <figure class="visual-figure"><div class="visual-frame"><svg id="state-plot-2" class="topic-plot" viewBox="0 0 530 260" role="img" aria-labelledby="plot-title-2 plot-desc-2"><title id="plot-title-2">두 중심점과 여덟 점</title><desc id="plot-desc-2">초기 중심점에 따라 점의 배정과 중심점의 위치가 바뀌는 과정을 나타낸다.</desc></svg></div><figcaption class="visual-caption">×는 현재 중심점이다. 제곱합은 각 점과 그 점이 속한 군집 중심 사이의 거리 제곱을 더한 값이다.</figcaption></figure>
         <div class="visual-readouts" id="state-read-2" aria-live="polite"></div>
         <p class="visual-note" id="state-result-2"></p>
       </div>
@@ -55,50 +59,117 @@
 </footer>
 <script>
 (function () {
-  var states = [[["K = 2인 배정 예", "관측이 왼쪽과 오른쪽 두 군집으로 나뉜다."], ["K = 3인 배정 예", "관측이 대각선 방향의 세 군집으로 나뉜다."]], [["초기 배정", "초기 중심점에서 가까운 군집으로 관측이 배정된다."], ["중심점 갱신", "군집 평균으로 중심점이 이동하고 제곱합이 줄어든다."]]];
-  var colors = ["#005baa", "#00a651", "#b3261e"], ink = "#1f2d3d";
+  var colors = ["#005baa", "#00a651", "#b3261e"];
   var points = [[110,205],[145,170],[180,215],[205,145],[265,170],[305,115],[340,150],[385,90],[420,125],[455,72],[480,112]];
-  function cross(x, y, color) { return '<path d="M' + (x-10) + ' ' + (y-10) + ' L' + (x+10) + ' ' + (y+10) + ' M' + (x+10) + ' ' + (y-10) + ' L' + (x-10) + ' ' + (y+10) + '" stroke="' + color + '" stroke-width="6"/>'; }
+  function cross(x, y, color, width = 6) { return '<path d="M' + (x-10) + ' ' + (y-10) + ' L' + (x+10) + ' ' + (y+10) + ' M' + (x+10) + ' ' + (y-10) + ' L' + (x-10) + ' ' + (y+10) + '" stroke="' + color + '" stroke-width="' + width + '"/>'; }
   function dot(p, color) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="9" fill="' + color + '" stroke="#ffffff" stroke-width="2"/>'; }
   function frame() { return '<rect x="55" y="35" width="490" height="225" rx="12" fill="#f5f8fb"/>'; }
   function drawSetting(index) {
     var svg = document.getElementById("state-plot-1");
     var groups = index === 0 ? [0,0,0,0,0,1,1,1,1,1,1] : [0,0,0,0,1,1,1,2,2,2,2];
     var centers = index === 0 ? [[181,181],[397.5,110.66666666666667]] : [[160,183.75],[303.3333333333333,145],[435,99.75]];
-    var html = frame();
+    var html = '<title id="plot-title-1">군집 수 비교</title><desc id="plot-desc-1">같은 점을 ' + centers.length + '개 군집으로 나눈 결과와 각 군집의 평균</desc>' + frame();
     points.forEach(function (p,j) { html += dot(p, colors[groups[j]]); });
     centers.forEach(function (c,j) { html += cross(c[0],c[1],colors[j]); });
-    html += '<text x="72" y="62" fill="' + ink + '" font-size="14" font-weight="700">K = ' + centers.length + '</text>';
     svg.innerHTML = html;
-  }
-  function drawUpdate(index) {
-    var svg = document.getElementById("state-plot-2");
-    var groups = [0,0,0,0,0,1,1,1,1,1,1];
-    var start = [[105,105],[495,150]], moved = [[181,181],[397.5,110.7]];
-    var centers = index === 0 ? start : moved;
-    var html = frame() + '<defs><marker id="move-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#5c6c7c"/></marker></defs>';
-    points.forEach(function (p,j) { var c=centers[groups[j]]; html += '<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+c[0]+'" y2="'+c[1]+'" stroke="#d7e0e8" stroke-width="1.5"/>'; });
-    points.forEach(function (p,j) { html += dot(p, colors[groups[j]]); });
-    if (index === 1) { start.forEach(function (c,j) { html += '<circle cx="'+c[0]+'" cy="'+c[1]+'" r="7" fill="none" stroke="#5c6c7c" stroke-width="2" stroke-dasharray="4 4"/><line x1="'+c[0]+'" y1="'+c[1]+'" x2="'+moved[j][0]+'" y2="'+moved[j][1]+'" stroke="#5c6c7c" stroke-width="3" marker-end="url(#move-arrow)"/>'; }); }
-    centers.forEach(function (c,j) { html += cross(c[0],c[1],colors[j]); });
-    svg.innerHTML = html;
+    var counts = centers.map(function (_, group) { return groups.filter(function (value) { return value === group; }).length; });
+    document.getElementById("state-read-1").innerHTML = readout("군집별 점 수", counts.join(" · "));
+    document.getElementById("state-result-1").textContent = index === 0
+      ? "가운데 점 세 개 중 한 점은 왼쪽 군집, 두 점은 오른쪽 군집에 속한다."
+      : "가운데 점 세 개가 따로 한 군집을 이룬다.";
   }
   function readout(label, value) {
     return '<div class="visual-readout"><span class="visual-readout-label">' + label + '</span><strong class="visual-readout-value">' + value + '</strong></div>';
   }
-  states.forEach(function (options, i) {
-    var n = i + 1;
-    var select = document.getElementById("state-" + n);
-    function render() {
-      var index = Number(select.value);
-      var state = options[index];
-      if (n === 1) { drawSetting(index); } else { drawUpdate(index); }
-      document.getElementById("state-read-" + n).innerHTML = readout("선택한 조건", state[0]) + readout("선택지", (index + 1) + " / " + options.length);
-      document.getElementById("state-result-" + n).textContent = state[1];
+
+  var iterationPoints = [[0,1],[0,3],[1,2],[4,3],[5,2],[8,1],[9,2],[9,4]];
+  var seeds = {left: [[0,1],[1,2]], right: [[8,1],[9,2]]};
+  var initial = document.getElementById("initial-centers");
+  var stage = document.getElementById("iteration-stage");
+  function squaredDistance(point, center) {
+    return (point[0] - center[0]) ** 2 + (point[1] - center[1]) ** 2;
+  }
+  function snapshot(label, groups, centers, previousCenters) {
+    var cost = iterationPoints.reduce(function (sum, point, i) {
+      return sum + squaredDistance(point, centers[groups[i]]);
+    }, 0);
+    return {label: label, groups: groups, centers: centers, previousCenters: previousCenters, cost: cost};
+  }
+  function runKmeans(start) {
+    var trace = [], previousGroups = [], centers = start;
+    for (;;) {
+      var groups = iterationPoints.map(function (point) {
+        return squaredDistance(point, centers[0]) <= squaredDistance(point, centers[1]) ? 0 : 1;
+      });
+      if (groups.every(function (value, i) { return value === previousGroups[i]; })) {
+        trace.push(snapshot("배정 그대로", groups, centers));
+        return trace;
+      }
+      trace.push(snapshot(previousGroups.length ? "다시 배정" : "첫 배정", groups, centers));
+      var means = centers.map(function (_, index) {
+        var members = iterationPoints.filter(function (_, i) { return groups[i] === index; });
+        return [0, 1].map(function (axis) {
+          return members.reduce(function (sum, point) { return sum + point[axis]; }, 0) / members.length;
+        });
+      });
+      trace.push(snapshot("중심점 이동", groups, means, centers));
+      centers = means;
+      previousGroups = groups;
     }
-    select.addEventListener("change", render);
-    render();
-  });
+  }
+  function plotPoint(point) { return [70 + 42 * point[0], 230 - 42 * point[1]]; }
+  function line(start, end, attributes) {
+    return '<line x1="' + start[0] + '" y1="' + start[1] + '" x2="' + end[0] + '" y2="' + end[1] + '" ' + attributes + '/>';
+  }
+  function drawIteration(state) {
+    var blue = state.groups.filter(function (group) { return group === 0; }).length;
+    var green = iterationPoints.length - blue;
+    var html = '<title id="plot-title-2">' + state.label + '</title><desc id="plot-desc-2">파란 군집 ' + blue + '점, 초록 군집 ' + green + '점. ×는 현재 중심점.</desc>'
+      + '<rect x="45" y="31" width="460" height="211" rx="12" fill="#f5f8fb"/>'
+      + '<defs><marker id="move-arrow" viewBox="0 0 10 10" markerWidth="7" markerHeight="7" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#5c6c7c"/></marker></defs>';
+    for (var x = 0; x < 10; x++) html += line(plotPoint([x, 0]), plotPoint([x, 4.5]), 'stroke="#d7e0e8"');
+    for (var y = 0; y < 5; y++) html += line(plotPoint([-0.3, y]), plotPoint([9.7, y]), 'stroke="#d7e0e8"');
+    iterationPoints.forEach(function (point, i) {
+      html += line(plotPoint(point), plotPoint(state.centers[state.groups[i]]), 'stroke="#5c6c7c" stroke-opacity=".55" stroke-width="1.5"');
+    });
+    if (state.previousCenters) {
+      state.previousCenters.forEach(function (center, i) {
+        var old = plotPoint(center);
+        html += '<circle cx="' + old[0] + '" cy="' + old[1] + '" r="13" fill="none" stroke="#5c6c7c" stroke-width="2" stroke-dasharray="4 3"/>';
+        html += line(old, plotPoint(state.centers[i]), 'stroke="#5c6c7c" stroke-width="2.5" marker-end="url(#move-arrow)"');
+      });
+    }
+    iterationPoints.forEach(function (point, i) { html += dot(plotPoint(point), colors[state.groups[i]]); });
+    state.centers.forEach(function (center, i) {
+      var p = plotPoint(center);
+      html += cross(p[0], p[1], "#ffffff", 9) + cross(p[0], p[1], colors[i]);
+    });
+    document.getElementById("state-plot-2").innerHTML = html;
+    document.getElementById("state-read-2").innerHTML = readout("단계", state.label)
+      + readout("군집별 점 수", "파랑 " + blue + " · 초록 " + green)
+      + readout("군집 안 제곱합", state.cost.toFixed(2));
+    document.getElementById("state-result-2").textContent = {
+      "첫 배정": "각 점을 두 초기 중심점 중 더 가까운 쪽에 배정한다.",
+      "다시 배정": "옮긴 중심점을 기준으로 가장 가까운 군집을 다시 찾는다.",
+      "중심점 이동": "점의 배정은 그대로 두고 각 중심점을 그 군집의 평균으로 옮긴다. 점선 원은 이동 전 중심점이다.",
+      "배정 그대로": "가장 가까운 중심점을 다시 찾아도 배정이 모두 같아 여기서 멈춘다."
+    }[state.label];
+    stage.setAttribute("aria-valuetext", state.label);
+  }
+  var setting = document.getElementById("state-1");
+  setting.addEventListener("change", function () { drawSetting(Number(setting.value)); });
+  drawSetting(Number(setting.value));
+  var trace;
+  function renderStage() { drawIteration(trace[Number(stage.value)]); }
+  function resetTrace() {
+    trace = runKmeans(seeds[initial.value]);
+    stage.max = trace.length - 1;
+    stage.value = 0;
+    renderStage();
+  }
+  initial.addEventListener("change", resetTrace);
+  stage.addEventListener("input", renderStage);
+  resetTrace();
 }());
 </script>
 </body>

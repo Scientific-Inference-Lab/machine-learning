@@ -67,7 +67,7 @@
     <header class="example-header"><h2 class="section-title">학습률이 알맞으면 한 번의 갱신으로 손실이 줄고, 너무 크면 오히려 커진다</h2><p class="lead">x = (1, 1), y = −1에서 아홉 매개변수를 한꺼번에 갱신할 때 학습률 η가 갱신 뒤 출력 가중치와 손실을 정한다.</p></header>
     <div class="visual-lab">
       <div class="visual-controls visual-controls--single"><div class="control-field"><label for="beta">학습률 η <output id="beta-out" class="control-value" for="beta">0.02</output></label><input id="beta" type="range" min="0" max="0.1" step="0.01" value="0.02"></div></div>
-      <figure class="visual-figure"><div class="visual-frame"><table id="upd-table" class="topic-table" aria-label="갱신 전후 매개변수와 손실"></table></div><figcaption class="visual-caption">행은 매개변수와 손실이다. 갱신 뒤 값은 θ − η × 그래디언트이며 초록 칸이 갱신 뒤 손실이다. 강의 예는 두 출력 가중치만 갱신하지만, 여기서는 아홉 매개변수를 모두 갱신한다.</figcaption></figure>
+      <figure class="visual-figure"><div class="visual-frame"><table id="upd-table" class="topic-table" aria-label="갱신 전후 매개변수와 손실"></table></div><figcaption class="visual-caption">아홉 매개변수를 각각 θ − η × 그래디언트로 갱신한다. 초록 칸은 갱신 뒤 손실이다.</figcaption></figure>
       <div id="read-2" class="visual-readouts" aria-live="polite"></div>
       <p id="note-2" class="visual-note"></p>
     </div>
